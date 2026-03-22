@@ -1,0 +1,136 @@
+<div class="auth-page">
+  <div class="page-controls">
+    <p-selectbutton
+      [options]="langOptions"
+      [ngModel]="lang.currentLang()"
+      (ngModelChange)="onLangChange($event)"
+      optionLabel="label"
+      optionValue="value"
+      size="small"
+    />
+    <p-button
+      [icon]="theme.isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'"
+      [rounded]="true"
+      [text]="true"
+      severity="secondary"
+      (onClick)="theme.toggleDarkMode()"
+    />
+  </div>
+
+  <p-card class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">
+        <i class="pi pi-wallet"></i>
+      </div>
+      <h1 class="app-name">BudgetWise</h1>
+      <p class="auth-subtitle">{{ 'register.subtitle' | translate }}</p>
+    </div>
+
+    @if (errorKey()) {
+      <p-message severity="error" [text]="errorKey()! | translate" styleClass="w-full mb-3" />
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="form-field">
+        <p-floatlabel>
+          <input
+            pInputText
+            id="fullName"
+            formControlName="fullName"
+            autocomplete="name"
+            [ngClass]="{ 'ng-invalid ng-dirty': form.get('fullName')?.invalid && form.get('fullName')?.touched }"
+          />
+          <label for="fullName">{{ 'register.fullName' | translate }}</label>
+        </p-floatlabel>
+        @if (form.get('fullName')?.invalid && form.get('fullName')?.touched) {
+          <small class="p-error">
+            @if (form.get('fullName')?.errors?.['required']) {
+              {{ 'validation.required' | translate }}
+            } @else if (form.get('fullName')?.errors?.['minlength']) {
+              {{ 'validation.minLength' | translate: { value: 3 } }}
+            }
+          </small>
+        }
+      </div>
+
+      <div class="form-field">
+        <p-floatlabel>
+          <input
+            pInputText
+            id="email"
+            formControlName="email"
+            autocomplete="email"
+            [ngClass]="{ 'ng-invalid ng-dirty': form.get('email')?.invalid && form.get('email')?.touched }"
+          />
+          <label for="email">{{ 'register.email' | translate }}</label>
+        </p-floatlabel>
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <small class="p-error">
+            @if (form.get('email')?.errors?.['required']) {
+              {{ 'validation.required' | translate }}
+            } @else if (form.get('email')?.errors?.['email']) {
+              {{ 'validation.email' | translate }}
+            }
+          </small>
+        }
+      </div>
+
+      <div class="form-field">
+        <p-floatlabel>
+          <p-password
+            inputId="password"
+            formControlName="password"
+            [toggleMask]="true"
+            [fluid]="true"
+            autocomplete="new-password"
+            [ngClass]="{ 'ng-invalid ng-dirty': form.get('password')?.invalid && form.get('password')?.touched }"
+          />
+          <label for="password">{{ 'register.password' | translate }}</label>
+        </p-floatlabel>
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <small class="p-error">
+            @if (form.get('password')?.errors?.['required']) {
+              {{ 'validation.required' | translate }}
+            } @else if (form.get('password')?.errors?.['minlength']) {
+              {{ 'validation.minLength' | translate: { value: 6 } }}
+            }
+          </small>
+        }
+      </div>
+
+      <div class="form-field">
+        <p-floatlabel>
+          <p-password
+            inputId="confirmPassword"
+            formControlName="confirmPassword"
+            [feedback]="false"
+            [toggleMask]="true"
+            [fluid]="true"
+            autocomplete="new-password"
+            [ngClass]="{ 'ng-invalid ng-dirty': (form.get('confirmPassword')?.touched && form.hasError('passwordMismatch')) || (form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched) }"
+          />
+          <label for="confirmPassword">{{ 'register.confirmPassword' | translate }}</label>
+        </p-floatlabel>
+        @if (form.get('confirmPassword')?.touched) {
+          @if (form.get('confirmPassword')?.errors?.['required']) {
+            <small class="p-error">{{ 'validation.required' | translate }}</small>
+          } @else if (form.hasError('passwordMismatch')) {
+            <small class="p-error">{{ 'validation.passwordMismatch' | translate }}</small>
+          }
+        }
+      </div>
+
+      <p-button
+        type="submit"
+        [label]="'register.submit' | translate"
+        [fluid]="true"
+        [loading]="isLoading()"
+      />
+    </form>
+
+    <div class="auth-footer">
+      <span>{{ 'register.hasAccount' | translate }}</span>
+      <a routerLink="/login">{{ 'register.login' | translate }}</a>
+    </div>
+  </p-card>
+</div>

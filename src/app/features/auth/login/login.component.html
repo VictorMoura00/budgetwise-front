@@ -1,0 +1,93 @@
+<div class="login-page">
+  <div class="page-controls">
+    <p-selectbutton
+      [options]="langOptions"
+      [ngModel]="lang.currentLang()"
+      (ngModelChange)="onLangChange($event)"
+      optionLabel="label"
+      optionValue="value"
+      size="small"
+    />
+    <p-button
+      [icon]="theme.isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'"
+      [rounded]="true"
+      [text]="true"
+      severity="secondary"
+      (onClick)="theme.toggleDarkMode()"
+    />
+  </div>
+
+  <p-card class="login-card">
+    <div class="login-header">
+      <div class="login-logo">
+        <i class="pi pi-wallet"></i>
+      </div>
+      <h1 class="app-name">BudgetWise</h1>
+      <p class="login-subtitle">{{ 'login.subtitle' | translate }}</p>
+    </div>
+
+    @if (errorKey()) {
+      <p-message severity="error" [text]="errorKey()! | translate" styleClass="w-full mb-3" />
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="form-field">
+        <p-floatlabel>
+          <input
+            pInputText
+            id="email"
+            formControlName="email"
+            autocomplete="email"
+            [ngClass]="{ 'ng-invalid ng-dirty': form.get('email')?.invalid && form.get('email')?.touched }"
+          />
+          <label for="email">{{ 'login.email' | translate }}</label>
+        </p-floatlabel>
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <small class="p-error">
+            @if (form.get('email')?.errors?.['required']) {
+              {{ 'validation.required' | translate }}
+            } @else if (form.get('email')?.errors?.['email']) {
+              {{ 'validation.email' | translate }}
+            }
+          </small>
+        }
+      </div>
+
+      <div class="form-field">
+        <p-floatlabel>
+          <p-password
+            inputId="password"
+            formControlName="password"
+            [feedback]="false"
+            [toggleMask]="true"
+            [fluid]="true"
+            autocomplete="current-password"
+            [ngClass]="{ 'ng-invalid ng-dirty': form.get('password')?.invalid && form.get('password')?.touched }"
+          />
+          <label for="password">{{ 'login.password' | translate }}</label>
+        </p-floatlabel>
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <small class="p-error">
+            @if (form.get('password')?.errors?.['required']) {
+              {{ 'validation.required' | translate }}
+            } @else if (form.get('password')?.errors?.['minlength']) {
+              {{ 'validation.minLength' | translate: { value: 6 } }}
+            }
+          </small>
+        }
+      </div>
+
+      <p-button
+        type="submit"
+        [label]="'login.submit' | translate"
+        [fluid]="true"
+        [loading]="isLoading()"
+      />
+    </form>
+
+    <div class="auth-footer">
+      <span>{{ 'login.noAccount' | translate }}</span>
+      <a routerLink="/register">{{ 'login.register' | translate }}</a>
+    </div>
+  </p-card>
+</div>
