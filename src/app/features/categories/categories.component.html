@@ -1,0 +1,234 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ 'categories.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'categories.subtitle' | translate }}</p>
+    </div>
+    <p-button
+      icon="pi pi-plus"
+      [label]="'categories.newCategory' | translate"
+      (onClick)="openCreateDialog()"
+    />
+  </div>
+
+  <div class="table-wrapper">
+  <p-table
+    [value]="categories()"
+    [lazy]="true"
+    (onLazyLoad)="onLazyLoad($event)"
+    [paginator]="true"
+    [rows]="pageSize"
+    [totalRecords]="totalRecords()"
+    [loading]="loading()"
+    [rowsPerPageOptions]="[10, 20, 50]"
+    [showCurrentPageReport]="true"
+    [currentPageReportTemplate]="'categories.pageReport' | translate"
+    styleClass="p-datatable-sm"
+  >
+    <ng-template #header>
+      <tr>
+        <th>{{ 'categories.columns.name' | translate }}</th>
+        <th class="col-description">{{ 'categories.columns.description' | translate }}</th>
+        <th class="col-type" style="width: 110px">{{ 'categories.columns.type' | translate }}</th>
+        <th style="width: 100px">{{ 'categories.columns.status' | translate }}</th>
+        <th style="width: 90px"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-category>
+      <tr>
+        <td>
+          <div class="category-name-cell">
+            <div
+              class="category-icon"
+              [style.background-color]="category.color ?? 'var(--p-primary-100)'"
+            >
+              <i [class]="iconPreview(category.icon)"></i>
+            </div>
+            <span>{{ category.name }}</span>
+          </div>
+        </td>
+
+        <td class="col-description text-muted">{{ category.description || '—' }}</td>
+
+        <td class="col-type">
+          <p-tag
+            [value]="(category.isSystem ? 'categories.system' : 'categories.personal') | translate"
+            [severity]="category.isSystem ? 'secondary' : 'info'"
+          />
+        </td>
+
+        <td>
+          <p-tag
+            [value]="(category.isActive ? 'categories.active' : 'categories.inactive') | translate"
+            [severity]="category.isActive ? 'success' : 'danger'"
+          />
+        </td>
+
+        <td>
+          @if (!category.isSystem) {
+            <div class="row-actions">
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.edit' | translate"
+                (onClick)="openEditDialog(category)"
+              />
+              @if (category.isActive) {
+                <p-button
+                  icon="pi pi-ban"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="danger"
+                  [pTooltip]="'common.deactivate' | translate"
+                  (onClick)="confirmDeactivate(category)"
+                />
+              }
+            </div>
+          }
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="5" class="empty-message">
+          {{ 'categories.empty' | translate }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  </div>
+</div>
+
+<!-- Dialog criar/editar -->
+<p-dialog
+  [visible]="dialogVisible"
+  (visibleChange)="dialogVisible = $event"
+  [header]="(editingCategory ? 'categories.editCategory' : 'categories.newCategory') | translate"
+  [modal]="true"
+  [style]="{ width: 'min(480px, 95vw)' }"
+  [draggable]="false"
+>
+  <form [formGroup]="form" (ngSubmit)="saveCategory()" novalidate>
+
+    <!-- Nome com ícone integrado -->
+    <div class="form-field">
+      <label class="field-label" for="cat-name">{{ 'categories.form.name' | translate }}</label>
+      <p-inputgroup>
+        <p-inputgroup-addon
+          class="icon-addon"
+          [pTooltip]="'categories.form.editIcon' | translate"
+          tooltipPosition="top"
+          (click)="openIconPicker($event)"
+        >
+          <i [class]="form.get('icon')?.value || 'pi pi-box'"></i>
+        </p-inputgroup-addon>
+        <input
+          pInputText
+          id="cat-name"
+          formControlName="name"
+          [ngClass]="{ 'ng-invalid ng-dirty': form.get('name')?.invalid && form.get('name')?.touched }"
+        />
+      </p-inputgroup>
+      @if (form.get('name')?.invalid && form.get('name')?.touched) {
+        <small class="p-error">{{ 'validation.required' | translate }}</small>
+      }
+
+      <!-- Popover do seletor de ícones -->
+      <p-popover #iconPopover [style]="{ width: '340px' }">
+        <div class="icon-picker-popover">
+          <input
+            pInputText
+            [(ngModel)]="iconSearch"
+            [ngModelOptions]="{ standalone: true }"
+            [placeholder]="'common.search' | translate"
+            class="icon-search-input"
+          />
+          <div class="icon-grid">
+            @for (icon of filteredIcons; track icon) {
+              <button
+                type="button"
+                class="icon-grid-item"
+                [class.selected]="form.get('icon')?.value === icon"
+                [pTooltip]="icon.replace('pi pi-', '')"
+                tooltipPosition="top"
+                (click)="selectIcon(icon)"
+              >
+                <i [class]="icon"></i>
+              </button>
+            }
+            @empty {
+              <span class="icon-empty">{{ 'categories.form.noIcons' | translate }}</span>
+            }
+          </div>
+        </div>
+      </p-popover>
+    </div>
+
+    <!-- Descrição -->
+    <div class="form-field">
+      <label class="field-label" for="cat-description">{{ 'categories.form.description' | translate }}</label>
+      <textarea
+        pTextarea
+        id="cat-description"
+        formControlName="description"
+        rows="3"
+        style="width: 100%; resize: vertical"
+      ></textarea>
+    </div>
+
+    <!-- Cor -->
+    <div class="form-field">
+      <label class="field-label">{{ 'categories.form.color' | translate }}</label>
+      <div class="color-row">
+        <span
+          class="color-swatch"
+          [style.background]="displayColor()"
+        ></span>
+        <span class="color-hex">{{ displayColor() }}</span>
+        <p-button
+          icon="pi pi-pencil"
+          [text]="true"
+          [rounded]="true"
+          size="small"
+          severity="secondary"
+          [pTooltip]="'categories.form.editColor' | translate"
+          (onClick)="openColorPicker($event)"
+        />
+      </div>
+      <small class="field-hint-text">{{ 'categories.form.colorHint' | translate }}</small>
+
+      <!-- Popover do color picker -->
+      <p-popover #colorPopover>
+        <p-colorpicker
+          [inline]="true"
+          [ngModel]="colorPickerValue"
+          [ngModelOptions]="{ standalone: true }"
+          format="hex"
+          (ngModelChange)="onColorChange($event)"
+        />
+      </p-popover>
+    </div>
+
+  </form>
+
+  <ng-template #footer>
+    <p-button
+      [label]="'common.cancel' | translate"
+      [text]="true"
+      severity="secondary"
+      (onClick)="dialogVisible = false"
+    />
+    <p-button
+      [label]="'common.save' | translate"
+      (onClick)="saveCategory()"
+      [loading]="saving()"
+    />
+  </ng-template>
+</p-dialog>
+
+<p-confirmdialog />
+<p-toast position="bottom-right" />
