@@ -1,0 +1,67 @@
+@import "primeicons/primeicons.css";
+@import "primeflex/primeflex.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --p-font-family: 'Poppins', system-ui, sans-serif;
+  --topbar-height: 57px;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: var(--p-font-family);
+  background: var(--p-surface-ground);
+  color: var(--p-text-color);
+}
+
+// Garante que imagens e elementos nativos sejam responsivos por padrão
+img,
+video {
+  max-width: 100%;
+}
+
+// ─── Responsivo global ───────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+  // Paginador: esconde "linhas por página" e relatório de página
+  .p-paginator-rpp-options,
+  .p-paginator-current {
+    display: none !important;
+  }
+
+  // Reduz padding dos botões do paginador
+  .p-paginator {
+    padding: 0.5rem 0.25rem;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  // Mantém só Anterior / números / Próximo no paginador
+  .p-paginator-first,
+  .p-paginator-last {
+    display: none !important;
+  }
+
+  // Dialog: padding menor
+  .p-dialog .p-dialog-content {
+    padding: 1rem 0.75rem;
+  }
+
+  .p-dialog .p-dialog-header {
+    padding: 0.75rem;
+  }
+
+  .p-dialog .p-dialog-footer {
+    padding: 0.75rem;
+  }
+}
