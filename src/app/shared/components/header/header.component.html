@@ -1,0 +1,53 @@
+<p-toolbar styleClass="app-toolbar">
+  <ng-template #start>
+    <div class="header-start">
+      <p-button
+        icon="pi pi-bars"
+        [text]="true"
+        [rounded]="true"
+        severity="secondary"
+        (onClick)="menuToggle.emit()"
+      />
+      <div class="header-brand">
+        <i class="pi pi-wallet brand-icon"></i>
+        <span class="brand-name">BudgetWise</span>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #end>
+    <div class="header-actions">
+      <p-selectbutton
+        [options]="langOptions"
+        [ngModel]="lang.currentLang()"
+        (ngModelChange)="lang.setLanguage($event)"
+        optionLabel="label"
+        optionValue="value"
+        size="small"
+      />
+
+      <p-button
+        [icon]="theme.isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'"
+        [rounded]="true"
+        [text]="true"
+        severity="secondary"
+        (onClick)="theme.toggleDarkMode()"
+      />
+
+      <button class="user-trigger" (click)="userMenu.toggle($event)">
+        <p-avatar
+          [label]="userInitials()"
+          shape="circle"
+          styleClass="user-avatar"
+        />
+        <div class="user-info">
+          <span class="user-name">{{ auth.currentUser()?.fullName }}</span>
+          <span class="user-email">{{ auth.currentUser()?.email }}</span>
+        </div>
+        <i class="pi pi-chevron-down chevron"></i>
+      </button>
+
+      <p-menu #userMenu [model]="menuItems()" [popup]="true" />
+    </div>
+  </ng-template>
+</p-toolbar>

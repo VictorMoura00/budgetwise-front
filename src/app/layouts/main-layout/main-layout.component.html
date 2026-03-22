@@ -1,0 +1,54 @@
+<div class="shell">
+
+  <!-- Backdrop -->
+  @if (sidebarOpen()) {
+    <div class="sidebar-backdrop" (click)="close()"></div>
+  }
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.open]="sidebarOpen()">
+
+    <!-- Header interno: visível só no mobile (top: 0) -->
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <i class="pi pi-wallet brand-icon"></i>
+        <span class="brand-name">BudgetWise</span>
+      </div>
+      <button class="sidebar-close" (click)="close()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-item"
+        (click)="close()"
+      >
+        <i class="pi pi-chart-bar"></i>
+        <span>{{ 'nav.dashboard' | translate }}</span>
+      </a>
+
+      <a
+        routerLink="/categories"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="close()"
+      >
+        <i class="pi pi-tag"></i>
+        <span>{{ 'nav.categories' | translate }}</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Área principal -->
+  <div class="shell-main">
+    <app-header (menuToggle)="toggle()" />
+    <main class="main-content">
+      <router-outlet />
+    </main>
+  </div>
+
+</div>

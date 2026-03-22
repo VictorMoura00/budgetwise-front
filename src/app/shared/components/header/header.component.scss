@@ -1,0 +1,117 @@
+:host {
+  display: block;
+}
+
+.header-start {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+
+  .brand-icon {
+    font-size: 1.3rem;
+    color: var(--p-primary-color);
+  }
+
+  .brand-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--p-text-color);
+    letter-spacing: -0.01em;
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid transparent;
+  border-radius: var(--p-border-radius-md, 6px);
+  background: transparent;
+  cursor: pointer;
+  color: var(--p-text-color);
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: var(--p-surface-hover);
+    border-color: var(--p-surface-border);
+  }
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+
+  .user-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .user-email {
+    font-size: 0.75rem;
+    color: var(--p-text-muted-color);
+  }
+}
+
+.chevron {
+  font-size: 0.65rem;
+  color: var(--p-text-muted-color);
+  margin-left: 0.1rem;
+}
+
+::ng-deep .app-toolbar {
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  padding: 0.5rem 1.5rem;
+}
+
+// ─── Responsivo ──────────────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+  ::ng-deep .app-toolbar {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .user-info {
+    display: none;
+  }
+
+  .chevron {
+    display: none;
+  }
+
+  .user-trigger {
+    padding: 0.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-brand .brand-name {
+    display: none;
+  }
+
+  .header-actions {
+    gap: 0.25rem;
+  }
+
+  // Esconde o lang switcher — usuário acessa pelo menu de usuário se necessário
+  ::ng-deep p-selectbutton {
+    display: none;
+  }
+}
