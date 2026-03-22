@@ -1,0 +1,90 @@
+{
+  "common": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "deactivate": "Desativar",
+    "success": "Sucesso",
+    "error": "Erro",
+    "search": "Buscar..."
+  },
+  "login": {
+    "title": "Entrar",
+    "subtitle": "Acesse sua conta",
+    "email": "E-mail",
+    "password": "Senha",
+    "submit": "Entrar",
+    "noAccount": "Não tem uma conta?",
+    "register": "Criar conta"
+  },
+  "register": {
+    "title": "Criar conta",
+    "subtitle": "Crie sua conta gratuita",
+    "fullName": "Nome completo",
+    "email": "E-mail",
+    "password": "Senha",
+    "confirmPassword": "Confirmar senha",
+    "submit": "Criar conta",
+    "hasAccount": "Já tem uma conta?",
+    "login": "Entrar"
+  },
+  "errors": {
+    "invalidCredentials": "E-mail ou senha incorretos.",
+    "emailConflict": "Este e-mail já está em uso.",
+    "generic": "Ocorreu um erro. Tente novamente."
+  },
+  "header": {
+    "logout": "Sair"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "categories": "Categorias"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "placeholder": "Em construção"
+  },
+  "categories": {
+    "title": "Categorias",
+    "subtitle": "Gerencie suas categorias pessoais e visualize as do sistema",
+    "newCategory": "Nova Categoria",
+    "editCategory": "Editar Categoria",
+    "system": "Sistema",
+    "personal": "Pessoal",
+    "active": "Ativa",
+    "inactive": "Inativa",
+    "empty": "Nenhuma categoria encontrada.",
+    "pageReport": "{first} - {last} de {totalRecords}",
+    "confirmDeactivate": "Tem certeza que deseja desativar esta categoria?",
+    "confirmDeactivateHeader": "Desativar Categoria",
+    "columns": {
+      "name": "Nome",
+      "description": "Descrição",
+      "type": "Tipo",
+      "status": "Status",
+      "actions": "Ações"
+    },
+    "form": {
+      "name": "Nome",
+      "description": "Descrição (opcional)",
+      "icon": "Ícone (opcional)",
+      "editIcon": "Editar ícone",
+      "noIcons": "Nenhum ícone encontrado",
+      "color": "Cor (opcional)",
+      "colorHint": "Clique no lápis para escolher a cor",
+      "editColor": "Editar cor"
+    },
+    "toast": {
+      "createSuccess": "Categoria criada com sucesso.",
+      "updateSuccess": "Categoria atualizada com sucesso.",
+      "deactivateSuccess": "Categoria desativada com sucesso.",
+      "error": "Ocorreu um erro. Tente novamente."
+    }
+  },
+  "validation": {
+    "required": "Campo obrigatório",
+    "email": "E-mail inválido",
+    "minLength": "Mínimo de {{value}} caracteres",
+    "passwordMismatch": "As senhas não coincidem"
+  }
+}

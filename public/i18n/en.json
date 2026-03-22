@@ -1,0 +1,90 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "deactivate": "Deactivate",
+    "success": "Success",
+    "error": "Error",
+    "search": "Search..."
+  },
+  "login": {
+    "title": "Sign In",
+    "subtitle": "Access your account",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign In",
+    "noAccount": "Don't have an account?",
+    "register": "Create account"
+  },
+  "register": {
+    "title": "Create account",
+    "subtitle": "Create your free account",
+    "fullName": "Full name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "submit": "Create account",
+    "hasAccount": "Already have an account?",
+    "login": "Sign in"
+  },
+  "errors": {
+    "invalidCredentials": "Incorrect email or password.",
+    "emailConflict": "This email is already in use.",
+    "generic": "An error occurred. Please try again."
+  },
+  "header": {
+    "logout": "Sign Out"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "categories": "Categories"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "placeholder": "Under construction"
+  },
+  "categories": {
+    "title": "Categories",
+    "subtitle": "Manage your personal categories and view system ones",
+    "newCategory": "New Category",
+    "editCategory": "Edit Category",
+    "system": "System",
+    "personal": "Personal",
+    "active": "Active",
+    "inactive": "Inactive",
+    "empty": "No categories found.",
+    "pageReport": "{first} - {last} of {totalRecords}",
+    "confirmDeactivate": "Are you sure you want to deactivate this category?",
+    "confirmDeactivateHeader": "Deactivate Category",
+    "columns": {
+      "name": "Name",
+      "description": "Description",
+      "type": "Type",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "form": {
+      "name": "Name",
+      "description": "Description (optional)",
+      "icon": "Icon (optional)",
+      "editIcon": "Edit icon",
+      "noIcons": "No icons found",
+      "color": "Color (optional)",
+      "colorHint": "Click the pencil to choose a color",
+      "editColor": "Edit color"
+    },
+    "toast": {
+      "createSuccess": "Category created successfully.",
+      "updateSuccess": "Category updated successfully.",
+      "deactivateSuccess": "Category deactivated successfully.",
+      "error": "An error occurred. Please try again."
+    }
+  },
+  "validation": {
+    "required": "Required field",
+    "email": "Invalid email",
+    "minLength": "Minimum {{value}} characters",
+    "passwordMismatch": "Passwords do not match"
+  }
+}
