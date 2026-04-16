@@ -1,0 +1,347 @@
+<div class="page">
+
+  <!-- ─── Header ──────────────────────────────────────────────────────────── -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ 'transactions.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'transactions.subtitle' | translate }}</p>
+    </div>
+    <p-button
+      icon="pi pi-plus"
+      [label]="'transactions.new' | translate"
+      (onClick)="openCreateDialog()"
+    />
+  </div>
+
+  <!-- ─── Filter bar ───────────────────────────────────────────────────────── -->
+  <div class="filter-bar">
+    <p-selectbutton
+      [options]="typeFilterOptions()"
+      [ngModel]="filterType()"
+      (ngModelChange)="filterType.set($event); applyFilters()"
+      optionLabel="label"
+      optionValue="value"
+    />
+
+    <p-selectbutton
+      [options]="statusFilterOptions()"
+      [ngModel]="filterStatus()"
+      (ngModelChange)="filterStatus.set($event); applyFilters()"
+      optionLabel="label"
+      optionValue="value"
+    />
+
+    <p-datepicker
+      [ngModel]="filterDateRange()"
+      (ngModelChange)="filterDateRange.set($event); applyFilters()"
+      selectionMode="range"
+      [readonlyInput]="true"
+      dateFormat="dd/mm/yy"
+      [placeholder]="'transactions.filters.dateRange' | translate"
+      [showClear]="true"
+      styleClass="filter-datepicker"
+    />
+
+    @if (hasActiveFilters()) {
+      <p-button
+        icon="pi pi-filter-slash"
+        [label]="'transactions.filters.clear' | translate"
+        [text]="true"
+        severity="secondary"
+        (onClick)="clearFilters()"
+      />
+    }
+  </div>
+
+  <!-- ─── Table ────────────────────────────────────────────────────────────── -->
+  <div class="table-wrapper">
+    <p-table
+      [value]="transactions()"
+      [lazy]="true"
+      (onLazyLoad)="onLazyLoad($event)"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalRecords()"
+      [loading]="loading()"
+      [rowsPerPageOptions]="[10, 20, 50]"
+      [showCurrentPageReport]="true"
+      [currentPageReportTemplate]="'transactions.pageReport' | translate"
+      styleClass="p-datatable-sm"
+    >
+      <ng-template #header>
+        <tr>
+          <th>{{ 'transactions.columns.description' | translate }}</th>
+          <th class="col-amount" style="width: 160px">{{ 'transactions.columns.amount' | translate }}</th>
+          <th class="col-type" style="width: 110px">{{ 'transactions.columns.type' | translate }}</th>
+          <th class="col-date" style="width: 120px">{{ 'transactions.columns.date' | translate }}</th>
+          <th class="col-category">{{ 'transactions.columns.category' | translate }}</th>
+          <th class="col-status" style="width: 120px">{{ 'transactions.columns.status' | translate }}</th>
+          <th style="width: 110px"></th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-t>
+        <tr>
+          <td>
+            <div class="description-cell">
+              <span class="description-text">{{ t.description }}</span>
+              @if (t.tags.length > 0) {
+                <div class="tags-row">
+                  @for (tag of t.tags; track tag.id) {
+                    <p-chip [label]="tag.name" styleClass="tag-chip" />
+                  }
+                </div>
+              }
+              @if (t.notes) {
+                <small class="notes-text">{{ t.notes }}</small>
+              }
+            </div>
+          </td>
+
+          <td class="col-amount">
+            <span [class]="'amount amount--' + (t.type === TransactionType.Income ? 'income' : 'expense')">
+              {{ formatAmount(t.amount, t.type) }}
+            </span>
+          </td>
+
+          <td class="col-type">
+            <p-tag
+              [value]="(t.type === TransactionType.Income ? 'transactions.type.income' : 'transactions.type.expense') | translate"
+              [severity]="typeSeverity(t.type)"
+            />
+          </td>
+
+          <td class="col-date text-muted">
+            {{ t.transactionDate | date: 'dd/MM/yyyy' }}
+          </td>
+
+          <td class="col-category text-muted">
+            {{ getCategoryName(t.categoryId) }}
+          </td>
+
+          <td class="col-status">
+            <p-tag
+              [value]="(t.isConfirmed ? 'transactions.status.confirmed' : 'transactions.status.pending') | translate"
+              [severity]="statusSeverity(t.isConfirmed)"
+            />
+          </td>
+
+          <td>
+            <div class="row-actions">
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.edit' | translate"
+                (onClick)="openEditDialog(t)"
+              />
+              @if (!t.isConfirmed) {
+                <p-button
+                  icon="pi pi-check"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="success"
+                  [pTooltip]="'transactions.actions.confirm' | translate"
+                  (onClick)="confirmTransaction(t)"
+                />
+              }
+              <p-button
+                icon="pi pi-trash"
+                [text]="true"
+                [rounded]="true"
+                severity="danger"
+                [pTooltip]="'common.delete' | translate"
+                (onClick)="confirmDelete(t)"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="7" class="empty-message">
+            {{ 'transactions.empty' | translate }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- ─── Dialog criar / editar ────────────────────────────────────────────── -->
+<p-dialog
+  [visible]="dialogVisible"
+  (visibleChange)="dialogVisible = $event"
+  [header]="(editingTransaction ? 'transactions.edit' : 'transactions.new') | translate"
+  [modal]="true"
+  [style]="{ width: 'min(640px, 95vw)' }"
+  [draggable]="false"
+>
+  <form [formGroup]="form" (ngSubmit)="saveTransaction()" novalidate>
+    <div class="form-grid">
+
+      <!-- Descrição (full width) -->
+      <div class="form-field col-full">
+        <label class="field-label" for="tx-description">
+          {{ 'transactions.form.description' | translate }}
+        </label>
+        <input
+          pInputText
+          id="tx-description"
+          formControlName="description"
+          [class.ng-invalid]="form.get('description')?.invalid && form.get('description')?.touched"
+          [class.ng-dirty]="form.get('description')?.dirty"
+        />
+        @if (form.get('description')?.invalid && form.get('description')?.touched) {
+          <small class="p-error">{{ 'validation.required' | translate }}</small>
+        }
+      </div>
+
+      <!-- Valor -->
+      <div class="form-field">
+        <label class="field-label" for="tx-amount">
+          {{ 'transactions.form.amount' | translate }}
+        </label>
+        <p-inputnumber
+          inputId="tx-amount"
+          formControlName="amount"
+          mode="decimal"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+          [min]="0.01"
+          locale="pt-BR"
+          [class.ng-invalid]="form.get('amount')?.invalid && form.get('amount')?.touched"
+        />
+        @if (form.get('amount')?.invalid && form.get('amount')?.touched) {
+          <small class="p-error">{{ 'validation.required' | translate }}</small>
+        }
+      </div>
+
+      <!-- Tipo (Income / Expense) -->
+      <div class="form-field">
+        <label class="field-label">{{ 'transactions.form.type' | translate }}</label>
+        <p-selectbutton
+          [options]="typeFormOptions()"
+          formControlName="type"
+          optionLabel="label"
+          optionValue="value"
+          styleClass="type-selector"
+        />
+      </div>
+
+      <!-- Data -->
+      <div class="form-field">
+        <label class="field-label" for="tx-date">
+          {{ 'transactions.form.date' | translate }}
+        </label>
+        <p-datepicker
+          inputId="tx-date"
+          formControlName="transactionDate"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          [class.ng-invalid]="form.get('transactionDate')?.invalid && form.get('transactionDate')?.touched"
+        />
+        @if (form.get('transactionDate')?.invalid && form.get('transactionDate')?.touched) {
+          <small class="p-error">{{ 'validation.required' | translate }}</small>
+        }
+      </div>
+
+      <!-- Categoria -->
+      <div class="form-field">
+        <label class="field-label" for="tx-category">
+          {{ 'transactions.form.category' | translate }}
+        </label>
+        <p-select
+          inputId="tx-category"
+          formControlName="categoryId"
+          [options]="categoriesOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="label"
+          [placeholder]="'transactions.form.noCategory' | translate"
+        />
+      </div>
+
+      <!-- Método de pagamento -->
+      <div class="form-field">
+        <label class="field-label" for="tx-payment">
+          {{ 'transactions.form.paymentMethod' | translate }}
+        </label>
+        <p-select
+          inputId="tx-payment"
+          formControlName="paymentMethod"
+          [options]="paymentMethodOptions()"
+          optionLabel="label"
+          optionValue="value"
+        />
+      </div>
+
+      <!-- Confirmada? -->
+      <div class="form-field form-field--toggle">
+        <label class="field-label">{{ 'transactions.form.isConfirmed' | translate }}</label>
+        <p-toggleswitch formControlName="isConfirmed" />
+      </div>
+
+      <!-- Recorrência -->
+      <div class="form-field">
+        <label class="field-label" for="tx-recurrence">
+          {{ 'transactions.form.recurrenceType' | translate }}
+        </label>
+        <p-select
+          inputId="tx-recurrence"
+          formControlName="recurrenceType"
+          [options]="recurrenceOptions()"
+          optionLabel="label"
+          optionValue="value"
+        />
+      </div>
+
+      <!-- Data fim da recorrência (condicional) -->
+      @if (showRecurrenceEndDate) {
+        <div class="form-field">
+          <label class="field-label" for="tx-recurrence-end">
+            {{ 'transactions.form.recurrenceEndDate' | translate }}
+          </label>
+          <p-datepicker
+            inputId="tx-recurrence-end"
+            formControlName="recurrenceEndDate"
+            dateFormat="dd/mm/yy"
+            [showIcon]="true"
+          />
+        </div>
+      }
+
+      <!-- Notas (full width) -->
+      <div class="form-field col-full">
+        <label class="field-label" for="tx-notes">
+          {{ 'transactions.form.notes' | translate }}
+        </label>
+        <textarea
+          pTextarea
+          id="tx-notes"
+          formControlName="notes"
+          rows="3"
+        ></textarea>
+      </div>
+
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button
+      [label]="'common.cancel' | translate"
+      [text]="true"
+      severity="secondary"
+      (onClick)="dialogVisible = false"
+    />
+    <p-button
+      [label]="'common.save' | translate"
+      (onClick)="saveTransaction()"
+      [loading]="saving()"
+    />
+  </ng-template>
+</p-dialog>

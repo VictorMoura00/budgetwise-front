@@ -3,10 +3,13 @@
     "save": "Salvar",
     "cancel": "Cancelar",
     "edit": "Editar",
+    "delete": "Excluir",
     "deactivate": "Desativar",
+    "confirm": "Confirmar",
     "success": "Sucesso",
     "error": "Erro",
-    "search": "Buscar..."
+    "search": "Buscar...",
+    "all": "Todos"
   },
   "login": {
     "title": "Entrar",
@@ -38,7 +41,8 @@
   },
   "nav": {
     "dashboard": "Dashboard",
-    "categories": "Categorias"
+    "categories": "Categorias",
+    "transactions": "Transações"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -77,8 +81,79 @@
     "toast": {
       "createSuccess": "Categoria criada com sucesso.",
       "updateSuccess": "Categoria atualizada com sucesso.",
-      "deactivateSuccess": "Categoria desativada com sucesso.",
-      "error": "Ocorreu um erro. Tente novamente."
+      "deactivateSuccess": "Categoria desativada com sucesso."
+    }
+  },
+  "transactions": {
+    "title": "Transações",
+    "subtitle": "Registre e acompanhe suas receitas e despesas",
+    "new": "Nova Transação",
+    "edit": "Editar Transação",
+    "empty": "Nenhuma transação encontrada.",
+    "pageReport": "{first} - {last} de {totalRecords}",
+    "confirmDelete": "Tem certeza que deseja excluir esta transação?",
+    "confirmDeleteHeader": "Excluir Transação",
+    "confirmConfirm": "Confirmar esta transação como realizada?",
+    "confirmConfirmHeader": "Confirmar Transação",
+    "columns": {
+      "description": "Descrição",
+      "amount": "Valor",
+      "type": "Tipo",
+      "date": "Data",
+      "category": "Categoria",
+      "status": "Status",
+      "actions": "Ações"
+    },
+    "form": {
+      "description": "Descrição",
+      "amount": "Valor",
+      "type": "Tipo",
+      "date": "Data",
+      "category": "Categoria",
+      "noCategory": "Sem categoria",
+      "paymentMethod": "Método de pagamento",
+      "isConfirmed": "Confirmada",
+      "recurrenceType": "Recorrência",
+      "recurrenceEndDate": "Fim da recorrência",
+      "notes": "Observações (opcional)"
+    },
+    "type": {
+      "income": "Receita",
+      "expense": "Despesa"
+    },
+    "status": {
+      "confirmed": "Confirmada",
+      "pending": "Pendente"
+    },
+    "paymentMethod": {
+      "none": "Não informado",
+      "pix": "Pix",
+      "creditCard": "Cartão de crédito",
+      "debitCard": "Cartão de débito",
+      "cash": "Dinheiro",
+      "ted": "TED",
+      "boleto": "Boleto",
+      "other": "Outro"
+    },
+    "recurrence": {
+      "none": "Sem recorrência",
+      "daily": "Diária",
+      "weekly": "Semanal",
+      "monthly": "Mensal",
+      "yearly": "Anual"
+    },
+    "filters": {
+      "dateRange": "Período...",
+      "clear": "Limpar filtros"
+    },
+    "actions": {
+      "confirm": "Confirmar transação"
+    },
+    "toast": {
+      "createSuccess": "Transação criada com sucesso.",
+      "updateSuccess": "Transação atualizada com sucesso.",
+      "deleteSuccess": "Transação excluída com sucesso.",
+      "confirmSuccess": "Transação confirmada com sucesso."
     }
   },
   "validation": {

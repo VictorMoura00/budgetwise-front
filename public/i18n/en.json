@@ -3,10 +3,13 @@
     "save": "Save",
     "cancel": "Cancel",
     "edit": "Edit",
+    "delete": "Delete",
     "deactivate": "Deactivate",
+    "confirm": "Confirm",
     "success": "Success",
     "error": "Error",
-    "search": "Search..."
+    "search": "Search...",
+    "all": "All"
   },
   "login": {
     "title": "Sign In",
@@ -38,7 +41,8 @@
   },
   "nav": {
     "dashboard": "Dashboard",
-    "categories": "Categories"
+    "categories": "Categories",
+    "transactions": "Transactions"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -77,8 +81,79 @@
     "toast": {
       "createSuccess": "Category created successfully.",
       "updateSuccess": "Category updated successfully.",
-      "deactivateSuccess": "Category deactivated successfully.",
-      "error": "An error occurred. Please try again."
+      "deactivateSuccess": "Category deactivated successfully."
+    }
+  },
+  "transactions": {
+    "title": "Transactions",
+    "subtitle": "Record and track your income and expenses",
+    "new": "New Transaction",
+    "edit": "Edit Transaction",
+    "empty": "No transactions found.",
+    "pageReport": "{first} - {last} of {totalRecords}",
+    "confirmDelete": "Are you sure you want to delete this transaction?",
+    "confirmDeleteHeader": "Delete Transaction",
+    "confirmConfirm": "Confirm this transaction as completed?",
+    "confirmConfirmHeader": "Confirm Transaction",
+    "columns": {
+      "description": "Description",
+      "amount": "Amount",
+      "type": "Type",
+      "date": "Date",
+      "category": "Category",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "form": {
+      "description": "Description",
+      "amount": "Amount",
+      "type": "Type",
+      "date": "Date",
+      "category": "Category",
+      "noCategory": "No category",
+      "paymentMethod": "Payment method",
+      "isConfirmed": "Confirmed",
+      "recurrenceType": "Recurrence",
+      "recurrenceEndDate": "Recurrence end date",
+      "notes": "Notes (optional)"
+    },
+    "type": {
+      "income": "Income",
+      "expense": "Expense"
+    },
+    "status": {
+      "confirmed": "Confirmed",
+      "pending": "Pending"
+    },
+    "paymentMethod": {
+      "none": "Not specified",
+      "pix": "Pix",
+      "creditCard": "Credit card",
+      "debitCard": "Debit card",
+      "cash": "Cash",
+      "ted": "Wire transfer",
+      "boleto": "Bank slip",
+      "other": "Other"
+    },
+    "recurrence": {
+      "none": "No recurrence",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "yearly": "Yearly"
+    },
+    "filters": {
+      "dateRange": "Date range...",
+      "clear": "Clear filters"
+    },
+    "actions": {
+      "confirm": "Confirm transaction"
+    },
+    "toast": {
+      "createSuccess": "Transaction created successfully.",
+      "updateSuccess": "Transaction updated successfully.",
+      "deleteSuccess": "Transaction deleted successfully.",
+      "confirmSuccess": "Transaction confirmed successfully."
     }
   },
   "validation": {
