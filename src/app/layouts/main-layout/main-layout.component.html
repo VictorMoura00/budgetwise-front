@@ -40,6 +40,16 @@
         <i class="pi pi-tag"></i>
         <span>{{ 'nav.categories' | translate }}</span>
       </a>
+
+      <a
+        routerLink="/transactions"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="close()"
+      >
+        <i class="pi pi-arrow-right-arrow-left"></i>
+        <span>{{ 'nav.transactions' | translate }}</span>
+      </a>
     </nav>
   </aside>
 
@@ -52,3 +62,6 @@
   </div>
 
 </div>
+
+<p-toast position="bottom-right" />
+<p-confirmdialog />

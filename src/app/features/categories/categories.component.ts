@@ -7,7 +7,6 @@ import { DialogModule } from 'primeng/dialog';
 import { TagModule } from 'primeng/tag';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
-import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { ColorPickerModule } from 'primeng/colorpicker';
@@ -74,7 +73,6 @@ const ALL_ICONS: string[] = [
     TagModule,
     InputTextModule,
     TextareaModule,
-    ToastModule,
     ConfirmDialogModule,
     TooltipModule,
     ColorPickerModule,
@@ -82,7 +80,6 @@ const ALL_ICONS: string[] = [
     InputGroupModule,
     InputGroupAddonModule,
   ],
-  providers: [MessageService, ConfirmationService],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.scss',
 })
@@ -208,10 +205,7 @@ export class CategoriesComponent implements OnInit {
         this.toast('success', this.editingCategory ? 'categories.toast.updateSuccess' : 'categories.toast.createSuccess');
         this.loadCategories(this.currentPage, this.pageSize);
       },
-      error: () => {
-        this.saving.set(false);
-        this.toast('error', 'categories.toast.error');
-      },
+      error: () => this.saving.set(false),
     });
   }
 
@@ -235,7 +229,6 @@ export class CategoriesComponent implements OnInit {
         this.toast('success', 'categories.toast.deactivateSuccess');
         this.loadCategories(this.currentPage, this.pageSize);
       },
-      error: () => this.toast('error', 'categories.toast.error'),
     });
   }
 
@@ -247,10 +240,7 @@ export class CategoriesComponent implements OnInit {
         this.totalRecords.set(res.totalCount);
         this.loading.set(false);
       },
-      error: () => {
-        this.loading.set(false);
-        this.toast('error', 'categories.toast.error');
-      },
+      error: () => this.loading.set(false),
     });
   }
 
