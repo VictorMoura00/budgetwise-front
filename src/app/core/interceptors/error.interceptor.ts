@@ -15,6 +15,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
+      // 404 on GET requests is expected (empty list, resource not yet created)
+      if (error.status === 404 && req.method === 'GET') {
+        return throwError(() => error);
+      }
+
       const detail =
         error.error?.detail ??
         error.error?.title ??
