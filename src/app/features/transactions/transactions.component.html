@@ -266,6 +266,25 @@
         />
       </div>
 
+      <!-- Tags (full width) -->
+      <div class="form-field col-full">
+        <label class="field-label" for="tx-tags">
+          {{ 'transactions.form.tags' | translate }}
+        </label>
+        <p-multiselect
+          inputId="tx-tags"
+          formControlName="tagIds"
+          [options]="tagsOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [filter]="true"
+          filterBy="label"
+          [showClear]="true"
+          [placeholder]="'transactions.form.tagsPlaceholder' | translate"
+          display="chip"
+        />
+      </div>
+
       <!-- Método de pagamento -->
       <div class="form-field">
         <label class="field-label" for="tx-payment">

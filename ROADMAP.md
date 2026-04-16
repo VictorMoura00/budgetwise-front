@@ -73,10 +73,11 @@
 ---
 
 ## 🏷️ Tags
-- 🔲 TagService (CRUD + vincular/desvincular)
-- 🔲 Gerenciamento de tags (listar, criar, renomear, excluir)
-- 🔲 Seleção de tags no formulário de transação
-- 🔲 Filtro de transações por tag
+- ✅ TagService (CRUD + vincular/desvincular)
+- ✅ Gerenciamento de tags (listar, criar, renomear, excluir) — layout em grid de cards
+- ✅ Seleção de tags no formulário de transação (MultiSelect com chips)
+- ✅ Sincronização de vínculos via forkJoin (add/remove por diff)
+- 🔲 Filtro de transações por tag _(endpoint não suportado pelo backend)_
 
 ---
 

@@ -1,0 +1,172 @@
+.page {
+  padding: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+  gap: 1rem;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--p-text-color);
+  margin: 0 0 0.2rem;
+}
+
+.page-subtitle {
+  color: var(--p-text-muted-color);
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+// ─── Loading ──────────────────────────────────────────────────────────────────
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 4rem 0;
+}
+
+.loading-icon {
+  font-size: 2rem;
+  color: var(--p-primary-color);
+}
+
+// ─── Empty state ──────────────────────────────────────────────────────────────
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 4rem 1rem;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  color: var(--p-text-muted-color);
+  margin-bottom: 0.5rem;
+  opacity: 0.5;
+}
+
+.empty-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+  margin: 0;
+}
+
+.empty-subtitle {
+  font-size: 0.875rem;
+  color: var(--p-text-muted-color);
+  margin: 0 0 1rem;
+}
+
+// ─── Tags grid ────────────────────────────────────────────────────────────────
+
+.tags-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+
+.tag-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--p-surface-card);
+  border: 1px solid var(--p-surface-border);
+  border-radius: var(--p-border-radius-md, 8px);
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    border-color: var(--p-primary-color);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--p-primary-color) 20%, transparent);
+  }
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.1rem;
+    flex-shrink: 0;
+  }
+}
+
+.tag-hash {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--p-primary-color);
+  flex-shrink: 0;
+}
+
+.tag-name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--p-text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ─── Dialog form ──────────────────────────────────────────────────────────────
+
+.form-field {
+  margin-bottom: 0.5rem;
+
+  input[pInputText] {
+    width: 100%;
+  }
+
+  .p-error {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.75rem;
+  }
+}
+
+.field-label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--p-text-muted-color);
+  margin-bottom: 0.4rem;
+}
+
+// ─── Responsivo ──────────────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1rem 0.75rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+
+    p-button {
+      align-self: flex-end;
+    }
+  }
+
+  .page-title {
+    font-size: 1.25rem;
+  }
+
+  .tags-grid {
+    grid-template-columns: 1fr;
+  }
+}

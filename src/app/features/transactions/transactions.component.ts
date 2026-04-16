@@ -10,16 +10,21 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
 import { ChipModule } from 'primeng/chip';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Observable, forkJoin, of, switchMap } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { LanguageService } from '../../core/services/language.service';
 import { CategoryService } from '../../core/services/category.service';
 import { TransactionService } from '../../core/services/transaction.service';
+import { TagService } from '../../core/services/tag.service';
 import { CategoryResponse } from '../../core/models/category.models';
+import { TagResponse } from '../../core/models/tag.models';
 import {
   PaymentMethod,
   RecurrenceType,
@@ -27,7 +32,7 @@ import {
   TransactionType,
 } from '../../core/models/transaction.models';
 
-type TagSeverity = 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast';
+type Severity = 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast';
 
 interface SelectOption<T> {
   label: string;
@@ -48,6 +53,7 @@ interface SelectOption<T> {
     TextareaModule,
     InputNumberModule,
     SelectModule,
+    MultiSelectModule,
     SelectButtonModule,
     DatePickerModule,
     ToggleSwitchModule,
@@ -61,6 +67,7 @@ interface SelectOption<T> {
 export class TransactionsComponent implements OnInit {
   private readonly transactionService = inject(TransactionService);
   private readonly categoryService = inject(CategoryService);
+  private readonly tagService = inject(TagService);
   private readonly fb = inject(FormBuilder);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
@@ -75,6 +82,7 @@ export class TransactionsComponent implements OnInit {
   loading = signal(false);
   saving = signal(false);
   allCategories = signal<CategoryResponse[]>([]);
+  allTags = signal<TagResponse[]>([]);
 
   dialogVisible = false;
   editingTransaction: TransactionResponse | null = null;
@@ -86,7 +94,7 @@ export class TransactionsComponent implements OnInit {
   readonly pageSize = 20;
   private currentPage = 1;
 
-  // ─── Translated select options (reactive to language changes) ─────────────
+  // ─── Translated select options (reactive to language changes) ──────────────
 
   readonly typeFilterOptions = computed<SelectOption<TransactionType | null>[]>(() => {
     this.lang.currentLang();
@@ -141,9 +149,15 @@ export class TransactionsComponent implements OnInit {
 
   readonly categoriesOptions = computed<SelectOption<string | null>[]>(() => {
     const noneLabel = this.translate.instant('transactions.form.noCategory');
-    const categoryItems = this.allCategories().map(c => ({ label: c.name, value: c.id }));
-    return [{ label: noneLabel, value: null }, ...categoryItems];
+    return [
+      { label: noneLabel, value: null },
+      ...this.allCategories().map(c => ({ label: c.name, value: c.id })),
+    ];
   });
+
+  readonly tagsOptions = computed<SelectOption<string>[]>(() =>
+    this.allTags().map(t => ({ label: t.name, value: t.id }))
+  );
 
   form = this.fb.group({
     description: ['', [Validators.required, Validators.maxLength(200)]],
@@ -151,6 +165,7 @@ export class TransactionsComponent implements OnInit {
     type: [TransactionType.Expense, Validators.required],
     transactionDate: [new Date(), Validators.required],
     categoryId: [null as string | null],
+    tagIds: [[] as string[]],
     notes: [null as string | null],
     recurrenceType: [RecurrenceType.None],
     recurrenceEndDate: [null as Date | null],
@@ -159,12 +174,12 @@ export class TransactionsComponent implements OnInit {
   });
 
   constructor() {
-    // Reload when language changes to ensure computed signals refresh
     effect(() => { this.lang.currentLang(); });
   }
 
   ngOnInit(): void {
     this.loadCategories();
+    this.loadTags();
     this.loadTransactions(1, this.pageSize);
   }
 
@@ -194,6 +209,7 @@ export class TransactionsComponent implements OnInit {
       type: TransactionType.Expense,
       transactionDate: new Date(),
       categoryId: null,
+      tagIds: [],
       notes: null,
       recurrenceType: RecurrenceType.None,
       recurrenceEndDate: null,
@@ -211,6 +227,7 @@ export class TransactionsComponent implements OnInit {
       type: transaction.type,
       transactionDate: new Date(transaction.transactionDate),
       categoryId: transaction.categoryId,
+      tagIds: transaction.tags.map(t => t.id),
       notes: transaction.notes,
       recurrenceType: transaction.recurrenceType,
       recurrenceEndDate: transaction.recurrenceEndDate ? new Date(transaction.recurrenceEndDate) : null,
@@ -229,10 +246,12 @@ export class TransactionsComponent implements OnInit {
     const v = this.form.value;
     const transactionDate = this.toDateString(v.transactionDate as Date);
     const recurrenceEndDate = this.toDateString(v.recurrenceEndDate as Date | null);
+    const selectedTagIds = (v.tagIds as string[]) ?? [];
+    const existingTagIds = this.editingTransaction?.tags.map(t => t.id) ?? [];
 
     this.saving.set(true);
 
-    const op$ = this.editingTransaction
+    const save$ = this.editingTransaction
       ? this.transactionService.update(this.editingTransaction.id, {
           description: v.description!,
           amount: v.amount!,
@@ -259,7 +278,9 @@ export class TransactionsComponent implements OnInit {
           familyGroupId: null,
         });
 
-    op$.subscribe({
+    save$.pipe(
+      switchMap(transaction => this.syncTags(transaction.id, selectedTagIds, existingTagIds)),
+    ).subscribe({
       next: () => {
         this.saving.set(false);
         this.dialogVisible = false;
@@ -304,11 +325,11 @@ export class TransactionsComponent implements OnInit {
     return type === TransactionType.Income ? `+${formatted}` : `-${formatted}`;
   }
 
-  typeSeverity(type: TransactionType): TagSeverity {
+  typeSeverity(type: TransactionType): Severity {
     return type === TransactionType.Income ? 'success' : 'danger';
   }
 
-  statusSeverity(isConfirmed: boolean): TagSeverity {
+  statusSeverity(isConfirmed: boolean): Severity {
     return isConfirmed ? 'success' : 'warn';
   }
 
@@ -322,6 +343,20 @@ export class TransactionsComponent implements OnInit {
 
   get showRecurrenceEndDate(): boolean {
     return this.form.value.recurrenceType !== RecurrenceType.None;
+  }
+
+  private syncTags(transactionId: string, selectedIds: string[], existingIds: string[]): Observable<void> {
+    const toAdd = selectedIds.filter(id => !existingIds.includes(id));
+    const toRemove = existingIds.filter(id => !selectedIds.includes(id));
+
+    const ops: Observable<void>[] = [
+      ...toAdd.map(id => this.tagService.addToTransaction(transactionId, id)),
+      ...toRemove.map(id => this.tagService.removeFromTransaction(transactionId, id)),
+    ];
+
+    return ops.length > 0
+      ? forkJoin(ops).pipe(map(() => undefined))
+      : of(undefined);
   }
 
   private loadTransactions(page: number, size: number): void {
@@ -347,6 +382,12 @@ export class TransactionsComponent implements OnInit {
   private loadCategories(): void {
     this.categoryService.getAll({ pageSize: 200 }).subscribe({
       next: res => this.allCategories.set(res.items),
+    });
+  }
+
+  private loadTags(): void {
+    this.tagService.getAll().subscribe({
+      next: tags => this.allTags.set(tags),
     });
   }
 

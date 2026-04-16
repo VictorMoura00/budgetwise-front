@@ -50,6 +50,16 @@
         <i class="pi pi-arrow-right-arrow-left"></i>
         <span>{{ 'nav.transactions' | translate }}</span>
       </a>
+
+      <a
+        routerLink="/tags"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="close()"
+      >
+        <i class="pi pi-hashtag"></i>
+        <span>{{ 'nav.tags' | translate }}</span>
+      </a>
     </nav>
   </aside>
 

@@ -42,7 +42,8 @@
   "nav": {
     "dashboard": "Dashboard",
     "categories": "Categorias",
-    "transactions": "Transações"
+    "transactions": "Transações",
+    "tags": "Tags"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -111,6 +112,8 @@
       "date": "Data",
       "category": "Categoria",
       "noCategory": "Sem categoria",
+      "tags": "Tags",
+      "tagsPlaceholder": "Selecione as tags...",
       "paymentMethod": "Método de pagamento",
       "isConfirmed": "Confirmada",
       "recurrenceType": "Recorrência",
@@ -154,6 +157,25 @@
       "updateSuccess": "Transação atualizada com sucesso.",
       "deleteSuccess": "Transação excluída com sucesso.",
       "confirmSuccess": "Transação confirmada com sucesso."
+    }
+  },
+  "tags": {
+    "title": "Tags",
+    "subtitle": "Organize suas transações com etiquetas personalizadas",
+    "new": "Nova Tag",
+    "edit": "Renomear Tag",
+    "empty": "Nenhuma tag criada ainda.",
+    "emptyHint": "Crie tags para categorizar melhor suas transações.",
+    "confirmDelete": "Tem certeza que deseja excluir esta tag?",
+    "confirmDeleteHeader": "Excluir Tag",
+    "form": {
+      "name": "Nome",
+      "namePlaceholder": "Ex.: alimentação, lazer..."
+    },
+    "toast": {
+      "createSuccess": "Tag criada com sucesso.",
+      "updateSuccess": "Tag renomeada com sucesso.",
+      "deleteSuccess": "Tag excluída com sucesso."
     }
   },
   "validation": {
