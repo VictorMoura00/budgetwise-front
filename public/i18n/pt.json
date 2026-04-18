@@ -9,7 +9,8 @@
     "success": "Sucesso",
     "error": "Erro",
     "search": "Buscar...",
-    "all": "Todos"
+    "all": "Todos",
+    "details": "Detalhes"
   },
   "login": {
     "title": "Entrar",
@@ -47,7 +48,56 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "placeholder": "Em construção"
+    "subtitle": "Resumo financeiro do período selecionado",
+    "period": {
+      "month": "Este mês",
+      "quarter": "3 meses",
+      "semester": "6 meses"
+    },
+    "kpi": {
+      "income": "Receitas",
+      "expense": "Despesas",
+      "balance": "Saldo",
+      "pending": "Pendentes",
+      "vsLastPeriod": "vs. período anterior:"
+    },
+    "chart": {
+      "evolution": "Evolução mensal",
+      "income": "Receitas",
+      "expense": "Despesas",
+      "byCategory": "Despesas por categoria",
+      "noData": "Sem dados no período",
+      "clickHint": "Clique para ver detalhes",
+      "clickToView": "Clique para ver transações"
+    },
+    "recent": {
+      "title": "Últimas transações",
+      "viewAll": "Ver todas",
+      "empty": "Nenhuma transação recente"
+    },
+    "pending": {
+      "title": "Pendentes este mês",
+      "empty": "Nenhuma transação pendente este mês"
+    },
+    "modal": {
+      "incomeTitle": "Receitas no período",
+      "expenseTitle": "Despesas no período",
+      "monthTitle": "Transações em {{month}}",
+      "categoryTitle": "Despesas — {{name}}",
+      "noCategoryTitle": "Despesas sem categoria",
+      "empty": "Nenhuma transação encontrada",
+      "transactionsCount": "transação(ões)"
+    },
+    "detail": {
+      "title": "Detalhe da transação"
+    },
+    "quickAdd": {
+      "title": "Lançamento rápido",
+      "tooltip": "Adicionar transação"
+    },
+    "topExpenses": {
+      "title": "Maiores despesas"
+    }
   },
   "categories": {
     "title": "Categorias",
@@ -102,6 +152,7 @@
       "type": "Tipo",
       "date": "Data",
       "category": "Categoria",
+      "tags": "Tags",
       "status": "Status",
       "actions": "Ações"
     },
@@ -152,11 +203,26 @@
     "actions": {
       "confirm": "Confirmar transação"
     },
+    "bulkActions": {
+      "selected": "selecionada(s)",
+      "confirmPending": "Confirmar pendentes",
+      "deleteAll": "Excluir selecionadas",
+      "clearSelection": "Limpar seleção"
+    },
+    "confirmBulkDelete": "Excluir {{count}} transação(ões) selecionada(s)?",
+    "tags": {
+      "editTitle": "Editar tags",
+      "editTooltip": "Clique para editar tags",
+      "selected": "Selecionadas",
+      "noMatch": "Nenhuma tag encontrada"
+    },
     "toast": {
       "createSuccess": "Transação criada com sucesso.",
       "updateSuccess": "Transação atualizada com sucesso.",
       "deleteSuccess": "Transação excluída com sucesso.",
-      "confirmSuccess": "Transação confirmada com sucesso."
+      "confirmSuccess": "Transação confirmada com sucesso.",
+      "bulkConfirmSuccess": "Transações confirmadas com sucesso.",
+      "bulkDeleteSuccess": "Transações excluídas com sucesso."
     }
   },
   "tags": {

@@ -9,7 +9,8 @@
     "success": "Success",
     "error": "Error",
     "search": "Search...",
-    "all": "All"
+    "all": "All",
+    "details": "Details"
   },
   "login": {
     "title": "Sign In",
@@ -47,7 +48,56 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "placeholder": "Under construction"
+    "subtitle": "Financial summary for the selected period",
+    "period": {
+      "month": "This month",
+      "quarter": "3 months",
+      "semester": "6 months"
+    },
+    "kpi": {
+      "income": "Income",
+      "expense": "Expenses",
+      "balance": "Balance",
+      "pending": "Pending",
+      "vsLastPeriod": "vs. last period:"
+    },
+    "chart": {
+      "evolution": "Monthly evolution",
+      "income": "Income",
+      "expense": "Expenses",
+      "byCategory": "Expenses by category",
+      "noData": "No data for this period",
+      "clickHint": "Click to see details",
+      "clickToView": "Click to view transactions"
+    },
+    "recent": {
+      "title": "Recent transactions",
+      "viewAll": "View all",
+      "empty": "No recent transactions"
+    },
+    "pending": {
+      "title": "Pending this month",
+      "empty": "No pending transactions this month"
+    },
+    "modal": {
+      "incomeTitle": "Income in the period",
+      "expenseTitle": "Expenses in the period",
+      "monthTitle": "Transactions in {{month}}",
+      "categoryTitle": "Expenses — {{name}}",
+      "noCategoryTitle": "Expenses without category",
+      "empty": "No transactions found",
+      "transactionsCount": "transaction(s)"
+    },
+    "detail": {
+      "title": "Transaction detail"
+    },
+    "quickAdd": {
+      "title": "Quick add transaction",
+      "tooltip": "Add transaction"
+    },
+    "topExpenses": {
+      "title": "Top expenses"
+    }
   },
   "categories": {
     "title": "Categories",
@@ -102,6 +152,7 @@
       "type": "Type",
       "date": "Date",
       "category": "Category",
+      "tags": "Tags",
       "status": "Status",
       "actions": "Actions"
     },
@@ -152,11 +203,26 @@
     "actions": {
       "confirm": "Confirm transaction"
     },
+    "bulkActions": {
+      "selected": "selected",
+      "confirmPending": "Confirm pending",
+      "deleteAll": "Delete selected",
+      "clearSelection": "Clear selection"
+    },
+    "confirmBulkDelete": "Delete {{count}} selected transaction(s)?",
+    "tags": {
+      "editTitle": "Edit tags",
+      "editTooltip": "Click to edit tags",
+      "selected": "Selected",
+      "noMatch": "No tags found"
+    },
     "toast": {
       "createSuccess": "Transaction created successfully.",
       "updateSuccess": "Transaction updated successfully.",
       "deleteSuccess": "Transaction deleted successfully.",
-      "confirmSuccess": "Transaction confirmed successfully."
+      "confirmSuccess": "Transaction confirmed successfully.",
+      "bulkConfirmSuccess": "Transactions confirmed successfully.",
+      "bulkDeleteSuccess": "Transactions deleted successfully."
     }
   },
   "tags": {
