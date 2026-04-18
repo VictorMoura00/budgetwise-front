@@ -1,24 +1,24 @@
 export enum TransactionType {
-  Income = 0,
-  Expense = 1,
+  Income = 'Income',
+  Expense = 'Expense',
 }
 
 export enum RecurrenceType {
-  None = 0,
-  Daily = 1,
-  Weekly = 2,
-  Monthly = 3,
-  Yearly = 4,
+  None = 'None',
+  Daily = 'Daily',
+  Weekly = 'Weekly',
+  Monthly = 'Monthly',
+  Yearly = 'Yearly',
 }
 
 export enum PaymentMethod {
-  Pix = 0,
-  CreditCard = 1,
-  DebitCard = 2,
-  Cash = 3,
-  Ted = 4,
-  Boleto = 5,
-  Other = 6,
+  Pix = 'Pix',
+  CreditCard = 'CreditCard',
+  DebitCard = 'DebitCard',
+  Cash = 'Cash',
+  Ted = 'Ted',
+  Boleto = 'Boleto',
+  Other = 'Other',
 }
 
 export interface TagSummary {
@@ -34,6 +34,8 @@ export interface TransactionResponse {
   type: TransactionType;
   transactionDate: string;
   categoryId: string | null;
+  categoryName: string | null;
+  categoryColor: string | null;
   notes: string | null;
   recurrenceType: RecurrenceType;
   recurrenceEndDate: string | null;
@@ -43,6 +45,20 @@ export interface TransactionResponse {
   createdAt: string;
   updatedAt: string;
   tags: TagSummary[];
+}
+
+export interface TransactionSummaryResponse {
+  totalIncome: number;
+  totalExpense: number;
+  balance: number;
+  pendingCount: number;
+  pendingAmount: number;
+}
+
+export interface MonthlyTransactionSummary {
+  month: string;  // "YYYY-MM"
+  income: number;
+  expense: number;
 }
 
 export interface CreateTransactionRequest {

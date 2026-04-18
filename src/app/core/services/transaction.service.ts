@@ -5,8 +5,10 @@ import { environment } from '../../../environments/environment';
 import {
   CreateTransactionRequest,
   GetTransactionsParams,
+  MonthlyTransactionSummary,
   PaginatedTransactionResponse,
   TransactionResponse,
+  TransactionSummaryResponse,
   UpdateTransactionRequest,
 } from '../models/transaction.models';
 
@@ -47,5 +49,17 @@ export class TransactionService {
 
   confirm(id: string): Observable<TransactionResponse> {
     return this.http.patch<TransactionResponse>(`${this.base}/${id}/confirm`, {});
+  }
+
+  getSummary(params: { startDate?: string; endDate?: string } = {}): Observable<TransactionSummaryResponse> {
+    let httpParams = new HttpParams();
+    if (params.startDate) httpParams = httpParams.set('startDate', params.startDate);
+    if (params.endDate) httpParams = httpParams.set('endDate', params.endDate);
+    return this.http.get<TransactionSummaryResponse>(`${this.base}/summary`, { params: httpParams });
+  }
+
+  getMonthlySummary(months: number): Observable<MonthlyTransactionSummary[]> {
+    const httpParams = new HttpParams().set('months', months);
+    return this.http.get<MonthlyTransactionSummary[]>(`${this.base}/monthly-summary`, { params: httpParams });
   }
 }
