@@ -20,16 +20,20 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
-      const detail =
-        error.error?.detail ??
-        error.error?.title ??
-        translate.instant('errors.generic');
+      const title: string =
+        error.error?.title ?? translate.instant('common.error');
+
+      const fullDetail: string =
+        error.error?.detail ?? error.error?.title ?? translate.instant('errors.generic');
+
+      const previewDetail = fullDetail.split('\n')[0].trim();
 
       messageService.add({
         severity: 'error',
-        summary: translate.instant('common.error'),
-        detail,
-        life: 5000,
+        summary: title,
+        detail: previewDetail,
+        data: { fullDetail },
+        life: 8000,
       });
 
       return throwError(() => error);
