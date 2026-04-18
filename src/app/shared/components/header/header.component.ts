@@ -38,6 +38,8 @@ export class HeaderComponent {
   readonly langOptions = [
     { label: 'PT', value: 'pt' },
     { label: 'EN', value: 'en' },
+    { label: '中文', value: 'zh' },
+    { label: 'EO', value: 'eo' },
   ];
 
   readonly userInitials = computed(() => {

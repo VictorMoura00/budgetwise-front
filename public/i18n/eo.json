@@ -1,0 +1,253 @@
+{
+  "common": {
+    "save": "Konservi",
+    "cancel": "Nuligi",
+    "edit": "Redakti",
+    "delete": "Forigi",
+    "deactivate": "Malaktivigi",
+    "confirm": "Konfirmi",
+    "success": "Sukceso",
+    "error": "Eraro",
+    "search": "Serĉi...",
+    "all": "Ĉiuj",
+    "details": "Detaloj"
+  },
+  "login": {
+    "title": "Ensaluti",
+    "subtitle": "Aliru vian konton",
+    "email": "Retpoŝto",
+    "password": "Pasvorto",
+    "submit": "Ensaluti",
+    "noAccount": "Vi ne havas konton?",
+    "register": "Krei konton"
+  },
+  "register": {
+    "title": "Krei konton",
+    "subtitle": "Kreu vian senpagan konton",
+    "fullName": "Plena nomo",
+    "email": "Retpoŝto",
+    "password": "Pasvorto",
+    "confirmPassword": "Konfirmi pasvorton",
+    "submit": "Krei konton",
+    "hasAccount": "Vi jam havas konton?",
+    "login": "Ensaluti"
+  },
+  "errors": {
+    "invalidCredentials": "Neĝusta retpoŝto aŭ pasvorto.",
+    "emailConflict": "Ĉi tiu retpoŝto jam estas uzata.",
+    "generic": "Okazis eraro. Bonvolu reprovi."
+  },
+  "header": {
+    "logout": "Elsaluti"
+  },
+  "nav": {
+    "dashboard": "Panelo",
+    "categories": "Kategorioj",
+    "transactions": "Transakcioj",
+    "tags": "Etikedoj"
+  },
+  "dashboard": {
+    "title": "Panelo",
+    "subtitle": "Financa resumo de la elektita periodo",
+    "period": {
+      "month": "Ĉi-monate",
+      "quarter": "3 monatoj",
+      "semester": "6 monatoj"
+    },
+    "kpi": {
+      "income": "Enspezo",
+      "expense": "Elspezoj",
+      "balance": "Saldo",
+      "pending": "Pendantaj",
+      "vsLastPeriod": "vs. antaŭa periodo:"
+    },
+    "chart": {
+      "evolution": "Monata evoluo",
+      "income": "Enspezo",
+      "expense": "Elspezoj",
+      "byCategory": "Elspezoj laŭ kategorio",
+      "noData": "Neniuj datumoj por ĉi tiu periodo",
+      "clickHint": "Alklaku por vidi detalojn",
+      "clickToView": "Alklaku por vidi transakciojn"
+    },
+    "recent": {
+      "title": "Lastaj transakcioj",
+      "viewAll": "Vidi ĉiujn",
+      "empty": "Neniuj lastatempaj transakcioj"
+    },
+    "pending": {
+      "title": "Pendantaj ĉi-monate",
+      "empty": "Neniuj pendantaj transakcioj ĉi-monate"
+    },
+    "modal": {
+      "incomeTitle": "Enspezo en la periodo",
+      "expenseTitle": "Elspezoj en la periodo",
+      "monthTitle": "Transakcioj en {{month}}",
+      "categoryTitle": "Elspezoj — {{name}}",
+      "noCategoryTitle": "Elspezoj sen kategorio",
+      "empty": "Neniuj transakcioj trovitaj",
+      "transactionsCount": "transakci(oj)"
+    },
+    "detail": {
+      "title": "Transakcio-detalo"
+    },
+    "quickAdd": {
+      "title": "Rapida aldono de transakcio",
+      "tooltip": "Aldoni transakcion"
+    },
+    "topExpenses": {
+      "title": "Plej grandaj elspezoj"
+    }
+  },
+  "categories": {
+    "title": "Kategorioj",
+    "subtitle": "Administru viajn personajn kategoriojn kaj rigardu la sistemajn",
+    "newCategory": "Nova kategorio",
+    "editCategory": "Redakti kategorion",
+    "system": "Sistemo",
+    "personal": "Persona",
+    "active": "Aktiva",
+    "inactive": "Neaktiva",
+    "empty": "Neniuj kategorioj trovitaj.",
+    "pageReport": "{first} - {last} el {totalRecords}",
+    "confirmDeactivate": "Ĉu vi certas, ke vi volas malaktivigi ĉi tiun kategorion?",
+    "confirmDeactivateHeader": "Malaktivigi kategorion",
+    "columns": {
+      "name": "Nomo",
+      "description": "Priskribo",
+      "type": "Tipo",
+      "status": "Stato",
+      "actions": "Agoj"
+    },
+    "form": {
+      "name": "Nomo",
+      "description": "Priskribo (laŭvola)",
+      "icon": "Ikono (laŭvola)",
+      "editIcon": "Redakti ikonon",
+      "noIcons": "Neniuj ikonoj trovitaj",
+      "color": "Koloro (laŭvola)",
+      "colorHint": "Alklaku la krajonon por elekti koloron",
+      "editColor": "Redakti koloron"
+    },
+    "toast": {
+      "createSuccess": "Kategorio sukcese kreita.",
+      "updateSuccess": "Kategorio sukcese ĝisdatigita.",
+      "deactivateSuccess": "Kategorio sukcese malaktivigita."
+    }
+  },
+  "transactions": {
+    "title": "Transakcioj",
+    "subtitle": "Registru kaj spuru viajn enspezojn kaj elspezojn",
+    "new": "Nova transakcio",
+    "edit": "Redakti transakcion",
+    "empty": "Neniuj transakcioj trovitaj.",
+    "pageReport": "{first} - {last} el {totalRecords}",
+    "confirmDelete": "Ĉu vi certas, ke vi volas forigi ĉi tiun transakcion?",
+    "confirmDeleteHeader": "Forigi transakcion",
+    "confirmConfirm": "Konfirmi ĉi tiun transakcion kiel plenumitan?",
+    "confirmConfirmHeader": "Konfirmi transakcion",
+    "columns": {
+      "description": "Priskribo",
+      "amount": "Sumo",
+      "type": "Tipo",
+      "date": "Dato",
+      "category": "Kategorio",
+      "tags": "Etikedoj",
+      "status": "Stato",
+      "actions": "Agoj"
+    },
+    "form": {
+      "description": "Priskribo",
+      "amount": "Sumo",
+      "type": "Tipo",
+      "date": "Dato",
+      "category": "Kategorio",
+      "noCategory": "Sen kategorio",
+      "tags": "Etikedoj",
+      "tagsPlaceholder": "Elekti etikedojn...",
+      "paymentMethod": "Pagmaniero",
+      "isConfirmed": "Konfirmita",
+      "recurrenceType": "Ripeto",
+      "recurrenceEndDate": "Fino de ripeto",
+      "notes": "Notoj (laŭvola)"
+    },
+    "type": {
+      "income": "Enspezo",
+      "expense": "Elspezo"
+    },
+    "status": {
+      "confirmed": "Konfirmita",
+      "pending": "Pendanta"
+    },
+    "paymentMethod": {
+      "none": "Nespecifita",
+      "pix": "Pix",
+      "creditCard": "Kredita karto",
+      "debitCard": "Debita karto",
+      "cash": "Kontanto",
+      "ted": "Banktransigo",
+      "boleto": "Pagordono",
+      "other": "Alia"
+    },
+    "recurrence": {
+      "none": "Sen ripeto",
+      "daily": "Ĉiutage",
+      "weekly": "Ĉiusemajne",
+      "monthly": "Ĉiumonate",
+      "yearly": "Ĉiujare"
+    },
+    "filters": {
+      "dateRange": "Datintervalo...",
+      "clear": "Forigi filtrilojn"
+    },
+    "actions": {
+      "confirm": "Konfirmi transakcion"
+    },
+    "bulkActions": {
+      "selected": "elektita(j)",
+      "confirmPending": "Konfirmi pendantajn",
+      "deleteAll": "Forigi elektitajn",
+      "clearSelection": "Forigi elekton"
+    },
+    "confirmBulkDelete": "Forigi {{count}} elektitan(j) transakcion(ojn)?",
+    "tags": {
+      "editTitle": "Redakti etikedojn",
+      "editTooltip": "Alklaku por redakti etikedojn",
+      "selected": "Elektitaj",
+      "noMatch": "Neniuj etikedoj trovitaj"
+    },
+    "toast": {
+      "createSuccess": "Transakcio sukcese kreita.",
+      "updateSuccess": "Transakcio sukcese ĝisdatigita.",
+      "deleteSuccess": "Transakcio sukcese forigita.",
+      "confirmSuccess": "Transakcio sukcese konfirmita.",
+      "bulkConfirmSuccess": "Transakcioj sukcese konfirmitaj.",
+      "bulkDeleteSuccess": "Transakcioj sukcese forigitaj."
+    }
+  },
+  "tags": {
+    "title": "Etikedoj",
+    "subtitle": "Organizu viajn transakciojn per personaj etikedoj",
+    "new": "Nova etikedo",
+    "edit": "Renomi etikedo",
+    "empty": "Neniu etikedo kreita ankoraŭ.",
+    "emptyHint": "Kreu etikedojn por pli bone kategorii viajn transakciojn.",
+    "confirmDelete": "Ĉu vi certas, ke vi volas forigi ĉi tiun etikedo?",
+    "confirmDeleteHeader": "Forigi etikedo",
+    "form": {
+      "name": "Nomo",
+      "namePlaceholder": "Ekz.: manĝaĵo, libertempo..."
+    },
+    "toast": {
+      "createSuccess": "Etikedo sukcese kreita.",
+      "updateSuccess": "Etikedo sukcese renomita.",
+      "deleteSuccess": "Etikedo sukcese forigita."
+    }
+  },
+  "validation": {
+    "required": "Deviga kampo",
+    "email": "Nevalida retpoŝto",
+    "minLength": "Minimumo {{value}} signoj",
+    "passwordMismatch": "Pasvortoj ne kongruas"
+  }
+}

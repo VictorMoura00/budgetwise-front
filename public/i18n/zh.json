@@ -1,0 +1,253 @@
+{
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "edit": "编辑",
+    "delete": "删除",
+    "deactivate": "停用",
+    "confirm": "确认",
+    "success": "成功",
+    "error": "错误",
+    "search": "搜索...",
+    "all": "全部",
+    "details": "详情"
+  },
+  "login": {
+    "title": "登录",
+    "subtitle": "访问您的账户",
+    "email": "电子邮件",
+    "password": "密码",
+    "submit": "登录",
+    "noAccount": "没有账户？",
+    "register": "创建账户"
+  },
+  "register": {
+    "title": "创建账户",
+    "subtitle": "免费注册您的账户",
+    "fullName": "全名",
+    "email": "电子邮件",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "submit": "创建账户",
+    "hasAccount": "已有账户？",
+    "login": "登录"
+  },
+  "errors": {
+    "invalidCredentials": "电子邮件或密码不正确。",
+    "emailConflict": "该电子邮件已被使用。",
+    "generic": "发生错误，请重试。"
+  },
+  "header": {
+    "logout": "退出登录"
+  },
+  "nav": {
+    "dashboard": "仪表盘",
+    "categories": "分类",
+    "transactions": "交易",
+    "tags": "标签"
+  },
+  "dashboard": {
+    "title": "仪表盘",
+    "subtitle": "所选时段的财务摘要",
+    "period": {
+      "month": "本月",
+      "quarter": "3个月",
+      "semester": "6个月"
+    },
+    "kpi": {
+      "income": "收入",
+      "expense": "支出",
+      "balance": "余额",
+      "pending": "待处理",
+      "vsLastPeriod": "与上期相比："
+    },
+    "chart": {
+      "evolution": "月度走势",
+      "income": "收入",
+      "expense": "支出",
+      "byCategory": "按分类的支出",
+      "noData": "该时段暂无数据",
+      "clickHint": "点击查看详情",
+      "clickToView": "点击查看交易"
+    },
+    "recent": {
+      "title": "最近交易",
+      "viewAll": "查看全部",
+      "empty": "暂无最近交易"
+    },
+    "pending": {
+      "title": "本月待处理",
+      "empty": "本月暂无待处理交易"
+    },
+    "modal": {
+      "incomeTitle": "时段内收入",
+      "expenseTitle": "时段内支出",
+      "monthTitle": "{{month}} 的交易",
+      "categoryTitle": "支出 — {{name}}",
+      "noCategoryTitle": "无分类支出",
+      "empty": "未找到交易",
+      "transactionsCount": "笔交易"
+    },
+    "detail": {
+      "title": "交易详情"
+    },
+    "quickAdd": {
+      "title": "快速添加交易",
+      "tooltip": "添加交易"
+    },
+    "topExpenses": {
+      "title": "最大支出"
+    }
+  },
+  "categories": {
+    "title": "分类",
+    "subtitle": "管理您的个人分类并查看系统分类",
+    "newCategory": "新建分类",
+    "editCategory": "编辑分类",
+    "system": "系统",
+    "personal": "个人",
+    "active": "启用",
+    "inactive": "停用",
+    "empty": "未找到分类。",
+    "pageReport": "{first} - {last} / 共 {totalRecords} 条",
+    "confirmDeactivate": "确定要停用此分类吗？",
+    "confirmDeactivateHeader": "停用分类",
+    "columns": {
+      "name": "名称",
+      "description": "描述",
+      "type": "类型",
+      "status": "状态",
+      "actions": "操作"
+    },
+    "form": {
+      "name": "名称",
+      "description": "描述（可选）",
+      "icon": "图标（可选）",
+      "editIcon": "编辑图标",
+      "noIcons": "未找到图标",
+      "color": "颜色（可选）",
+      "colorHint": "点击铅笔图标选择颜色",
+      "editColor": "编辑颜色"
+    },
+    "toast": {
+      "createSuccess": "分类创建成功。",
+      "updateSuccess": "分类更新成功。",
+      "deactivateSuccess": "分类已停用。"
+    }
+  },
+  "transactions": {
+    "title": "交易",
+    "subtitle": "记录并追踪您的收入和支出",
+    "new": "新建交易",
+    "edit": "编辑交易",
+    "empty": "未找到交易。",
+    "pageReport": "{first} - {last} / 共 {totalRecords} 条",
+    "confirmDelete": "确定要删除此交易吗？",
+    "confirmDeleteHeader": "删除交易",
+    "confirmConfirm": "确认此交易已完成？",
+    "confirmConfirmHeader": "确认交易",
+    "columns": {
+      "description": "描述",
+      "amount": "金额",
+      "type": "类型",
+      "date": "日期",
+      "category": "分类",
+      "tags": "标签",
+      "status": "状态",
+      "actions": "操作"
+    },
+    "form": {
+      "description": "描述",
+      "amount": "金额",
+      "type": "类型",
+      "date": "日期",
+      "category": "分类",
+      "noCategory": "无分类",
+      "tags": "标签",
+      "tagsPlaceholder": "选择标签...",
+      "paymentMethod": "支付方式",
+      "isConfirmed": "已确认",
+      "recurrenceType": "重复",
+      "recurrenceEndDate": "重复结束日期",
+      "notes": "备注（可选）"
+    },
+    "type": {
+      "income": "收入",
+      "expense": "支出"
+    },
+    "status": {
+      "confirmed": "已确认",
+      "pending": "待处理"
+    },
+    "paymentMethod": {
+      "none": "未指定",
+      "pix": "Pix",
+      "creditCard": "信用卡",
+      "debitCard": "借记卡",
+      "cash": "现金",
+      "ted": "电汇",
+      "boleto": "银行单据",
+      "other": "其他"
+    },
+    "recurrence": {
+      "none": "不重复",
+      "daily": "每天",
+      "weekly": "每周",
+      "monthly": "每月",
+      "yearly": "每年"
+    },
+    "filters": {
+      "dateRange": "日期范围...",
+      "clear": "清除筛选"
+    },
+    "actions": {
+      "confirm": "确认交易"
+    },
+    "bulkActions": {
+      "selected": "已选中",
+      "confirmPending": "确认待处理",
+      "deleteAll": "删除所选",
+      "clearSelection": "清除选择"
+    },
+    "confirmBulkDelete": "删除所选 {{count}} 笔交易？",
+    "tags": {
+      "editTitle": "编辑标签",
+      "editTooltip": "点击编辑标签",
+      "selected": "已选",
+      "noMatch": "未找到标签"
+    },
+    "toast": {
+      "createSuccess": "交易创建成功。",
+      "updateSuccess": "交易更新成功。",
+      "deleteSuccess": "交易删除成功。",
+      "confirmSuccess": "交易确认成功。",
+      "bulkConfirmSuccess": "交易批量确认成功。",
+      "bulkDeleteSuccess": "交易批量删除成功。"
+    }
+  },
+  "tags": {
+    "title": "标签",
+    "subtitle": "使用自定义标签整理您的交易",
+    "new": "新建标签",
+    "edit": "重命名标签",
+    "empty": "暂无标签。",
+    "emptyHint": "创建标签以更好地分类您的交易。",
+    "confirmDelete": "确定要删除此标签吗？",
+    "confirmDeleteHeader": "删除标签",
+    "form": {
+      "name": "名称",
+      "namePlaceholder": "例如：餐饮、休闲..."
+    },
+    "toast": {
+      "createSuccess": "标签创建成功。",
+      "updateSuccess": "标签重命名成功。",
+      "deleteSuccess": "标签删除成功。"
+    }
+  },
+  "validation": {
+    "required": "必填项",
+    "email": "无效的电子邮件",
+    "minLength": "最少 {{value}} 个字符",
+    "passwordMismatch": "密码不匹配"
+  }
+}
