@@ -5,9 +5,11 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
+import { SkeletonModule } from 'primeng/skeleton';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TagService } from '../../core/services/tag.service';
 import { TagResponse } from '../../core/models/tag.models';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-tags',
@@ -18,6 +20,8 @@ import { TagResponse } from '../../core/models/tag.models';
     DialogModule,
     InputTextModule,
     TooltipModule,
+    SkeletonModule,
+    EmptyStateComponent,
   ],
   templateUrl: './tags.component.html',
   styleUrl: './tags.component.scss',
@@ -32,6 +36,7 @@ export class TagsComponent implements OnInit {
   tags = signal<TagResponse[]>([]);
   loading = signal(false);
   saving = signal(false);
+  readonly skeletonTags = Array(8);
 
   dialogVisible = false;
   editingTag: TagResponse | null = null;

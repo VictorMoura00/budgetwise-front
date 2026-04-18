@@ -1,0 +1,18 @@
+<div class="empty-state">
+  <div class="empty-state__icon-wrap">
+    <i class="pi empty-state__icon" [class]="icon"></i>
+  </div>
+  <p class="empty-state__title">{{ title }}</p>
+  @if (subtitle) {
+    <p class="empty-state__subtitle">{{ subtitle }}</p>
+  }
+  @if (actionLabel) {
+    <p-button
+      [label]="actionLabel"
+      icon="pi pi-plus"
+      size="small"
+      [outlined]="true"
+      (onClick)="action.emit()"
+    />
+  }
+</div>

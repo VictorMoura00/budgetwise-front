@@ -215,10 +215,31 @@
         </tr>
       </ng-template>
 
+      <ng-template #loadingbody>
+        @for (i of skeletonRows; track i) {
+          <tr>
+            <td><p-skeleton size="1.25rem" shape="circle" /></td>
+            <td><div class="description-cell"><p-skeleton width="70%" /><p-skeleton width="40%" height="0.7rem" styleClass="mt-1" /></div></td>
+            <td class="col-tags"><p-skeleton width="80%" height="1.25rem" borderRadius="999px" /></td>
+            <td class="col-amount"><p-skeleton width="5rem" /></td>
+            <td class="col-type"><p-skeleton width="4.5rem" height="1.5rem" borderRadius="999px" /></td>
+            <td class="col-date"><p-skeleton width="4rem" /></td>
+            <td class="col-category"><p-skeleton width="5rem" /></td>
+            <td class="col-status"><p-skeleton width="4.5rem" height="1.5rem" borderRadius="999px" /></td>
+            <td><p-skeleton width="3.5rem" /></td>
+          </tr>
+        }
+      </ng-template>
+
       <ng-template #emptymessage>
         <tr>
-          <td colspan="9" class="empty-message">
-            {{ 'transactions.empty' | translate }}
+          <td colspan="9" style="padding: 0; border: none">
+            <app-empty-state
+              icon="pi-arrow-right-arrow-left"
+              [title]="'transactions.empty' | translate"
+              [actionLabel]="'transactions.new' | translate"
+              (action)="openCreateDialog()"
+            />
           </td>
         </tr>
       </ng-template>

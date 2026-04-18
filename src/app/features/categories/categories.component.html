@@ -94,10 +94,27 @@
       </tr>
     </ng-template>
 
+    <ng-template #loadingbody>
+      @for (i of skeletonRows; track i) {
+        <tr>
+          <td><div class="category-name-cell"><p-skeleton shape="circle" size="2rem" /><p-skeleton width="60%" /></div></td>
+          <td class="col-description"><p-skeleton width="75%" /></td>
+          <td class="col-type"><p-skeleton width="4rem" height="1.5rem" borderRadius="999px" /></td>
+          <td><p-skeleton width="4rem" height="1.5rem" borderRadius="999px" /></td>
+          <td><p-skeleton width="3rem" /></td>
+        </tr>
+      }
+    </ng-template>
+
     <ng-template #emptymessage>
       <tr>
-        <td colspan="5" class="empty-message">
-          {{ 'categories.empty' | translate }}
+        <td colspan="5" style="padding: 0; border: none">
+          <app-empty-state
+            icon="pi-tag"
+            [title]="'categories.empty' | translate"
+            [actionLabel]="'categories.newCategory' | translate"
+            (action)="openCreateDialog()"
+          />
         </td>
       </tr>
     </ng-template>

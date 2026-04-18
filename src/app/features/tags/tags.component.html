@@ -15,20 +15,25 @@
 
   <!-- ─── Content ─────────────────────────────────────────────────────────── -->
   @if (loading()) {
-    <div class="loading-state">
-      <i class="pi pi-spin pi-spinner loading-icon"></i>
+    <div class="tags-grid">
+      @for (i of skeletonTags; track i) {
+        <div class="tag-card tag-card--skeleton">
+          <p-skeleton width="60%" height="1rem" />
+          <div class="tag-card__actions">
+            <p-skeleton shape="circle" size="2rem" />
+            <p-skeleton shape="circle" size="2rem" />
+          </div>
+        </div>
+      }
     </div>
   } @else if (tags().length === 0) {
-    <div class="empty-state">
-      <i class="pi pi-hashtag empty-icon"></i>
-      <p class="empty-title">{{ 'tags.empty' | translate }}</p>
-      <p class="empty-subtitle">{{ 'tags.emptyHint' | translate }}</p>
-      <p-button
-        [label]="'tags.new' | translate"
-        icon="pi pi-plus"
-        (onClick)="openCreateDialog()"
-      />
-    </div>
+    <app-empty-state
+      icon="pi-hashtag"
+      [title]="'tags.empty' | translate"
+      [subtitle]="'tags.emptyHint' | translate"
+      [actionLabel]="'tags.new' | translate"
+      (action)="openCreateDialog()"
+    />
   } @else {
     <div class="tags-grid">
       @for (tag of tags(); track tag.id) {

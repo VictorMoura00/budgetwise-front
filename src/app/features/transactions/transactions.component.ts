@@ -16,7 +16,9 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
 import { ChipModule } from 'primeng/chip';
+import { SkeletonModule } from 'primeng/skeleton';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { Observable, forkJoin, of, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LanguageService } from '../../core/services/language.service';
@@ -60,6 +62,8 @@ interface SelectOption<T> {
     TooltipModule,
     ChipModule,
     DatePipe,
+    SkeletonModule,
+    EmptyStateComponent,
   ],
   templateUrl: './transactions.component.html',
   styleUrl: './transactions.component.scss',
@@ -117,6 +121,7 @@ export class TransactionsComponent implements OnInit {
   filterDateRange = signal<Date[] | null>(null);
 
   readonly pageSize = 20;
+  readonly skeletonRows = Array(this.pageSize);
   private currentPage = 1;
 
   // ─── Translated select options (reactive to language changes) ──────────────

@@ -13,11 +13,13 @@ import { ColorPickerModule } from 'primeng/colorpicker';
 import { PopoverModule } from 'primeng/popover';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { SkeletonModule } from 'primeng/skeleton';
 import { Popover } from 'primeng/popover';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { NgClass } from '@angular/common';
 import { CategoryService } from '../../core/services/category.service';
 import { CategoryResponse } from '../../core/models/category.models';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 
 const ALL_ICONS: string[] = [
   'pi pi-address-book', 'pi pi-at', 'pi pi-ban', 'pi pi-barcode', 'pi pi-bars',
@@ -79,6 +81,8 @@ const ALL_ICONS: string[] = [
     PopoverModule,
     InputGroupModule,
     InputGroupAddonModule,
+    SkeletonModule,
+    EmptyStateComponent,
   ],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.scss',
@@ -102,6 +106,7 @@ export class CategoriesComponent implements OnInit {
   editingCategory: CategoryResponse | null = null;
 
   readonly pageSize = 10;
+  readonly skeletonRows = Array(this.pageSize);
   private currentPage = 1;
 
   iconSearch = '';

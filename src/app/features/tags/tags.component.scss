@@ -24,48 +24,10 @@
   font-size: 0.875rem;
 }
 
-// ─── Loading ──────────────────────────────────────────────────────────────────
+// ─── Skeleton card ────────────────────────────────────────────────────────────
 
-.loading-state {
-  display: flex;
-  justify-content: center;
-  padding: 4rem 0;
-}
-
-.loading-icon {
-  font-size: 2rem;
-  color: var(--p-primary-color);
-}
-
-// ─── Empty state ──────────────────────────────────────────────────────────────
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 4rem 1rem;
-  text-align: center;
-}
-
-.empty-icon {
-  font-size: 3rem;
-  color: var(--p-text-muted-color);
-  margin-bottom: 0.5rem;
-  opacity: 0.5;
-}
-
-.empty-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--p-text-color);
-  margin: 0;
-}
-
-.empty-subtitle {
-  font-size: 0.875rem;
-  color: var(--p-text-muted-color);
-  margin: 0 0 1rem;
+.tag-card--skeleton {
+  pointer-events: none;
 }
 
 // ─── Tags grid ────────────────────────────────────────────────────────────────
