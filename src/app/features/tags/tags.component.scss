@@ -1,7 +1,6 @@
 .page {
-  padding: 1.5rem;
-  max-width: 900px;
-  margin: 0 auto;
+  padding: 1.5rem 2rem;
+  width: 100%;
 }
 
 .page-header {
@@ -151,6 +150,7 @@
   .page {
     padding: 1rem 0.75rem;
   }
+
 
   .page-header {
     flex-direction: column;

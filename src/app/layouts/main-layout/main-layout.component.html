@@ -1,77 +1,110 @@
 <div class="shell">
 
-  <!-- Backdrop -->
-  @if (sidebarOpen()) {
-    <div class="sidebar-backdrop" (click)="close()"></div>
-  }
+  <!-- Header (full width, top) -->
+  <app-header (menuToggle)="toggle()" />
 
-  <!-- Sidebar -->
-  <aside class="sidebar" [class.open]="sidebarOpen()">
+  <!-- Body row: sidebar + content -->
+  <div class="shell-body">
 
-    <!-- Header interno: visível só no mobile (top: 0) -->
-    <div class="sidebar-header">
-      <div class="sidebar-brand">
-        <i class="pi pi-wallet brand-icon"></i>
-        <span class="brand-name">BudgetWise</span>
+    <!-- Backdrop (mobile overlay only) -->
+    @if (sidebarOpen() && isMobile()) {
+      <div class="sidebar-backdrop" (click)="close()"></div>
+    }
+
+    <!-- Sidebar -->
+    <aside class="sidebar" [class.open]="sidebarOpen()">
+      <div class="sidebar-inner">
+
+        <!-- Mobile header (brand + close) -->
+        <div class="sidebar-header">
+          <div class="sidebar-brand">
+            <i class="pi pi-wallet brand-icon"></i>
+            <span class="brand-name">BudgetWise</span>
+          </div>
+          <button class="sidebar-close" (click)="close()">
+            <i class="pi pi-times"></i>
+          </button>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a
+            routerLink="/dashboard"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="nav-item"
+            (click)="closeIfMobile()"
+          >
+            <i class="pi pi-chart-bar"></i>
+            <span>{{ 'nav.dashboard' | translate }}</span>
+          </a>
+
+          <a
+            routerLink="/categories"
+            routerLinkActive="active"
+            class="nav-item"
+            (click)="closeIfMobile()"
+          >
+            <i class="pi pi-tag"></i>
+            <span>{{ 'nav.categories' | translate }}</span>
+          </a>
+
+          <a
+            routerLink="/transactions"
+            routerLinkActive="active"
+            class="nav-item"
+            (click)="closeIfMobile()"
+          >
+            <i class="pi pi-arrow-right-arrow-left"></i>
+            <span>{{ 'nav.transactions' | translate }}</span>
+          </a>
+
+          <a
+            routerLink="/tags"
+            routerLinkActive="active"
+            class="nav-item"
+            (click)="closeIfMobile()"
+          >
+            <i class="pi pi-hashtag"></i>
+            <span>{{ 'nav.tags' | translate }}</span>
+          </a>
+        </nav>
+
       </div>
-      <button class="sidebar-close" (click)="close()">
-        <i class="pi pi-times"></i>
-      </button>
-    </div>
+    </aside>
 
-    <nav class="sidebar-nav">
-      <a
-        routerLink="/dashboard"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="nav-item"
-        (click)="close()"
-      >
-        <i class="pi pi-chart-bar"></i>
-        <span>{{ 'nav.dashboard' | translate }}</span>
-      </a>
-
-      <a
-        routerLink="/categories"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="close()"
-      >
-        <i class="pi pi-tag"></i>
-        <span>{{ 'nav.categories' | translate }}</span>
-      </a>
-
-      <a
-        routerLink="/transactions"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="close()"
-      >
-        <i class="pi pi-arrow-right-arrow-left"></i>
-        <span>{{ 'nav.transactions' | translate }}</span>
-      </a>
-
-      <a
-        routerLink="/tags"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="close()"
-      >
-        <i class="pi pi-hashtag"></i>
-        <span>{{ 'nav.tags' | translate }}</span>
-      </a>
-    </nav>
-  </aside>
-
-  <!-- Área principal -->
-  <div class="shell-main">
-    <app-header (menuToggle)="toggle()" />
+    <!-- Main content -->
     <main class="main-content">
       <router-outlet />
     </main>
+
   </div>
 
 </div>
 
-<p-toast position="bottom-right" />
+<p-toast position="bottom-right">
+  <ng-template pTemplate="message" let-message>
+    <div class="ct-toast">
+      <i class="ct-toast__icon pi" [ngClass]="{
+        'pi-check-circle':        message.severity === 'success',
+        'pi-times-circle':        message.severity === 'error',
+        'pi-exclamation-triangle': message.severity === 'warn',
+        'pi-info-circle':         message.severity === 'info'
+      }"></i>
+      <div class="ct-toast__body">
+        @if (message.summary) {
+          <span class="ct-toast__summary">{{ message.summary }}</span>
+        }
+        @if (message.detail) {
+          <span class="ct-toast__detail">{{ message.detail }}</span>
+        }
+        @if (message.data?.fullDetail && message.data.fullDetail !== message.detail) {
+          <details class="ct-toast__details">
+            <summary>{{ 'common.details' | translate }}</summary>
+            <pre class="ct-toast__pre">{{ message.data.fullDetail }}</pre>
+          </details>
+        }
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
 <p-confirmdialog />

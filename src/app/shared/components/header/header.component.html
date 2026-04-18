@@ -8,10 +8,10 @@
         severity="secondary"
         (onClick)="menuToggle.emit()"
       />
-      <div class="header-brand">
+      <a class="header-brand" routerLink="/dashboard">
         <i class="pi pi-wallet brand-icon"></i>
         <span class="brand-name">BudgetWise</span>
-      </div>
+      </a>
     </div>
   </ng-template>
 
@@ -27,11 +27,11 @@
       />
 
       <p-button
-        [icon]="theme.isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'"
+        [icon]="layout.isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'"
         [rounded]="true"
         [text]="true"
         severity="secondary"
-        (onClick)="theme.toggleDarkMode()"
+        (onClick)="layout.toggleDarkMode()"
       />
 
       <button class="user-trigger" (click)="userMenu.toggle($event)">

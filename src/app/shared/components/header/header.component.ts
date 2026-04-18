@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
@@ -8,13 +9,14 @@ import { MenuModule } from 'primeng/menu';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
-import { ThemeService } from '../../../core/services/theme.service';
+import { LayoutService } from '../../../core/services/layout.service';
 import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-header',
   imports: [
     FormsModule,
+    RouterLink,
     TranslateModule,
     ToolbarModule,
     ButtonModule,
@@ -30,7 +32,7 @@ export class HeaderComponent {
   private readonly translate = inject(TranslateService);
 
   readonly auth = inject(AuthService);
-  readonly theme = inject(ThemeService);
+  readonly layout = inject(LayoutService);
   readonly lang = inject(LanguageService);
 
   readonly langOptions = [
