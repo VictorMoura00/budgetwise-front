@@ -13,48 +13,88 @@
     />
   </div>
 
-  <!-- ─── Filter bar ───────────────────────────────────────────────────────── -->
-  <div class="filter-bar">
-    <p-selectbutton
-      [options]="typeFilterOptions()"
-      [ngModel]="filterType()"
-      (ngModelChange)="filterType.set($event); applyFilters()"
-      optionLabel="label"
-      optionValue="value"
-    />
+  <!-- ─── Content card ─────────────────────────────────────────────────────── -->
+  <div class="content-card">
 
-    <p-selectbutton
-      [options]="statusFilterOptions()"
-      [ngModel]="filterStatus()"
-      (ngModelChange)="filterStatus.set($event); applyFilters()"
-      optionLabel="label"
-      optionValue="value"
-    />
-
-    <p-datepicker
-      [ngModel]="filterDateRange()"
-      (ngModelChange)="filterDateRange.set($event); applyFilters()"
-      selectionMode="range"
-      [readonlyInput]="true"
-      dateFormat="dd/mm/yy"
-      [placeholder]="'transactions.filters.dateRange' | translate"
-      [showClear]="true"
-      styleClass="filter-datepicker"
-    />
-
-    @if (hasActiveFilters()) {
-      <p-button
-        icon="pi pi-filter-slash"
-        [label]="'transactions.filters.clear' | translate"
-        [text]="true"
-        severity="secondary"
-        (onClick)="clearFilters()"
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <p-selectbutton
+        [options]="typeFilterOptions()"
+        [ngModel]="filterType()"
+        (ngModelChange)="filterType.set($event); applyFilters()"
+        optionLabel="label"
+        optionValue="value"
       />
-    }
-  </div>
 
-  <!-- ─── Table ────────────────────────────────────────────────────────────── -->
-  <div class="table-wrapper">
+      <p-selectbutton
+        [options]="statusFilterOptions()"
+        [ngModel]="filterStatus()"
+        (ngModelChange)="filterStatus.set($event); applyFilters()"
+        optionLabel="label"
+        optionValue="value"
+      />
+
+      <p-datepicker
+        [ngModel]="filterDateRange()"
+        (ngModelChange)="filterDateRange.set($event); applyFilters()"
+        selectionMode="range"
+        [readonlyInput]="true"
+        dateFormat="dd/mm/yy"
+        [placeholder]="'transactions.filters.dateRange' | translate"
+        [showClear]="true"
+        styleClass="filter-datepicker"
+      />
+
+      @if (hasActiveFilters()) {
+        <p-button
+          icon="pi pi-filter-slash"
+          [label]="'transactions.filters.clear' | translate"
+          [text]="true"
+          severity="secondary"
+          (onClick)="clearFilters()"
+        />
+      }
+    </div>
+
+    <!-- Bulk action toolbar (shown when items are selected) -->
+    @if (selectedTransactions().length > 0) {
+      <div class="selection-toolbar">
+        <span class="selection-count">
+          {{ selectedTransactions().length }} {{ 'transactions.bulkActions.selected' | translate }}
+        </span>
+        @if (pendingInSelection() > 0) {
+          <p-button
+            icon="pi pi-check"
+            [label]="'transactions.bulkActions.confirmPending' | translate"
+            size="small"
+            severity="success"
+            [outlined]="true"
+            [loading]="bulkConfirming()"
+            (onClick)="bulkConfirmSelected()"
+          />
+        }
+        <p-button
+          icon="pi pi-trash"
+          [label]="'transactions.bulkActions.deleteAll' | translate"
+          size="small"
+          severity="danger"
+          [outlined]="true"
+          [loading]="bulkDeleting()"
+          (onClick)="bulkDeleteSelected()"
+        />
+        <p-button
+          icon="pi pi-times"
+          [label]="'transactions.bulkActions.clearSelection' | translate"
+          size="small"
+          severity="secondary"
+          [text]="true"
+          (onClick)="selectedTransactions.set([])"
+        />
+      </div>
+    }
+
+    <!-- Table -->
+    <div class="table-wrapper">
     <p-table
       [value]="transactions()"
       [lazy]="true"
@@ -67,33 +107,50 @@
       [showCurrentPageReport]="true"
       [currentPageReportTemplate]="'transactions.pageReport' | translate"
       styleClass="p-datatable-sm"
+      [tableStyle]="{'table-layout':'fixed'}"
+      selectionMode="multiple"
+      [selection]="selectedTransactions()"
+      (selectionChange)="selectedTransactions.set($event)"
+      dataKey="id"
     >
       <ng-template #header>
         <tr>
+          <th style="width: 3rem"><p-tableHeaderCheckbox /></th>
           <th>{{ 'transactions.columns.description' | translate }}</th>
-          <th class="col-amount" style="width: 160px">{{ 'transactions.columns.amount' | translate }}</th>
-          <th class="col-type" style="width: 110px">{{ 'transactions.columns.type' | translate }}</th>
-          <th class="col-date" style="width: 120px">{{ 'transactions.columns.date' | translate }}</th>
-          <th class="col-category">{{ 'transactions.columns.category' | translate }}</th>
-          <th class="col-status" style="width: 120px">{{ 'transactions.columns.status' | translate }}</th>
-          <th style="width: 110px"></th>
+          <th class="col-tags" style="width: 180px">{{ 'transactions.columns.tags' | translate }}</th>
+          <th class="col-amount" style="width: 150px">{{ 'transactions.columns.amount' | translate }}</th>
+          <th class="col-type" style="width: 105px">{{ 'transactions.columns.type' | translate }}</th>
+          <th class="col-date" style="width: 110px">{{ 'transactions.columns.date' | translate }}</th>
+          <th class="col-category" style="width: 150px">{{ 'transactions.columns.category' | translate }}</th>
+          <th class="col-status" style="width: 115px">{{ 'transactions.columns.status' | translate }}</th>
+          <th style="width: 100px"></th>
         </tr>
       </ng-template>
 
       <ng-template #body let-t>
         <tr>
+          <td><p-tableCheckbox [value]="t" /></td>
+
           <td>
             <div class="description-cell">
               <span class="description-text">{{ t.description }}</span>
-              @if (t.tags.length > 0) {
-                <div class="tags-row">
-                  @for (tag of t.tags; track tag.id) {
-                    <p-chip [label]="tag.name" styleClass="tag-chip" />
-                  }
-                </div>
-              }
               @if (t.notes) {
-                <small class="notes-text">{{ t.notes }}</small>
+                <small class="notes-text" [pTooltip]="t.notes" tooltipPosition="top">{{ t.notes }}</small>
+              }
+            </div>
+          </td>
+
+          <td class="col-tags" (click)="openTagEditor(t)" [pTooltip]="'transactions.tags.editTooltip' | translate" tooltipPosition="top">
+            <div class="tags-cell">
+              @if (t.tags.length > 0) {
+                @for (tag of t.tags.slice(0, 3); track tag.id) {
+                  <span class="tx-tag-pill">{{ tag.name }}</span>
+                }
+                @if (t.tags.length > 3) {
+                  <span class="tx-tag-more">+{{ t.tags.length - 3 }}</span>
+                }
+              } @else {
+                <span class="tags-add-hint"><i class="pi pi-plus"></i></span>
               }
             </div>
           </td>
@@ -111,13 +168,9 @@
             />
           </td>
 
-          <td class="col-date text-muted">
-            {{ t.transactionDate | date: 'dd/MM/yyyy' }}
-          </td>
+          <td class="col-date text-muted">{{ t.transactionDate | date: 'dd/MM/yyyy' }}</td>
 
-          <td class="col-category text-muted">
-            {{ getCategoryName(t.categoryId) }}
-          </td>
+          <td class="col-category text-muted">{{ getCategoryName(t.categoryId) }}</td>
 
           <td class="col-status">
             <p-tag
@@ -133,6 +186,7 @@
                 [text]="true"
                 [rounded]="true"
                 severity="secondary"
+                size="small"
                 [pTooltip]="'common.edit' | translate"
                 (onClick)="openEditDialog(t)"
               />
@@ -142,6 +196,7 @@
                   [text]="true"
                   [rounded]="true"
                   severity="success"
+                  size="small"
                   [pTooltip]="'transactions.actions.confirm' | translate"
                   (onClick)="confirmTransaction(t)"
                 />
@@ -151,6 +206,7 @@
                 [text]="true"
                 [rounded]="true"
                 severity="danger"
+                size="small"
                 [pTooltip]="'common.delete' | translate"
                 (onClick)="confirmDelete(t)"
               />
@@ -161,13 +217,15 @@
 
       <ng-template #emptymessage>
         <tr>
-          <td colspan="7" class="empty-message">
+          <td colspan="9" class="empty-message">
             {{ 'transactions.empty' | translate }}
           </td>
         </tr>
       </ng-template>
     </p-table>
-  </div>
+    </div><!-- /table-wrapper -->
+
+  </div><!-- /content-card -->
 </div>
 
 <!-- ─── Dialog criar / editar ────────────────────────────────────────────── -->
@@ -361,6 +419,85 @@
       [label]="'common.save' | translate"
       (onClick)="saveTransaction()"
       [loading]="saving()"
+    />
+  </ng-template>
+</p-dialog>
+
+<!-- ─── Dialog editar tags ────────────────────────────────────────────────── -->
+<p-dialog
+  [visible]="tagEditVisible"
+  (visibleChange)="tagEditVisible = $event"
+  [header]="'transactions.tags.editTitle' | translate"
+  [modal]="true"
+  [dismissableMask]="false"
+  [style]="{ width: 'min(520px, 95vw)' }"
+  [draggable]="false"
+>
+  @if (tagEditingTx(); as tx) {
+    <p class="tag-edit-desc">{{ tx.description }}</p>
+  }
+
+  <!-- Selected tags summary -->
+  @if (tagEditIds().length > 0) {
+    <div class="tag-selected-summary">
+      <span class="tag-selected-label">{{ 'transactions.tags.selected' | translate }}:</span>
+      <div class="tag-selected-pills">
+        @for (id of tagEditIds(); track id) {
+          <span class="tx-tag-pill tx-tag-pill--selected">
+            {{ getTagName(id) }}
+            <button type="button" class="tag-pill-remove" (click)="toggleTag(id)">
+              <i class="pi pi-times"></i>
+            </button>
+          </span>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Tag search -->
+  <div class="tag-search-row">
+    <input
+      pInputText
+      [ngModel]="tagSearchQuery()"
+      (ngModelChange)="tagSearchQuery.set($event)"
+      [placeholder]="'common.search' | translate"
+      class="tag-search-input"
+    />
+  </div>
+
+  <!-- All available tags -->
+  <div class="tag-selector">
+    @for (tag of filteredAvailableTags(); track tag.id) {
+      <button
+        type="button"
+        class="tag-toggle-pill"
+        [class.tag-toggle-pill--selected]="tagEditIds().includes(tag.id)"
+        (click)="toggleTag(tag.id)"
+      >
+        @if (tagEditIds().includes(tag.id)) {
+          <i class="pi pi-check"></i>
+        } @else {
+          <i class="pi pi-hashtag"></i>
+        }
+        {{ tag.name }}
+      </button>
+    }
+    @if (filteredAvailableTags().length === 0) {
+      <span class="tag-selector-empty">{{ 'transactions.tags.noMatch' | translate }}</span>
+    }
+  </div>
+
+  <ng-template #footer>
+    <p-button
+      [label]="'common.cancel' | translate"
+      [text]="true"
+      severity="secondary"
+      (onClick)="tagEditVisible = false"
+    />
+    <p-button
+      [label]="'common.save' | translate"
+      (onClick)="saveTagEdit()"
+      [loading]="tagSaving()"
     />
   </ng-template>
 </p-dialog>

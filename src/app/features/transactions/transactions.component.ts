@@ -87,6 +87,31 @@ export class TransactionsComponent implements OnInit {
   dialogVisible = false;
   editingTransaction: TransactionResponse | null = null;
 
+  // ─── Bulk selection ─────────────────────────────────────────────────────────
+
+  selectedTransactions = signal<TransactionResponse[]>([]);
+  bulkConfirming = signal(false);
+  bulkDeleting = signal(false);
+
+  readonly pendingInSelection = computed(() =>
+    this.selectedTransactions().filter(t => !t.isConfirmed).length
+  );
+
+  // ─── Tag editor modal ────────────────────────────────────────────────────────
+
+  tagEditVisible = false;
+  tagEditingTx = signal<TransactionResponse | null>(null);
+  tagEditIds = signal<string[]>([]);
+  tagSaving = signal(false);
+  tagSearchQuery = signal('');
+
+  readonly filteredAvailableTags = computed(() => {
+    const q = this.tagSearchQuery().toLowerCase();
+    return q
+      ? this.allTags().filter(t => t.name.toLowerCase().includes(q))
+      : this.allTags();
+  });
+
   filterType = signal<TransactionType | null>(null);
   filterStatus = signal<boolean | null>(null);
   filterDateRange = signal<Date[] | null>(null);
@@ -244,7 +269,7 @@ export class TransactionsComponent implements OnInit {
     }
 
     const v = this.form.value;
-    const transactionDate = this.toDateString(v.transactionDate as Date);
+    const transactionDate = this.toDateString(v.transactionDate as Date)!;
     const recurrenceEndDate = this.toDateString(v.recurrenceEndDate as Date | null);
     const selectedTagIds = (v.tagIds as string[]) ?? [];
     const existingTagIds = this.editingTransaction?.tags.map(t => t.id) ?? [];
@@ -312,6 +337,79 @@ export class TransactionsComponent implements OnInit {
     });
   }
 
+  // ─── Tag editor ─────────────────────────────────────────────────────────────
+
+  openTagEditor(tx: TransactionResponse): void {
+    this.tagEditingTx.set(tx);
+    this.tagEditIds.set(tx.tags.map(t => t.id));
+    this.tagSearchQuery.set('');
+    this.tagEditVisible = true;
+  }
+
+  toggleTag(tagId: string): void {
+    const current = this.tagEditIds();
+    this.tagEditIds.set(
+      current.includes(tagId) ? current.filter(id => id !== tagId) : [...current, tagId]
+    );
+  }
+
+  getTagName(tagId: string): string {
+    return this.allTags().find(t => t.id === tagId)?.name ?? tagId;
+  }
+
+  saveTagEdit(): void {
+    const tx = this.tagEditingTx();
+    if (!tx) return;
+    this.tagSaving.set(true);
+    this.syncTags(tx.id, this.tagEditIds(), tx.tags.map(t => t.id)).subscribe({
+      next: () => {
+        this.tagSaving.set(false);
+        this.tagEditVisible = false;
+        this.notify('success', 'transactions.toast.updateSuccess');
+        this.loadTransactions(this.currentPage, this.pageSize);
+      },
+      error: () => this.tagSaving.set(false),
+    });
+  }
+
+  // ─── Bulk actions ────────────────────────────────────────────────────────────
+
+  bulkConfirmSelected(): void {
+    const pending = this.selectedTransactions().filter(t => !t.isConfirmed);
+    if (!pending.length) return;
+    this.bulkConfirming.set(true);
+    forkJoin(pending.map(t => this.transactionService.confirm(t.id))).subscribe({
+      next: () => {
+        this.bulkConfirming.set(false);
+        this.selectedTransactions.set([]);
+        this.notify('success', 'transactions.toast.bulkConfirmSuccess');
+        this.loadTransactions(this.currentPage, this.pageSize);
+      },
+      error: () => this.bulkConfirming.set(false),
+    });
+  }
+
+  bulkDeleteSelected(): void {
+    this.confirmationService.confirm({
+      message: this.translate.instant('transactions.confirmBulkDelete', { count: this.selectedTransactions().length }),
+      header: this.translate.instant('transactions.confirmDeleteHeader'),
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.bulkDeleting.set(true);
+        forkJoin(this.selectedTransactions().map(t => this.transactionService.delete(t.id))).subscribe({
+          next: () => {
+            this.bulkDeleting.set(false);
+            this.selectedTransactions.set([]);
+            this.notify('success', 'transactions.toast.bulkDeleteSuccess');
+            this.loadTransactions(this.currentPage, this.pageSize);
+          },
+          error: () => this.bulkDeleting.set(false),
+        });
+      },
+    });
+  }
+
   getCategoryName(id: string | null): string {
     if (!id) return '—';
     return this.allCategories().find(c => c.id === id)?.name ?? '—';
@@ -361,6 +459,7 @@ export class TransactionsComponent implements OnInit {
 
   private loadTransactions(page: number, size: number): void {
     this.loading.set(true);
+    this.selectedTransactions.set([]);
     const dateRange = this.filterDateRange();
     this.transactionService.getAll({
       pageNumber: page,
@@ -409,8 +508,8 @@ export class TransactionsComponent implements OnInit {
     });
   }
 
-  private toDateString(date: Date | null | undefined): string {
-    if (!date) return '';
+  private toDateString(date: Date | null | undefined): string | null {
+    if (!date) return null;
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, '0');
     const d = String(date.getDate()).padStart(2, '0');
