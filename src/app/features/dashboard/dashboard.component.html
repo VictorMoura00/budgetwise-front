@@ -1,7 +1,589 @@
-<div class="dashboard-content">
-  <div class="placeholder-icon">
-    <i class="pi pi-chart-bar"></i>
+<div class="dashboard">
+
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div>
+      <h1 class="page-title">{{ 'dashboard.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'dashboard.subtitle' | translate }}</p>
+    </div>
+    <p-selectbutton
+      [options]="periodOptions()"
+      [ngModel]="period()"
+      (ngModelChange)="changePeriod($event)"
+      optionLabel="label"
+      optionValue="value"
+    />
   </div>
-  <h1>{{ 'dashboard.title' | translate }}</h1>
-  <p>{{ 'dashboard.placeholder' | translate }}</p>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid" [class.kpi-grid--loading]="loading()">
+
+    <!-- Income card -->
+    <div
+      class="kpi-card kpi-card--clickable"
+      (click)="openIncomeModal()"
+      [pTooltip]="incomeComparison() ? ('dashboard.kpi.vsLastPeriod' | translate) + ' ' + incomeComparison() : ''"
+      tooltipPosition="bottom"
+    >
+      @if (loading()) {
+        <p-skeleton height="4.5rem" />
+      } @else {
+        <div class="kpi-icon kpi-icon--income"><i class="pi pi-arrow-up"></i></div>
+        <div class="kpi-body">
+          <span class="kpi-label">{{ 'dashboard.kpi.income' | translate }}</span>
+          <span class="kpi-value kpi-value--income">{{ formatCurrency(data()?.summary?.totalIncome ?? 0) }}</span>
+          @if (incomeComparison()) {
+            <span class="kpi-comparison" [class.kpi-comparison--pos]="(data()?.summary?.totalIncome ?? 0) >= (data()?.prevSummary?.totalIncome ?? 0)" [class.kpi-comparison--neg]="(data()?.summary?.totalIncome ?? 0) < (data()?.prevSummary?.totalIncome ?? 0)">
+              {{ incomeComparison() }}
+            </span>
+          }
+        </div>
+        <i class="pi pi-chevron-right kpi-chevron"></i>
+      }
+    </div>
+
+    <!-- Expense card -->
+    <div
+      class="kpi-card kpi-card--clickable"
+      (click)="openExpenseModal()"
+      [pTooltip]="expenseComparison() ? ('dashboard.kpi.vsLastPeriod' | translate) + ' ' + expenseComparison() : ''"
+      tooltipPosition="bottom"
+    >
+      @if (loading()) {
+        <p-skeleton height="4.5rem" />
+      } @else {
+        <div class="kpi-icon kpi-icon--expense"><i class="pi pi-arrow-down"></i></div>
+        <div class="kpi-body">
+          <span class="kpi-label">{{ 'dashboard.kpi.expense' | translate }}</span>
+          <span class="kpi-value kpi-value--expense">{{ formatCurrency(data()?.summary?.totalExpense ?? 0) }}</span>
+          @if (expenseComparison()) {
+            <span class="kpi-comparison" [class.kpi-comparison--pos]="(data()?.summary?.totalExpense ?? 0) <= (data()?.prevSummary?.totalExpense ?? 0)" [class.kpi-comparison--neg]="(data()?.summary?.totalExpense ?? 0) > (data()?.prevSummary?.totalExpense ?? 0)">
+              {{ expenseComparison() }}
+            </span>
+          }
+        </div>
+        <i class="pi pi-chevron-right kpi-chevron"></i>
+      }
+    </div>
+
+    <!-- Balance card -->
+    <div
+      class="kpi-card"
+      [class.kpi-card--negative-pulse]="!loading() && (data()?.summary?.balance ?? 0) < 0"
+      [pTooltip]="balanceComparison() ? ('dashboard.kpi.vsLastPeriod' | translate) + ' ' + balanceComparison() : ''"
+      tooltipPosition="bottom"
+    >
+      @if (loading()) {
+        <p-skeleton height="4.5rem" />
+      } @else {
+        <div class="kpi-icon" [ngClass]="(data()?.summary?.balance ?? 0) >= 0 ? 'kpi-icon--balance-pos' : 'kpi-icon--balance-neg'">
+          <i class="pi" [ngClass]="(data()?.summary?.balance ?? 0) >= 0 ? 'pi-wallet' : 'pi-exclamation-triangle'"></i>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">{{ 'dashboard.kpi.balance' | translate }}</span>
+          <span class="kpi-value" [ngClass]="(data()?.summary?.balance ?? 0) >= 0 ? 'kpi-value--income' : 'kpi-value--expense'">
+            {{ formatCurrency(data()?.summary?.balance ?? 0) }}
+          </span>
+          @if (balanceComparison()) {
+            <span class="kpi-comparison" [class.kpi-comparison--pos]="(data()?.summary?.balance ?? 0) >= (data()?.prevSummary?.balance ?? 0)" [class.kpi-comparison--neg]="(data()?.summary?.balance ?? 0) < (data()?.prevSummary?.balance ?? 0)">
+              {{ balanceComparison() }}
+            </span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Pending card -->
+    <div class="kpi-card kpi-card--clickable" (click)="openPendingDialog()">
+      @if (loading()) {
+        <p-skeleton height="4.5rem" />
+      } @else {
+        <div class="kpi-icon kpi-icon--pending"><i class="pi pi-clock"></i></div>
+        <div class="kpi-body">
+          <span class="kpi-label">{{ 'dashboard.kpi.pending' | translate }}</span>
+          <span class="kpi-value kpi-value--pending">{{ data()?.summary?.pendingCount ?? 0 }}</span>
+          @if ((data()?.summary?.pendingAmount ?? 0) > 0) {
+            <span class="kpi-sub">{{ formatCurrency(data()?.summary?.pendingAmount ?? 0) }}</span>
+          }
+        </div>
+        <i class="pi pi-chevron-right kpi-chevron"></i>
+      }
+    </div>
+
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+
+    <!-- Line chart -->
+    <div class="card chart-card">
+      <div class="card-header">
+        <span class="card-title">{{ 'dashboard.chart.evolution' | translate }}</span>
+        @if (!loading() && (data()?.monthlyEvolution?.length ?? 0) > 0) {
+          <span class="card-hint"><i class="pi pi-hand-pointer"></i> {{ 'dashboard.chart.clickHint' | translate }}</span>
+        }
+      </div>
+      <div class="chart-wrap">
+        @if (loading()) {
+          <p-skeleton height="100%" />
+        } @else if (lineChartData()) {
+          <p-chart type="line" [data]="lineChartData()" [options]="lineChartOptions()" height="100%" />
+        } @else {
+          <div class="chart-empty">
+            <i class="pi pi-chart-line"></i>
+            <span>{{ 'dashboard.chart.noData' | translate }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Donut chart -->
+    <div class="card chart-card">
+      <div class="card-header">
+        <span class="card-title">{{ 'dashboard.chart.byCategory' | translate }}</span>
+        @if (!loading() && donutChartData()) {
+          <span class="card-hint"><i class="pi pi-hand-pointer"></i> {{ 'dashboard.chart.clickHint' | translate }}</span>
+        }
+      </div>
+      @if (loading()) {
+        <p-skeleton height="14rem" />
+      } @else if (donutChartData()) {
+        <div class="donut-wrap">
+          <p-chart type="doughnut" [data]="donutChartData()" [options]="donutChartOptions()" height="100%" />
+        </div>
+      } @else {
+        <div class="chart-empty">
+          <i class="pi pi-chart-pie"></i>
+          <span>{{ 'dashboard.chart.noData' | translate }}</span>
+        </div>
+      }
+    </div>
+
+  </div>
+
+  <!-- Bottom grid: recent transactions + top expense breakdown -->
+  <div class="bottom-grid">
+
+    <!-- Recent transactions -->
+    <div class="card recent-card">
+      <div class="card-header">
+        <span class="card-title">{{ 'dashboard.recent.title' | translate }}</span>
+        <p-button
+          [label]="'dashboard.recent.viewAll' | translate"
+          variant="text"
+          size="small"
+          icon="pi pi-arrow-right"
+          iconPos="right"
+          routerLink="/transactions"
+        />
+      </div>
+
+      @if (loading()) {
+        <div class="recent-list">
+          @for (i of [1,2,3,4,5]; track i) {
+            <div class="recent-item">
+              <p-skeleton shape="circle" size="2.5rem" />
+              <div style="flex:1">
+                <p-skeleton width="60%" height="0.875rem" />
+                <p-skeleton width="35%" height="0.75rem" styleClass="mt-1" />
+              </div>
+              <p-skeleton width="5rem" height="0.875rem" />
+            </div>
+          }
+        </div>
+      } @else if (!data()?.recentTransactions?.length) {
+        <div class="chart-empty">
+          <i class="pi pi-inbox"></i>
+          <span>{{ 'dashboard.recent.empty' | translate }}</span>
+        </div>
+      } @else {
+        <ul class="recent-list">
+          @for (tx of data()?.recentTransactions ?? []; track tx.id) {
+            <li class="recent-item recent-item--clickable" (click)="openTxDetail(tx)">
+              <div class="recent-icon" [ngClass]="tx.type === TransactionType.Income ? 'recent-icon--income' : 'recent-icon--expense'">
+                <i class="pi" [ngClass]="tx.type === TransactionType.Income ? 'pi-arrow-up' : 'pi-arrow-down'"></i>
+              </div>
+              <div class="recent-info">
+                <span class="recent-description">{{ tx.description }}</span>
+                <span class="recent-meta">
+                  {{ tx.transactionDate | date:'dd/MM/yyyy' }}
+                  @if (tx.categoryName) {
+                    · {{ tx.categoryName }}
+                  }
+                </span>
+              </div>
+              <div class="recent-right">
+                <span class="recent-amount" [ngClass]="tx.type === TransactionType.Income ? 'amount--income' : 'amount--expense'">
+                  {{ tx.type === TransactionType.Income ? '+' : '-' }}{{ formatCurrency(tx.amount) }}
+                </span>
+                @if (!tx.isConfirmed) {
+                  <p-tag value="{{ 'transactions.status.pending' | translate }}" severity="warn" styleClass="recent-tag" />
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <!-- Top expense categories breakdown -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">{{ 'dashboard.topExpenses.title' | translate }}</span>
+        @if (!loading() && donutChartData()) {
+          <span class="card-hint"><i class="pi pi-hand-pointer"></i> {{ 'dashboard.chart.clickHint' | translate }}</span>
+        }
+      </div>
+
+      @if (loading()) {
+        <ul class="expense-bars">
+          @for (i of [1,2,3,4]; track i) {
+            <li class="expense-bar-item">
+              <div class="expense-bar-header">
+                <p-skeleton width="55%" height="0.8rem" />
+                <p-skeleton width="4rem" height="0.8rem" />
+              </div>
+              <p-skeleton height="6px" />
+            </li>
+          }
+        </ul>
+      } @else if (!data()?.topCategories?.length) {
+        <div class="chart-empty">
+          <i class="pi pi-chart-bar"></i>
+          <span>{{ 'dashboard.chart.noData' | translate }}</span>
+        </div>
+      } @else {
+        <ul class="expense-bars">
+          @for (cat of data()?.topCategories ?? []; track cat.categoryId) {
+            <li class="expense-bar-item" (click)="onDonutChartClick($index)">
+              <div class="expense-bar-header">
+                <div class="expense-bar-name">
+                  <span class="legend-dot" [style.background-color]="cat.color"></span>
+                  <span>{{ cat.categoryName }}</span>
+                </div>
+                <span class="expense-bar-amount">{{ formatCurrency(cat.total) }}</span>
+              </div>
+              <div class="expense-progress-bg">
+                <div class="expense-progress-fill" [style.width.%]="cat.percentage" [style.background-color]="cat.color"></div>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+  </div>
+
 </div>
+
+<!-- FAB quick-add button -->
+<button class="fab" (click)="openQuickAdd()" [pTooltip]="'dashboard.quickAdd.tooltip' | translate" tooltipPosition="left">
+  <i class="pi pi-plus"></i>
+</button>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- Pending transactions dialog                                                -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<p-dialog
+  [(visible)]="pendingDialogVisible"
+  [header]="'dashboard.pending.title' | translate"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '560px' }"
+>
+  @if (loadingPending()) {
+    <ul class="pending-list">
+      @for (i of [1, 2, 3]; track i) {
+        <li class="pending-item">
+          <p-skeleton shape="circle" size="2.375rem" />
+          <div class="pending-info">
+            <p-skeleton width="55%" height="0.875rem" />
+            <p-skeleton width="35%" height="0.75rem" styleClass="mt-1" />
+          </div>
+          <p-skeleton width="5rem" height="0.875rem" />
+          <p-skeleton shape="circle" size="2rem" />
+        </li>
+      }
+    </ul>
+  } @else if (!pendingTransactions().length) {
+    <div class="pending-empty">
+      <i class="pi pi-check-circle"></i>
+      <span>{{ 'dashboard.pending.empty' | translate }}</span>
+    </div>
+  } @else {
+    <ul class="pending-list">
+      @for (tx of pendingTransactions(); track tx.id) {
+        <li class="pending-item">
+          <div class="pending-icon" [ngClass]="tx.type === TransactionType.Income ? 'pending-icon--income' : 'pending-icon--expense'">
+            <i class="pi" [ngClass]="tx.type === TransactionType.Income ? 'pi-arrow-up' : 'pi-arrow-down'"></i>
+          </div>
+          <div class="pending-info">
+            <span class="pending-description">{{ tx.description }}</span>
+            <span class="pending-meta">
+              {{ tx.transactionDate | date:'dd/MM/yyyy' }}
+              @if (tx.categoryName) { · {{ tx.categoryName }} }
+            </span>
+          </div>
+          <span class="pending-amount" [ngClass]="tx.type === TransactionType.Income ? 'amount--income' : 'amount--expense'">
+            {{ tx.type === TransactionType.Income ? '+' : '-' }}{{ formatCurrency(tx.amount) }}
+          </span>
+          <p-button
+            icon="pi pi-check"
+            size="small"
+            severity="success"
+            [text]="true"
+            [rounded]="true"
+            [loading]="confirming() === tx.id"
+            [pTooltip]="'transactions.actions.confirm' | translate"
+            tooltipPosition="left"
+            (onClick)="confirmPendingTransaction(tx)"
+          />
+        </li>
+      }
+    </ul>
+  }
+</p-dialog>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- Transaction list modal (income / expense / chart clicks)                   -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<p-dialog
+  [(visible)]="txListVisible"
+  [header]="txListTitle"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '600px' }"
+>
+  @if (txListLoading()) {
+    <ul class="pending-list">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <li class="pending-item">
+          <p-skeleton shape="circle" size="2.375rem" />
+          <div class="pending-info">
+            <p-skeleton width="55%" height="0.875rem" />
+            <p-skeleton width="35%" height="0.75rem" styleClass="mt-1" />
+          </div>
+          <p-skeleton width="5rem" height="0.875rem" />
+        </li>
+      }
+    </ul>
+  } @else if (!txListItems().length) {
+    <div class="pending-empty">
+      <i class="pi pi-inbox"></i>
+      <span>{{ 'dashboard.modal.empty' | translate }}</span>
+    </div>
+  } @else {
+    <ul class="pending-list">
+      @for (tx of txListItems(); track tx.id) {
+        <li class="pending-item pending-item--clickable" (click)="openTxDetail(tx); txListVisible = false">
+          <div class="pending-icon" [ngClass]="tx.type === TransactionType.Income ? 'pending-icon--income' : 'pending-icon--expense'">
+            <i class="pi" [ngClass]="tx.type === TransactionType.Income ? 'pi-arrow-up' : 'pi-arrow-down'"></i>
+          </div>
+          <div class="pending-info">
+            <span class="pending-description">{{ tx.description }}</span>
+            <span class="pending-meta">
+              {{ tx.transactionDate | date:'dd/MM/yyyy' }}
+              @if (tx.categoryName) { · {{ tx.categoryName }} }
+            </span>
+          </div>
+          <div class="txlist-right">
+            <span class="pending-amount" [ngClass]="tx.type === TransactionType.Income ? 'amount--income' : 'amount--expense'">
+              {{ tx.type === TransactionType.Income ? '+' : '-' }}{{ formatCurrency(tx.amount) }}
+            </span>
+            @if (!tx.isConfirmed) {
+              <p-tag value="{{ 'transactions.status.pending' | translate }}" severity="warn" styleClass="recent-tag" />
+            }
+          </div>
+        </li>
+      }
+    </ul>
+    <div class="txlist-footer">
+      {{ txListItems().length }} {{ 'dashboard.modal.transactionsCount' | translate }}
+    </div>
+  }
+</p-dialog>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- Transaction detail modal                                                   -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<p-dialog
+  [(visible)]="txDetailVisible"
+  [header]="'dashboard.detail.title' | translate"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '480px' }"
+>
+  @if (selectedTx(); as tx) {
+    <div class="detail-grid">
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.columns.description' | translate }}</span>
+        <span class="detail-value">{{ tx.description }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.columns.amount' | translate }}</span>
+        <span class="detail-value detail-value--amount" [ngClass]="tx.type === TransactionType.Income ? 'amount--income' : 'amount--expense'">
+          {{ tx.type === TransactionType.Income ? '+' : '-' }}{{ formatCurrency(tx.amount) }}
+        </span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.columns.type' | translate }}</span>
+        <p-tag
+          [value]="tx.type === TransactionType.Income ? ('transactions.type.income' | translate) : ('transactions.type.expense' | translate)"
+          [severity]="tx.type === TransactionType.Income ? 'success' : 'danger'"
+        />
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.columns.date' | translate }}</span>
+        <span class="detail-value">{{ tx.transactionDate | date:'dd/MM/yyyy' }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.columns.category' | translate }}</span>
+        <span class="detail-value">{{ tx.categoryName ?? '—' }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.columns.status' | translate }}</span>
+        <p-tag
+          [value]="tx.isConfirmed ? ('transactions.status.confirmed' | translate) : ('transactions.status.pending' | translate)"
+          [severity]="tx.isConfirmed ? 'success' : 'warn'"
+        />
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.form.paymentMethod' | translate }}</span>
+        <span class="detail-value">{{ paymentMethodLabel(tx.paymentMethod) }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.form.recurrenceType' | translate }}</span>
+        <span class="detail-value">{{ recurrenceLabel(tx.recurrenceType) }}</span>
+      </div>
+
+      @if (tx.recurrenceEndDate) {
+        <div class="detail-row">
+          <span class="detail-label">{{ 'transactions.form.recurrenceEndDate' | translate }}</span>
+          <span class="detail-value">{{ tx.recurrenceEndDate | date:'dd/MM/yyyy' }}</span>
+        </div>
+      }
+
+      @if (tx.tags.length) {
+        <div class="detail-row">
+          <span class="detail-label">{{ 'transactions.form.tags' | translate }}</span>
+          <div class="detail-tags">
+            @for (tag of tx.tags; track tag.id) {
+              <p-tag [value]="tag.name" severity="secondary" />
+            }
+          </div>
+        </div>
+      }
+
+      @if (tx.notes) {
+        <div class="detail-row detail-row--full">
+          <span class="detail-label">{{ 'transactions.form.notes' | translate }}</span>
+          <span class="detail-value detail-value--notes">{{ tx.notes }}</span>
+        </div>
+      }
+
+    </div>
+  }
+</p-dialog>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- Quick-add dialog                                                           -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<p-dialog
+  [(visible)]="quickAddVisible"
+  [header]="'dashboard.quickAdd.title' | translate"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '480px' }"
+>
+  <form [formGroup]="quickAddForm" class="quick-form">
+
+    <div class="form-row">
+      <label class="form-label">{{ 'transactions.form.type' | translate }}</label>
+      <p-selectbutton
+        formControlName="type"
+        [options]="typeFormOptions()"
+        optionLabel="label"
+        optionValue="value"
+      />
+    </div>
+
+    <div class="form-row">
+      <label class="form-label" for="qa-desc">{{ 'transactions.form.description' | translate }}</label>
+      <input
+        id="qa-desc"
+        pInputText
+        formControlName="description"
+        [placeholder]="'transactions.form.description' | translate"
+        style="width:100%"
+      />
+    </div>
+
+    <div class="form-row">
+      <label class="form-label" for="qa-amount">{{ 'transactions.form.amount' | translate }}</label>
+      <p-inputnumber
+        inputId="qa-amount"
+        formControlName="amount"
+        mode="currency"
+        currency="BRL"
+        locale="pt-BR"
+        [minFractionDigits]="2"
+        style="width:100%"
+      />
+    </div>
+
+    <div class="form-row">
+      <label class="form-label" for="qa-date">{{ 'transactions.form.date' | translate }}</label>
+      <p-datepicker
+        inputId="qa-date"
+        formControlName="transactionDate"
+        dateFormat="dd/mm/yy"
+        [showIcon]="true"
+        style="width:100%"
+      />
+    </div>
+
+    <div class="form-row">
+      <label class="form-label" for="qa-cat">{{ 'transactions.form.category' | translate }}</label>
+      <p-select
+        inputId="qa-cat"
+        formControlName="categoryId"
+        [options]="categoriesOptions()"
+        optionLabel="label"
+        optionValue="value"
+        style="width:100%"
+      />
+    </div>
+
+    <div class="form-row form-row--inline">
+      <label class="form-label">{{ 'transactions.form.isConfirmed' | translate }}</label>
+      <p-toggleswitch formControlName="isConfirmed" />
+    </div>
+
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      [label]="'common.cancel' | translate"
+      severity="secondary"
+      variant="text"
+      (onClick)="quickAddVisible = false"
+    />
+    <p-button
+      [label]="'common.save' | translate"
+      [loading]="quickAddSaving()"
+      (onClick)="saveQuickAdd()"
+    />
+  </ng-template>
+</p-dialog>
