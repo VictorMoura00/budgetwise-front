@@ -9,11 +9,11 @@
       size="small"
     />
     <p-button
-      [icon]="theme.isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'"
+      [icon]="layout.isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'"
       [rounded]="true"
       [text]="true"
       severity="secondary"
-      (onClick)="theme.toggleDarkMode()"
+      (onClick)="layout.toggleDarkMode()"
     />
   </div>
 

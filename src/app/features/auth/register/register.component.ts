@@ -12,7 +12,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { MessageModule } from 'primeng/message';
 import { NgClass } from '@angular/common';
-import { ThemeService } from '../../../core/services/theme.service';
+import { LayoutService } from '../../../core/services/layout.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -46,7 +46,7 @@ export class RegisterComponent {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
 
-  readonly theme = inject(ThemeService);
+  readonly layout = inject(LayoutService);
   readonly lang = inject(LanguageService);
 
   readonly langOptions = [

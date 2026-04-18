@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ThemeService } from './core/services/theme.service';
+import { LayoutService } from './core/services/layout.service';
 import { LanguageService } from './core/services/language.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { LanguageService } from './core/services/language.service';
 })
 export class App {
   constructor() {
-    inject(ThemeService).init();
+    inject(LayoutService);
     inject(LanguageService).init();
   }
 }
