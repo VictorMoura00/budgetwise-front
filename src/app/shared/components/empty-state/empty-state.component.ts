@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-empty-state',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TranslateModule, ButtonModule],
   templateUrl: './empty-state.component.html',
   styleUrl: './empty-state.component.scss',

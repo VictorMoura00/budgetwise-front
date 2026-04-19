@@ -249,5 +249,10 @@
     "email": "E-mail inválido",
     "minLength": "Mínimo de {{value}} caracteres",
     "passwordMismatch": "As senhas não coincidem"
+  },
+  "notFound": {
+    "title": "Página não encontrada",
+    "subtitle": "A página que você está procurando não existe ou foi movida.",
+    "back": "Voltar ao início"
   }
 }

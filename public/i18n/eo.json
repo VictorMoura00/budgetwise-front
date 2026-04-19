@@ -249,5 +249,10 @@
     "email": "Nevalida retpoŝto",
     "minLength": "Minimumo {{value}} signoj",
     "passwordMismatch": "Pasvortoj ne kongruas"
+  },
+  "notFound": {
+    "title": "Paĝo ne trovita",
+    "subtitle": "La paĝo, kiun vi serĉas, ne ekzistas aŭ estis movita.",
+    "back": "Reen al komenco"
   }
 }

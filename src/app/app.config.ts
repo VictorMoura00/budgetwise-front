@@ -1,9 +1,7 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling, withViewTransitions } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { errorInterceptor } from './core/interceptors/error.interceptor';
-import { authInterceptor } from './core/interceptors/auth.interceptor';
-import { tokenRefreshInterceptor } from './core/interceptors/token-refresh.interceptor';
+import { authInterceptor, errorInterceptor, tokenRefreshInterceptor } from './core/interceptors';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -42,7 +40,12 @@ const AppPreset = definePreset(Aura, {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withViewTransitions(),
+      withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
+      withComponentInputBinding(),
+    ),
     provideHttpClient(withInterceptors([errorInterceptor, authInterceptor, tokenRefreshInterceptor])),
     provideAnimationsAsync(),
     provideTranslateService({ defaultLanguage: 'pt' }),

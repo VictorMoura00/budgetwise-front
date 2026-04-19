@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
@@ -7,12 +7,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { TagService } from '../../core/services/tag.service';
-import { TagResponse } from '../../core/models/tag.models';
-import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { TagService } from '../../core/services';
+import { TagResponse } from '../../core/models';
+import { EmptyStateComponent } from '../../shared/components';
 
 @Component({
   selector: 'app-tags',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     TranslateModule,

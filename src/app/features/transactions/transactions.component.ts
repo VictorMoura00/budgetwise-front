@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -18,21 +18,11 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ChipModule } from 'primeng/chip';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { EmptyStateComponent } from '../../shared/components';
 import { Observable, forkJoin, of, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { LanguageService } from '../../core/services/language.service';
-import { CategoryService } from '../../core/services/category.service';
-import { TransactionService } from '../../core/services/transaction.service';
-import { TagService } from '../../core/services/tag.service';
-import { CategoryResponse } from '../../core/models/category.models';
-import { TagResponse } from '../../core/models/tag.models';
-import {
-  PaymentMethod,
-  RecurrenceType,
-  TransactionResponse,
-  TransactionType,
-} from '../../core/models/transaction.models';
+import { CategoryService, LanguageService, TagService, TransactionService } from '../../core/services';
+import { CategoryResponse, PaymentMethod, RecurrenceType, TagResponse, TransactionResponse, TransactionType } from '../../core/models';
 
 type Severity = 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast';
 
@@ -43,6 +33,7 @@ interface SelectOption<T> {
 
 @Component({
   selector: 'app-transactions',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     ReactiveFormsModule,

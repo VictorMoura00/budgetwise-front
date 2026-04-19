@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -14,6 +14,7 @@ import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-header',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     RouterLink,

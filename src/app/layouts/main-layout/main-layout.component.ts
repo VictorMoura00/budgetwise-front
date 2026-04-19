@@ -1,15 +1,16 @@
-import { Component, HostListener, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { HeaderComponent } from '../../shared/components/header/header.component';
+import { HeaderComponent } from './header/header.component';
 
 const MOBILE_BP = 768;
 
 @Component({
   selector: 'app-main-layout',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet, RouterLink, RouterLinkActive, NgClass, TranslateModule, HeaderComponent, ToastModule, ConfirmDialogModule],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss',

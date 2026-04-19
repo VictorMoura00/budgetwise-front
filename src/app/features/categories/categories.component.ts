@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
@@ -17,9 +17,9 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { Popover } from 'primeng/popover';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { NgClass } from '@angular/common';
-import { CategoryService } from '../../core/services/category.service';
-import { CategoryResponse } from '../../core/models/category.models';
-import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { CategoryService } from '../../core/services';
+import { CategoryResponse } from '../../core/models';
+import { EmptyStateComponent } from '../../shared/components';
 
 const ALL_ICONS: string[] = [
   'pi pi-address-book', 'pi pi-at', 'pi pi-ban', 'pi pi-barcode', 'pi pi-bars',
@@ -64,6 +64,7 @@ const ALL_ICONS: string[] = [
 
 @Component({
   selector: 'app-categories',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     FormsModule,

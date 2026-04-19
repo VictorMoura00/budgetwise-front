@@ -249,5 +249,10 @@
     "email": "Invalid email",
     "minLength": "Minimum {{value}} characters",
     "passwordMismatch": "Passwords do not match"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "subtitle": "The page you are looking for does not exist or has been moved.",
+    "back": "Back to home"
   }
 }

@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, NgZone, OnInit, computed, inject, signal } from '@angular/core';
 import { DatePipe, NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,23 +16,12 @@ import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { MessageService } from 'primeng/api';
-import { DashboardService } from '../../core/services/dashboard.service';
-import { LayoutService } from '../../core/services/layout.service';
-import { LanguageService } from '../../core/services/language.service';
-import { TransactionService } from '../../core/services/transaction.service';
-import { CategoryService } from '../../core/services/category.service';
-import { DashboardData, PeriodMonths } from '../../core/models/dashboard.models';
-import { CategoryResponse } from '../../core/models/category.models';
-import {
-  GetTransactionsParams,
-  TransactionResponse,
-  TransactionType,
-  RecurrenceType,
-  PaymentMethod,
-} from '../../core/models/transaction.models';
+import { CategoryService, DashboardService, LanguageService, LayoutService, TransactionService } from '../../core/services';
+import { CategoryResponse, DashboardData, GetTransactionsParams, PaymentMethod, PeriodMonths, RecurrenceType, TransactionResponse, TransactionType } from '../../core/models';
 
 @Component({
   selector: 'app-dashboard',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     ReactiveFormsModule,

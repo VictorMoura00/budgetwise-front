@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ValidationErrors, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -12,9 +12,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { MessageModule } from 'primeng/message';
 import { NgClass } from '@angular/common';
-import { LayoutService } from '../../../core/services/layout.service';
-import { LanguageService } from '../../../core/services/language.service';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthService, LanguageService, LayoutService } from '../../../core/services';
 
 function passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
   const password = group.get('password')?.value;
@@ -24,6 +22,7 @@ function passwordMatchValidator(group: AbstractControl): ValidationErrors | null
 
 @Component({
   selector: 'app-register',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     FormsModule,
