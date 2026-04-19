@@ -124,6 +124,12 @@ export class DashboardComponent implements OnInit {
     return [none, ...this.allCategories().map(c => ({ label: c.name, value: c.id as string | null }))];
   });
 
+  readonly categoriesChips = computed(() => {
+    this.lang.currentLang();
+    const none = { label: this.translate.instant('transactions.form.noCategory'), value: null as string | null, icon: null, color: null };
+    return [none, ...this.allCategories().map(c => ({ label: c.name, value: c.id as string | null, icon: c.icon, color: c.color }))];
+  });
+
   readonly lineChartData = computed(() => {
     const d = this.data();
     if (!d) return null;

@@ -505,33 +505,35 @@
   [modal]="true"
   [draggable]="false"
   [resizable]="false"
-  [style]="{ width: '480px' }"
+  [style]="{ width: '540px' }"
+  styleClass="quick-dialog"
 >
   <form [formGroup]="quickAddForm" class="quick-form">
 
-    <div class="form-row">
-      <label class="form-label">{{ 'transactions.form.type' | translate }}</label>
-      <p-selectbutton
-        formControlName="type"
-        [options]="typeFormOptions()"
-        optionLabel="label"
-        optionValue="value"
-      />
+    <!-- ── Tipo: cards visuais ──────────────────────────── -->
+    <div class="type-cards">
+      <button
+        type="button"
+        class="type-card type-card--income"
+        [class.type-card--active]="quickAddForm.get('type')?.value === TransactionType.Income"
+        (click)="quickAddForm.get('type')?.setValue(TransactionType.Income)"
+      >
+        <span class="type-card__icon"><i class="pi pi-arrow-up"></i></span>
+        <span class="type-card__label">{{ 'transactions.type.income' | translate }}</span>
+      </button>
+      <button
+        type="button"
+        class="type-card type-card--expense"
+        [class.type-card--active]="quickAddForm.get('type')?.value === TransactionType.Expense"
+        (click)="quickAddForm.get('type')?.setValue(TransactionType.Expense)"
+      >
+        <span class="type-card__icon"><i class="pi pi-arrow-down"></i></span>
+        <span class="type-card__label">{{ 'transactions.type.expense' | translate }}</span>
+      </button>
     </div>
 
-    <div class="form-row">
-      <label class="form-label" for="qa-desc">{{ 'transactions.form.description' | translate }}</label>
-      <input
-        id="qa-desc"
-        pInputText
-        formControlName="description"
-        [placeholder]="'transactions.form.description' | translate"
-        style="width:100%"
-      />
-    </div>
-
-    <div class="form-row">
-      <label class="form-label" for="qa-amount">{{ 'transactions.form.amount' | translate }}</label>
+    <!-- ── Valor: destaque central ──────────────────────── -->
+    <div class="amount-row">
       <p-inputnumber
         inputId="qa-amount"
         formControlName="amount"
@@ -539,33 +541,59 @@
         currency="BRL"
         locale="pt-BR"
         [minFractionDigits]="2"
-        style="width:100%"
+        styleClass="amount-input"
+        [ngClass]="{ 'amount-input--income': quickAddForm.get('type')?.value === TransactionType.Income,
+                     'amount-input--expense': quickAddForm.get('type')?.value === TransactionType.Expense }"
       />
     </div>
 
+    <!-- ── Descrição + Data lado a lado ────────────────── -->
+    <div class="quick-grid">
+      <div class="form-row">
+        <label class="form-label" for="qa-desc">{{ 'transactions.form.description' | translate }}</label>
+        <input
+          id="qa-desc"
+          pInputText
+          formControlName="description"
+          [placeholder]="'transactions.form.description' | translate"
+          style="width: 100%"
+        />
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="qa-date">{{ 'transactions.form.date' | translate }}</label>
+        <p-datepicker
+          inputId="qa-date"
+          formControlName="transactionDate"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          styleClass="date-full"
+        />
+      </div>
+    </div>
+
+    <!-- ── Categoria: chips horizontais ────────────────── -->
     <div class="form-row">
-      <label class="form-label" for="qa-date">{{ 'transactions.form.date' | translate }}</label>
-      <p-datepicker
-        inputId="qa-date"
-        formControlName="transactionDate"
-        dateFormat="dd/mm/yy"
-        [showIcon]="true"
-        style="width:100%"
-      />
+      <label class="form-label">{{ 'transactions.form.category' | translate }}</label>
+      <div class="cat-chips">
+        @for (cat of categoriesChips(); track cat.value) {
+          <button
+            type="button"
+            class="cat-chip"
+            [class.cat-chip--active]="quickAddForm.get('categoryId')?.value === cat.value"
+            (click)="quickAddForm.get('categoryId')?.setValue(cat.value)"
+          >
+            @if (cat.icon) {
+              <i [class]="cat.icon" [style.color]="cat.color ?? 'var(--p-primary-color)'"></i>
+            } @else {
+              <i class="pi pi-tag" style="opacity: 0.4"></i>
+            }
+            {{ cat.label }}
+          </button>
+        }
+      </div>
     </div>
 
-    <div class="form-row">
-      <label class="form-label" for="qa-cat">{{ 'transactions.form.category' | translate }}</label>
-      <p-select
-        inputId="qa-cat"
-        formControlName="categoryId"
-        [options]="categoriesOptions()"
-        optionLabel="label"
-        optionValue="value"
-        style="width:100%"
-      />
-    </div>
-
+    <!-- ── Confirmar ────────────────────────────────────── -->
     <div class="form-row form-row--inline">
       <label class="form-label">{{ 'transactions.form.isConfirmed' | translate }}</label>
       <p-toggleswitch formControlName="isConfirmed" />
@@ -582,6 +610,7 @@
     />
     <p-button
       [label]="'common.save' | translate"
+      [icon]="'pi pi-check'"
       [loading]="quickAddSaving()"
       (onClick)="saveQuickAdd()"
     />
