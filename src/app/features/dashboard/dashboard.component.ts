@@ -180,6 +180,7 @@ export class DashboardComponent implements OnInit {
     return {
       responsive: true,
       maintainAspectRatio: false,
+      resizeDelay: 100,
       interaction: { mode: 'index', intersect: false },
       onClick: (_: any, elements: any[]) => {
         if (elements.length) this.ngZone.run(() => this.onLineChartClick(elements[0].index));
@@ -246,6 +247,7 @@ export class DashboardComponent implements OnInit {
     return {
       responsive: true,
       maintainAspectRatio: false,
+      resizeDelay: 100,
       cutout: '72%',
       onClick: (_: any, elements: any[]) => {
         if (elements.length) this.ngZone.run(() => this.onDonutChartClick(elements[0].index));

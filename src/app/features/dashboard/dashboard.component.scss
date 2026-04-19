@@ -282,8 +282,7 @@
 
 .chart-card {
   .chart-wrap {
-    flex: 1;
-    min-height: 240px;
+    height: 280px;
     position: relative;
   }
 
@@ -317,8 +316,7 @@
 // ─── Donut ───────────────────────────────────────────────────────────────────
 
 .donut-wrap {
-  flex: 1;
-  min-height: 220px;
+  height: 280px;
   position: relative;
 
   ::ng-deep p-chart,
