@@ -7,9 +7,37 @@
   box-sizing: border-box;
 }
 
+// ─── Surface aliases ─────────────────────────────────────────────────────────
+// PrimeNG v21 gera --p-surface-0..950, sem aliases nomeados.
+// Aura light: surface-0 = branco → surface-950 = quase preto  (escala normal)
+// Aura dark:  surface-0 = branco → surface-950 = quase preto  (mesma escala!)
+// Logo, no dark mode os tokens semânticos usam números ALTOS (900/950) para
+// fundos escuros. Por isso temos seções :root e .app-dark separadas.
 :root {
   --p-font-family: 'Poppins', system-ui, sans-serif;
   --topbar-height: 57px;
+
+  // Light mode: surface-0 (mais claro) → fundos de card/página
+  --p-surface-card:   var(--p-surface-0);
+  --p-surface-ground: var(--p-surface-50);
+  --p-surface-hover:  var(--p-surface-100);
+  --p-surface-border: var(--p-surface-200);
+
+  // ─── Header ────────────────────────────────────────────────────────────────
+  // Para mudar a cor do header, altere apenas estas variáveis:
+  --header-bg:     var(--p-surface-0);
+  --header-border: var(--p-surface-200);
+}
+
+// Dark mode: surface-900/950 são os fundos escuros; surface-0 = branco (texto)
+.app-dark {
+  --p-surface-card:   var(--p-surface-850);
+  --p-surface-ground: var(--p-surface-900);
+  --p-surface-hover:  var(--p-surface-800);
+  --p-surface-border: var(--p-surface-700);
+
+  --header-bg:     var(--p-surface-900);
+  --header-border: var(--p-surface-700);
 }
 
 html,

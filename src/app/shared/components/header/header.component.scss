@@ -87,6 +87,8 @@
   border-left: none !important;
   border-right: none !important;
   border-top: none !important;
+  border-bottom: 1px solid var(--header-border) !important;
+  background: var(--header-bg) !important;
   padding: 0.5rem 1.5rem;
 }
 
