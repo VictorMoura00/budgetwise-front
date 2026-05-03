@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild, inject, linkedSignal, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, ViewChild, inject, linkedSignal, signal } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -98,6 +98,7 @@ export class CategoriesComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
 
   categories = signal<CategoryResponse[]>([]);
@@ -233,7 +234,7 @@ export class CategoriesComponent implements OnInit {
       ? this.categoryService.update(this.editingCategory.id, request)
       : this.categoryService.create(request);
 
-    op$.pipe(takeUntilDestroyed()).subscribe({
+    op$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.saving.set(false);
         this._draft = null;
@@ -256,7 +257,7 @@ export class CategoriesComponent implements OnInit {
   }
 
   private deleteCategory(category: CategoryResponse): void {
-    this.categoryService.delete(category.id).pipe(takeUntilDestroyed()).subscribe({
+    this.categoryService.delete(category.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.toast('success', 'categories.toast.deleteSuccess');
         this.loadCategories(this.currentPage, this.pageSize);
@@ -266,7 +267,7 @@ export class CategoriesComponent implements OnInit {
 
   private loadCategories(page: number, size: number): void {
     this.loading.set(true);
-    this.categoryService.getAll({ pageNumber: page, pageSize: size }).pipe(takeUntilDestroyed()).subscribe({
+    this.categoryService.getAll({ pageNumber: page, pageSize: size }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: res => {
         this.categories.set(res.items);
         this.totalRecords.set(res.totalCount);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -33,6 +33,7 @@ export class TagsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
 
   tags = signal<TagResponse[]>([]);
@@ -99,7 +100,7 @@ export class TagsComponent implements OnInit {
       ? this.tagService.update(this.editingTag.id, { name })
       : this.tagService.create({ name });
 
-    op$.pipe(takeUntilDestroyed()).subscribe({
+    op$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.saving.set(false);
         this._draft = null;
@@ -123,7 +124,7 @@ export class TagsComponent implements OnInit {
 
   private loadTags(): void {
     this.loading.set(true);
-    this.tagService.getAll().pipe(takeUntilDestroyed()).subscribe({
+    this.tagService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: tags => {
         this.tags.set(tags);
         this.loading.set(false);
@@ -133,7 +134,7 @@ export class TagsComponent implements OnInit {
   }
 
   private deleteTag(tag: TagResponse): void {
-    this.tagService.delete(tag.id).pipe(takeUntilDestroyed()).subscribe({
+    this.tagService.delete(tag.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.notify('success', 'tags.toast.deleteSuccess');
         this.loadTags();

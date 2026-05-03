@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, NgZone, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, NgZone, OnInit, computed, inject, signal } from '@angular/core';
 import { DatePipe, NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -58,6 +58,7 @@ export class DashboardComponent implements OnInit {
   private readonly layout = inject(LayoutService);
   private readonly messageService = inject(MessageService);
   private readonly ngZone = inject(NgZone);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly TransactionType = TransactionType;
   readonly RecurrenceType = RecurrenceType;
@@ -284,7 +285,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.load();
     this.loadOverview();
-    this.categoryService.getAll({ pageSize: 200 }).pipe(takeUntilDestroyed()).subscribe({
+    this.categoryService.getAll({ pageSize: 200 }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: res => this.allCategories.set(res.items),
     });
   }
@@ -313,7 +314,7 @@ export class DashboardComponent implements OnInit {
       startDate: `${y}-${m}-01`,
       endDate: `${y}-${m}-${String(lastDay).padStart(2, '0')}`,
       pageSize: 100,
-    }).pipe(takeUntilDestroyed()).subscribe({
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: res => {
         this.pendingTransactions.set(res.items);
         this.loadingPending.set(false);
@@ -324,7 +325,7 @@ export class DashboardComponent implements OnInit {
 
   confirmPendingTransaction(tx: TransactionResponse): void {
     this.confirming.set(tx.id);
-    this.transactionService.confirm(tx.id).pipe(takeUntilDestroyed()).subscribe({
+    this.transactionService.confirm(tx.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.pendingTransactions.update(list => list.filter(t => t.id !== tx.id));
         this.confirming.set(null);
@@ -462,7 +463,7 @@ export class DashboardComponent implements OnInit {
       paymentMethod: null,
       familyGroupId: null,
       dueDate: null,
-    }).pipe(takeUntilDestroyed()).subscribe({
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.quickAddSaving.set(false);
         this._quickAddDraft = null;
@@ -506,7 +507,7 @@ export class DashboardComponent implements OnInit {
     this.txListLoading.set(true);
     this.txListItems.set([]);
 
-    this.transactionService.getAll(params).pipe(takeUntilDestroyed()).subscribe({
+    this.transactionService.getAll(params).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: res => {
         this.txListItems.set(res.items);
         this.txListLoading.set(false);
@@ -545,7 +546,7 @@ export class DashboardComponent implements OnInit {
 
   private load(): void {
     this.loading.set(true);
-    this.dashboardService.load(this.period()).pipe(takeUntilDestroyed()).subscribe({
+    this.dashboardService.load(this.period()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: d => {
         this.data.set(d);
         this.loading.set(false);
@@ -557,7 +558,7 @@ export class DashboardComponent implements OnInit {
   private loadOverview(): void {
     const now = new Date();
     this.dashboardService.getOverview(now.getFullYear(), now.getMonth() + 1)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: res => this.overview.set(res),
       });

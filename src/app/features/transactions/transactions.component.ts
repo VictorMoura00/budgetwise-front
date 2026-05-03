@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -67,6 +67,7 @@ export class TransactionsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
   private readonly lang = inject(LanguageService);
 
@@ -337,7 +338,7 @@ export class TransactionsComponent implements OnInit {
 
     save$.pipe(
       switchMap(transaction => this.syncTags(transaction.id, selectedTagIds, existingTagIds)),
-      takeUntilDestroyed(),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.saving.set(false);
@@ -395,7 +396,7 @@ export class TransactionsComponent implements OnInit {
     const tx = this.tagEditingTx();
     if (!tx) return;
     this.tagSaving.set(true);
-    this.syncTags(tx.id, this.tagEditIds(), tx.tags.map(t => t.id)).pipe(takeUntilDestroyed()).subscribe({
+    this.syncTags(tx.id, this.tagEditIds(), tx.tags.map(t => t.id)).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.tagSaving.set(false);
         this.tagEditVisible = false;
@@ -412,7 +413,7 @@ export class TransactionsComponent implements OnInit {
     const pending = this.selectedTransactions().filter(t => !t.isConfirmed);
     if (!pending.length) return;
     this.bulkConfirming.set(true);
-    forkJoin(pending.map(t => this.transactionService.confirm(t.id))).pipe(takeUntilDestroyed()).subscribe({
+    forkJoin(pending.map(t => this.transactionService.confirm(t.id))).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.bulkConfirming.set(false);
         this.selectedTransactions.set([]);
@@ -431,7 +432,7 @@ export class TransactionsComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.bulkDeleting.set(true);
-        forkJoin(this.selectedTransactions().map(t => this.transactionService.delete(t.id))).pipe(takeUntilDestroyed()).subscribe({
+        forkJoin(this.selectedTransactions().map(t => this.transactionService.delete(t.id))).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: () => {
             this.bulkDeleting.set(false);
             this.selectedTransactions.set([]);
@@ -502,7 +503,7 @@ export class TransactionsComponent implements OnInit {
       isConfirmed: this.filterStatus(),
       startDate: dateRange?.[0] ? this.toDateString(dateRange[0]) : null,
       endDate: dateRange?.[1] ? this.toDateString(dateRange[1]) : null,
-    }).pipe(takeUntilDestroyed()).subscribe({
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: res => {
         this.transactions.set(res.items);
         this.totalRecords.set(res.totalCount);
@@ -513,19 +514,19 @@ export class TransactionsComponent implements OnInit {
   }
 
   private loadCategories(): void {
-    this.categoryService.getAll({ pageSize: 200 }).pipe(takeUntilDestroyed()).subscribe({
+    this.categoryService.getAll({ pageSize: 200 }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: res => this.allCategories.set(res.items),
     });
   }
 
   private loadTags(): void {
-    this.tagService.getAll().pipe(takeUntilDestroyed()).subscribe({
+    this.tagService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: tags => this.allTags.set(tags),
     });
   }
 
   private deleteTransaction(transaction: TransactionResponse): void {
-    this.transactionService.delete(transaction.id).pipe(takeUntilDestroyed()).subscribe({
+    this.transactionService.delete(transaction.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.notify('success', 'transactions.toast.deleteSuccess');
         this.loadTransactions(this.currentPage, this.pageSize);
@@ -534,7 +535,7 @@ export class TransactionsComponent implements OnInit {
   }
 
   private doConfirmTransaction(transaction: TransactionResponse): void {
-    this.transactionService.confirm(transaction.id).pipe(takeUntilDestroyed()).subscribe({
+    this.transactionService.confirm(transaction.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.notify('success', 'transactions.toast.confirmSuccess');
         this.loadTransactions(this.currentPage, this.pageSize);
