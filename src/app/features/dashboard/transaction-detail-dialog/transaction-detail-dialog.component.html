@@ -1,0 +1,89 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="!$event && close.emit()"
+  [header]="'dashboard.detail.title' | translate"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '480px' }"
+>
+  @if (tx(); as tx) {
+    <div class="detail-grid">
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.columns.description' | translate }}</span>
+        <span class="detail-value">{{ tx.description }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.columns.amount' | translate }}</span>
+        <span class="detail-value detail-value--amount" [ngClass]="tx.type === TransactionType.Income ? 'amount--income' : 'amount--expense'">
+          {{ tx.type === TransactionType.Income ? '+' : '-' }}{{ formatCurrency(tx.amount) }}
+        </span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.columns.type' | translate }}</span>
+        <p-tag
+          [value]="tx.type === TransactionType.Income ? ('transactions.type.income' | translate) : ('transactions.type.expense' | translate)"
+          [severity]="tx.type === TransactionType.Income ? 'success' : 'danger'"
+        />
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.columns.date' | translate }}</span>
+        <span class="detail-value">{{ tx.transactionDate | date:'dd/MM/yyyy' }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.columns.category' | translate }}</span>
+        <span class="detail-value">{{ tx.categoryName ?? '—' }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.columns.status' | translate }}</span>
+        <p-tag
+          [value]="tx.isConfirmed ? ('transactions.status.confirmed' | translate) : ('transactions.status.pending' | translate)"
+          [severity]="tx.isConfirmed ? 'success' : 'warn'"
+        />
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.form.paymentMethod' | translate }}</span>
+        <span class="detail-value">{{ paymentMethodLabel(tx.paymentMethod) }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'transactions.form.recurrenceType' | translate }}</span>
+        <span class="detail-value">{{ recurrenceLabel(tx.recurrenceType) }}</span>
+      </div>
+
+      @if (tx.recurrenceEndDate) {
+        <div class="detail-row">
+          <span class="detail-label">{{ 'transactions.form.recurrenceEndDate' | translate }}</span>
+          <span class="detail-value">{{ tx.recurrenceEndDate | date:'dd/MM/yyyy' }}</span>
+        </div>
+      }
+
+      @if (tx.tags.length) {
+        <div class="detail-row">
+          <span class="detail-label">{{ 'transactions.form.tags' | translate }}</span>
+          <div class="detail-tags">
+            @for (tag of tx.tags; track tag.id) {
+              <p-tag [value]="tag.name" severity="secondary" />
+            }
+          </div>
+        </div>
+      }
+
+      @if (tx.notes) {
+        <div class="detail-row detail-row--full">
+          <span class="detail-label">{{ 'transactions.form.notes' | translate }}</span>
+          <span class="detail-value detail-value--notes">{{ tx.notes }}</span>
+        </div>
+      }
+
+    </div>
+  }
+</p-dialog>

@@ -67,6 +67,38 @@
             <i class="pi pi-hashtag"></i>
             <span>{{ 'nav.tags' | translate }}</span>
           </a>
+
+          <a
+            routerLink="/family-groups"
+            routerLinkActive="active"
+            class="nav-item"
+            (click)="closeIfMobile()"
+          >
+            <i class="pi pi-users"></i>
+            <span>{{ 'nav.familyGroups' | translate }}</span>
+          </a>
+
+          <a
+            routerLink="/due-transactions"
+            routerLinkActive="active"
+            class="nav-item"
+            (click)="closeIfMobile()"
+          >
+            <i class="pi pi-clock"></i>
+            <span>{{ 'nav.dueTransactions' | translate }}</span>
+          </a>
+
+          @if (isAdmin) {
+            <a
+              routerLink="/admin/users"
+              routerLinkActive="active"
+              class="nav-item"
+              (click)="closeIfMobile()"
+            >
+              <i class="pi pi-shield"></i>
+              <span>{{ 'nav.admin' | translate }}</span>
+            </a>
+          }
         </nav>
 
       </div>

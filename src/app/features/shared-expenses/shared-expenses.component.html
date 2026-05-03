@@ -1,0 +1,72 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ 'sharedExpenses.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'sharedExpenses.subtitle' | translate }}</p>
+    </div>
+  </div>
+
+  @if (!groupId()) {
+    <div class="content-card">
+      <div class="empty-state">
+        <i class="pi pi-users empty-state__icon"></i>
+        <p class="empty-state__title">{{ 'sharedExpenses.empty.title' | translate }}</p>
+        <p class="empty-state__subtitle">{{ 'sharedExpenses.empty.subtitle' | translate }}</p>
+        <p-button
+          [label]="'sharedExpenses.selectGroup' | translate"
+          icon="pi pi-arrow-right"
+          size="small"
+          [outlined]="true"
+          routerLink="/family-groups"
+        />
+      </div>
+    </div>
+  } @else if (loading()) {
+    <div class="content-card skeleton-list">
+      @for (i of [1,2,3]; track i) {
+        <p-skeleton height="4rem" styleClass="mb-2" />
+      }
+    </div>
+  } @else {
+    <div class="content-card">
+      @if (summary(); as s) {
+        <div class="summary-row">
+          <div class="summary-cell">
+            <span class="summary-label">{{ 'sharedExpenses.totalAmount' | translate }}</span>
+            <span class="summary-value">{{ formatCurrency(s.totalAmount) }}</span>
+          </div>
+          <div class="summary-cell">
+            <span class="summary-label">{{ 'sharedExpenses.totalSettled' | translate }}</span>
+            <span class="summary-value">{{ formatCurrency(s.totalSettled) }}</span>
+          </div>
+          <div class="summary-cell">
+            <span class="summary-label">{{ 'sharedExpenses.totalPending' | translate }}</span>
+            <span class="summary-value">{{ formatCurrency(s.totalPending) }}</span>
+          </div>
+        </div>
+      }
+
+      @if (!expenses().length) {
+        <div class="group-empty">{{ 'sharedExpenses.noExpenses' | translate }}</div>
+      } @else {
+        <ul class="expense-list">
+          @for (exp of expenses(); track exp.id) {
+            <li class="expense-item">
+              <div class="expense-info">
+                <span class="expense-desc">{{ exp.description ?? '—' }}</span>
+                <span class="expense-meta">{{ formatCurrency(exp.totalAmount) }} · {{ exp.participants.length }} {{ 'sharedExpenses.participants' | translate }}</span>
+              </div>
+              <div class="expense-status">
+                @if (exp.isFullySettled) {
+                  <span class="status-badge status-badge--settled">{{ 'sharedExpenses.settled' | translate }}</span>
+                } @else {
+                  <span class="status-badge status-badge--pending">{{ 'sharedExpenses.pending' | translate }}</span>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  }
+</div>

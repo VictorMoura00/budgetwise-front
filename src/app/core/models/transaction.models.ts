@@ -33,6 +33,7 @@ export interface TransactionResponse {
   amount: number;
   type: TransactionType;
   transactionDate: string;
+  dueDate: string | null;
   categoryId: string | null;
   categoryName: string | null;
   categoryColor: string | null;
@@ -40,6 +41,7 @@ export interface TransactionResponse {
   recurrenceType: RecurrenceType;
   recurrenceEndDate: string | null;
   isConfirmed: boolean;
+  paidAt: string | null;
   paymentMethod: PaymentMethod | null;
   familyGroupId: string | null;
   createdAt: string;
@@ -72,7 +74,8 @@ export interface CreateTransactionRequest {
   recurrenceEndDate: string | null;
   isConfirmed: boolean;
   paymentMethod: PaymentMethod | null;
-  familyGroupId: null;
+  familyGroupId: string | null;
+  dueDate: string | null;
 }
 
 export interface UpdateTransactionRequest {
@@ -85,7 +88,12 @@ export interface UpdateTransactionRequest {
   recurrenceType: RecurrenceType;
   recurrenceEndDate: string | null;
   paymentMethod: PaymentMethod | null;
-  familyGroupId: null;
+  familyGroupId: string | null;
+  dueDate: string | null;
+}
+
+export interface ConfirmTransactionRequest {
+  paidAt: string | null;
 }
 
 export interface GetTransactionsParams {
@@ -96,6 +104,7 @@ export interface GetTransactionsParams {
   startDate?: string | null;
   endDate?: string | null;
   isConfirmed?: boolean | null;
+  dueDate?: string | null;
 }
 
 export interface PaginatedTransactionResponse {

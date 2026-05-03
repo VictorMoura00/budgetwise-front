@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 
@@ -10,9 +10,9 @@ import { ButtonModule } from 'primeng/button';
   styleUrl: './empty-state.component.scss',
 })
 export class EmptyStateComponent {
-  @Input() icon = 'pi-inbox';
-  @Input() title = '';
-  @Input() subtitle = '';
-  @Input() actionLabel = '';
-  @Output() action = new EventEmitter<void>();
+  icon = input('pi-inbox');
+  title = input('');
+  subtitle = input('');
+  actionLabel = input('');
+  action = output<void>();
 }

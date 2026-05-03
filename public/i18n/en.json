@@ -44,7 +44,10 @@
     "dashboard": "Dashboard",
     "categories": "Categories",
     "transactions": "Transactions",
-    "tags": "Tags"
+    "tags": "Tags",
+    "familyGroups": "Family",
+    "dueTransactions": "Due",
+    "admin": "Admin"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -249,6 +252,94 @@
     "email": "Invalid email",
     "minLength": "Minimum {{value}} characters",
     "passwordMismatch": "Passwords do not match"
+  },
+  "familyGroups": {
+    "title": "Family Groups",
+    "subtitle": "Manage your family groups and shared expenses",
+    "newGroup": "New Group",
+    "joinGroup": "Join with Code",
+    "members": "members",
+    "empty": {
+      "title": "No groups",
+      "subtitle": "Create a group or join with an invite code."
+    },
+    "create": {
+      "title": "Create Group"
+    },
+    "join": {
+      "title": "Join Group",
+      "action": "Join"
+    },
+    "form": {
+      "name": "Name",
+      "description": "Description",
+      "inviteCode": "Invite Code"
+    },
+    "confirmLeave": "Are you sure you want to leave {{name}}?",
+    "confirmLeaveHeader": "Leave Group",
+    "toast": {
+      "createSuccess": "Group created successfully.",
+      "joinSuccess": "You joined the group successfully."
+    }
+  },
+  "sharedExpenses": {
+    "title": "Shared Expenses",
+    "subtitle": "Manage expenses shared with your group",
+    "selectGroup": "Select Group",
+    "totalAmount": "Total",
+    "totalSettled": "Settled",
+    "totalPending": "Pending",
+    "participants": "participants",
+    "settled": "Settled",
+    "pending": "Pending",
+    "empty": {
+      "title": "No expenses",
+      "subtitle": "Create a shared expense to get started."
+    },
+    "noExpenses": "No expenses found."
+  },
+  "dueTransactions": {
+    "title": "Due Transactions",
+    "subtitle": "Track transactions by due date",
+    "totalPending": "Total Pending",
+    "noItems": "No items in this group.",
+    "groups": {
+      "overdue": "Overdue",
+      "dueToday": "Due Today",
+      "dueNext7Days": "Next 7 Days",
+      "dueNext30Days": "Next 30 Days",
+      "future": "Future",
+      "withoutDueDate": "No Due Date"
+    }
+  },
+  "admin": {
+    "users": {
+      "title": "User Administration",
+      "subtitle": "Manage system users",
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "status": "Status"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "locked": "Locked"
+      },
+      "actions": {
+        "unlock": "Unlock",
+        "activate": "Activate",
+        "deactivate": "Deactivate"
+      },
+      "confirmActivate": "Activate {{name}}?",
+      "confirmDeactivate": "Deactivate {{name}}?",
+      "confirmUnlock": "Unlock {{name}}?",
+      "toast": {
+        "statusUpdated": "Status updated.",
+        "unlocked": "User unlocked."
+      }
+    }
   },
   "notFound": {
     "title": "Page not found",

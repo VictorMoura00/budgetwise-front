@@ -1,0 +1,57 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ 'dueTransactions.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'dueTransactions.subtitle' | translate }}</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="content-card skeleton-list">
+      @for (i of [1,2,3]; track i) {
+        <p-skeleton height="8rem" styleClass="mb-2" />
+      }
+    </div>
+  } @else if (data(); as d) {
+    <div class="summary-bar">
+      <div class="summary-item">
+        <span class="summary-label">{{ 'dueTransactions.totalPending' | translate }}</span>
+        <span class="summary-value">{{ d.totalPendingCount }}</span>
+        <span class="summary-amount">{{ formatCurrency(d.totalPendingAmount) }}</span>
+      </div>
+    </div>
+
+    <div class="groups-grid">
+      @for (g of groups; track g.key) {
+        @if (getGroup(g.key); as group) {
+          <div class="group-card">
+            <div class="group-header group-header--{{ g.severity }}">
+              <span class="group-title">{{ groupTitle(g.key) }}</span>
+              <span class="group-badge">{{ group.count }} · {{ formatCurrency(group.totalAmount) }}</span>
+            </div>
+            @if (group.items.length) {
+              <ul class="item-list">
+                @for (item of group.items; track item.id) {
+                  <li class="item-row">
+                    <div class="item-info">
+                      <span class="item-desc">{{ item.description }}</span>
+                      <span class="item-meta">
+                        {{ item.transactionDate | date:'dd/MM/yyyy' }}
+                        @if (item.categoryName) { · {{ item.categoryName }} }
+                      </span>
+                    </div>
+                    <span class="item-amount" [ngClass]="item.type === 'Income' ? 'amount--income' : 'amount--expense'">
+                      {{ item.type === 'Income' ? '+' : '-' }}{{ formatCurrency(item.amount) }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <div class="group-empty">{{ 'dueTransactions.noItems' | translate }}</div>
+            }
+          </div>
+        }
+      }
+    </div>
+  }
+</div>

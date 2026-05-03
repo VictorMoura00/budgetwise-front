@@ -1,0 +1,140 @@
+<div class="page">
+  @if (loading()) {
+    <div class="skeleton-header">
+      <p-skeleton width="60%" height="1.75rem" styleClass="mb-2" />
+      <p-skeleton width="40%" height="0.875rem" />
+    </div>
+    <div class="skeleton-body">
+      @for (i of [1,2,3]; track i) {
+        <p-skeleton height="3rem" styleClass="mb-2" />
+      }
+    </div>
+  } @else if (group(); as g) {
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">{{ g.name }}</h1>
+        @if (g.description) {
+          <p class="page-subtitle">{{ g.description }}</p>
+        }
+      </div>
+      <div class="header-actions">
+        <p-button
+          icon="pi pi-arrow-right"
+          [label]="'sharedExpenses.title' | translate"
+          [routerLink]="['/family-groups', groupId(), 'shared-expenses']"
+        />
+        @if (isOwner()) {
+          <p-button
+            icon="pi pi-pencil"
+            [text]="true"
+            severity="secondary"
+            (onClick)="openEditDialog()"
+          />
+          <p-button
+            icon="pi pi-trash"
+            [text]="true"
+            severity="danger"
+            (onClick)="confirmDelete()"
+          />
+        } @else {
+          <p-button
+            icon="pi pi-sign-out"
+            [text]="true"
+            severity="danger"
+            (onClick)="confirmLeave()"
+          />
+        }
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="info-section">
+        <div class="info-row">
+          <span class="info-label">{{ 'familyGroups.inviteCode' | translate }}</span>
+          <div class="info-value-row">
+            <span class="info-value code">{{ g.inviteCode }}</span>
+            <p-button
+              icon="pi pi-copy"
+              [text]="true"
+              [rounded]="true"
+              size="small"
+              (onClick)="copyInviteCode()"
+            />
+            @if (isOwner()) {
+              <p-button
+                icon="pi pi-refresh"
+                [text]="true"
+                [rounded]="true"
+                size="small"
+                [loading]="regenerating()"
+                (onClick)="confirmRegenerateInvite()"
+              />
+            }
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-label">{{ 'familyGroups.createdAt' | translate }}</span>
+          <span class="info-value">{{ g.createdAt | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">{{ 'familyGroups.members' | translate }}</h2>
+    <div class="content-card">
+      <ul class="member-list">
+        @for (member of g.members; track member.id) {
+          <li class="member-item">
+            <div class="member-info">
+              <span class="member-id">{{ member.userId }}</span>
+              <span class="member-role" [class.member-role--owner]="member.role === 'Owner'">{{ member.role }}</span>
+            </div>
+            @if (isOwner() && member.role !== 'Owner') {
+              <p-button
+                icon="pi pi-times"
+                [text]="true"
+                [rounded]="true"
+                severity="danger"
+                size="small"
+                (onClick)="confirmRemoveMember(member)"
+              />
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  }
+</div>
+
+<p-dialog
+  [(visible)]="editDialogVisible"
+  [header]="'familyGroups.edit.title' | translate"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '440px' }"
+>
+  <div class="form-stack">
+    <div class="form-field">
+      <label class="field-label">{{ 'familyGroups.form.name' | translate }}</label>
+      <input pInputText [(ngModel)]="editName" style="width: 100%" />
+    </div>
+    <div class="form-field">
+      <label class="field-label">{{ 'familyGroups.form.description' | translate }}</label>
+      <input pInputText [(ngModel)]="editDescription" style="width: 100%" />
+    </div>
+  </div>
+  <ng-template #footer>
+    <p-button
+      [label]="'common.cancel' | translate"
+      [text]="true"
+      severity="secondary"
+      (onClick)="editDialogVisible = false"
+    />
+    <p-button
+      [label]="'common.save' | translate"
+      [loading]="saving()"
+      (onClick)="saveEdit()"
+    />
+  </ng-template>
+</p-dialog>

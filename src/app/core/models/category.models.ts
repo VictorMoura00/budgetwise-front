@@ -1,3 +1,5 @@
+export type CategoryType = 'Both' | 'Expense' | 'Income';
+
 export interface CategoryResponse {
   id: string;
   name: string;
@@ -6,6 +8,7 @@ export interface CategoryResponse {
   color: string | null;
   isSystem: boolean;
   isActive: boolean;
+  categoryType: CategoryType;
   userId: string | null;
   createdAt: string;
   updatedAt: string;
@@ -13,12 +16,19 @@ export interface CategoryResponse {
 
 export interface CreateCategoryRequest {
   name: string;
-  description?: string | null;
-  icon?: string | null;
-  color?: string | null;
+  description: string | null;
+  icon: string | null;
+  color: string | null;
+  categoryType: CategoryType;
 }
 
-export type UpdateCategoryRequest = CreateCategoryRequest;
+export interface UpdateCategoryRequest {
+  name: string;
+  description: string | null;
+  icon: string | null;
+  color: string | null;
+  categoryType: CategoryType;
+}
 
 export interface GetCategoriesParams {
   pageNumber?: number;

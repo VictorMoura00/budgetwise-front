@@ -1,6 +1,6 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling, withViewTransitions } from '@angular/router';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { authInterceptor, errorInterceptor, tokenRefreshInterceptor } from './core/interceptors';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideTranslateService } from '@ngx-translate/core';
@@ -46,7 +46,7 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
       withComponentInputBinding(),
     ),
-    provideHttpClient(withInterceptors([errorInterceptor, authInterceptor, tokenRefreshInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([errorInterceptor, authInterceptor, tokenRefreshInterceptor])),
     provideAnimationsAsync(),
     provideTranslateService({ defaultLanguage: 'pt' }),
     provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),

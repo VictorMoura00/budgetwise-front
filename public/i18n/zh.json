@@ -44,7 +44,10 @@
     "dashboard": "仪表盘",
     "categories": "分类",
     "transactions": "交易",
-    "tags": "标签"
+    "tags": "标签",
+    "familyGroups": "家庭",
+    "dueTransactions": "到期",
+    "admin": "管理"
   },
   "dashboard": {
     "title": "仪表盘",
@@ -249,6 +252,94 @@
     "email": "无效的电子邮件",
     "minLength": "最少 {{value}} 个字符",
     "passwordMismatch": "密码不匹配"
+  },
+  "familyGroups": {
+    "title": "家庭群组",
+    "subtitle": "管理您的家庭群组和共享支出",
+    "newGroup": "新建群组",
+    "joinGroup": "加入群组",
+    "members": "成员",
+    "empty": {
+      "title": "没有群组",
+      "subtitle": "创建群组或使用邀请码加入。"
+    },
+    "create": {
+      "title": "创建群组"
+    },
+    "join": {
+      "title": "加入群组",
+      "action": "加入"
+    },
+    "form": {
+      "name": "名称",
+      "description": "描述",
+      "inviteCode": "邀请码"
+    },
+    "confirmLeave": "确定要退出 {{name}} 吗？",
+    "confirmLeaveHeader": "退出群组",
+    "toast": {
+      "createSuccess": "群组创建成功。",
+      "joinSuccess": "您已成功加入群组。"
+    }
+  },
+  "sharedExpenses": {
+    "title": "共享支出",
+    "subtitle": "管理群组的共享支出",
+    "selectGroup": "选择群组",
+    "totalAmount": "总额",
+    "totalSettled": "已结清",
+    "totalPending": "待结清",
+    "participants": "参与者",
+    "settled": "已结清",
+    "pending": "待结清",
+    "empty": {
+      "title": "没有支出",
+      "subtitle": "创建共享支出以开始。"
+    },
+    "noExpenses": "未找到支出。"
+  },
+  "dueTransactions": {
+    "title": "到期交易",
+    "subtitle": "按到期日跟踪交易",
+    "totalPending": "待处理总数",
+    "noItems": "此组中没有项目。",
+    "groups": {
+      "overdue": "已逾期",
+      "dueToday": "今日到期",
+      "dueNext7Days": "未来7天",
+      "dueNext30Days": "未来30天",
+      "future": "未来",
+      "withoutDueDate": "无到期日"
+    }
+  },
+  "admin": {
+    "users": {
+      "title": "用户管理",
+      "subtitle": "管理系统用户",
+      "columns": {
+        "name": "姓名",
+        "email": "电子邮件",
+        "role": "角色",
+        "status": "状态"
+      },
+      "status": {
+        "active": "活跃",
+        "inactive": "非活跃",
+        "locked": "已锁定"
+      },
+      "actions": {
+        "unlock": "解锁",
+        "activate": "激活",
+        "deactivate": "停用"
+      },
+      "confirmActivate": "激活 {{name}}？",
+      "confirmDeactivate": "停用 {{name}}？",
+      "confirmUnlock": "解锁 {{name}}？",
+      "toast": {
+        "statusUpdated": "状态已更新。",
+        "unlocked": "用户已解锁。"
+      }
+    }
   },
   "notFound": {
     "title": "页面未找到",

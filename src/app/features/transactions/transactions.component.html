@@ -257,6 +257,8 @@
   [modal]="true"
   [style]="{ width: 'min(640px, 95vw)' }"
   [draggable]="false"
+  [dismissableMask]="true"
+  (onHide)="onDialogHide()"
 >
   <form [formGroup]="form" (ngSubmit)="saveTransaction()" novalidate>
     <div class="form-grid">
@@ -434,7 +436,7 @@
       [label]="'common.cancel' | translate"
       [text]="true"
       severity="secondary"
-      (onClick)="dialogVisible = false"
+      (onClick)="cancelDialog()"
     />
     <p-button
       [label]="'common.save' | translate"
@@ -450,7 +452,7 @@
   (visibleChange)="tagEditVisible = $event"
   [header]="'transactions.tags.editTitle' | translate"
   [modal]="true"
-  [dismissableMask]="false"
+  [dismissableMask]="true"
   [style]="{ width: 'min(520px, 95vw)' }"
   [draggable]="false"
 >

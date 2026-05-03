@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, inject, linkedSignal, signal } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -19,7 +20,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { NgClass } from '@angular/common';
 import { CategoryService } from '../../core/services';
 import { CategoryResponse } from '../../core/models';
-import { EmptyStateComponent } from '../../shared/components';
+import { EmptyStateComponent, CategoryIconComponent } from '../../shared/components';
 
 const ALL_ICONS: string[] = [
   'pi pi-address-book', 'pi pi-at', 'pi pi-ban', 'pi pi-barcode', 'pi pi-bars',
@@ -84,6 +85,7 @@ const ALL_ICONS: string[] = [
     InputGroupAddonModule,
     SkeletonModule,
     EmptyStateComponent,
+    CategoryIconComponent,
   ],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.scss',
@@ -105,14 +107,19 @@ export class CategoriesComponent implements OnInit {
 
   dialogVisible = false;
   editingCategory: CategoryResponse | null = null;
+  private _draft: { form: { name?: string | null; description?: string | null; icon?: string | null; color?: string | null }; colorPickerValue: string } | null = null;
+  private _cancelIntent = false;
 
   readonly pageSize = 10;
   readonly skeletonRows = Array(this.pageSize);
   private currentPage = 1;
 
   iconSearch = '';
-  colorPickerValue = 'ffffff';
-  displayColor = signal('#FFFFFF');
+  colorPickerValue = signal('ffffff');
+  displayColor = linkedSignal(() => {
+    const clean = this.colorPickerValue();
+    return clean ? `#${clean}` : '#FFFFFF';
+  });
 
   readonly allIcons = ALL_ICONS;
 
@@ -141,18 +148,40 @@ export class CategoriesComponent implements OnInit {
 
   openCreateDialog(): void {
     this.editingCategory = null;
-    this.form.reset({ name: '', description: null, icon: null, color: '#FFFFFF' });
-    this.colorPickerValue = 'ffffff';
-    this.displayColor.set('#FFFFFF');
+    if (this._draft) {
+      this.form.patchValue(this._draft.form);
+      this.colorPickerValue.set(this._draft.colorPickerValue);
+    } else {
+      this.form.reset({ name: '', description: null, icon: null, color: '#FFFFFF' });
+      this.colorPickerValue.set('ffffff');
+    }
     this.iconSearch = '';
     this.dialogVisible = true;
+  }
+
+  cancelDialog(): void {
+    this._cancelIntent = true;
+    this.dialogVisible = false;
+  }
+
+  onDialogHide(): void {
+    if (this._cancelIntent) {
+      this._draft = null;
+      this._cancelIntent = false;
+      return;
+    }
+    if (this.editingCategory === null) {
+      const name = this.form.value.name ?? '';
+      this._draft = name !== ''
+        ? { form: { ...this.form.value }, colorPickerValue: this.colorPickerValue() }
+        : null;
+    }
   }
 
   openEditDialog(category: CategoryResponse): void {
     this.editingCategory = category;
     const color = category.color ?? '#FFFFFF';
-    this.colorPickerValue = color.replace('#', '');
-    this.displayColor.set(color);
+    this.colorPickerValue.set(color.replace('#', ''));
     this.iconSearch = '';
     this.form.patchValue({
       name: category.name,
@@ -179,10 +208,9 @@ export class CategoriesComponent implements OnInit {
 
   onColorChange(hex: string): void {
     const clean = hex ? hex.replace(/^#/, '') : '';
-    this.colorPickerValue = clean;
+    this.colorPickerValue.set(clean);
     const color = clean ? `#${clean}` : null;
     this.form.patchValue({ color });
-    this.displayColor.set(color ?? '#FFFFFF');
   }
 
   saveCategory(): void {
@@ -196,6 +224,7 @@ export class CategoriesComponent implements OnInit {
       description: this.form.value.description || null,
       icon: this.form.value.icon || null,
       color: this.form.value.color || null,
+      categoryType: 'Both' as const,
     };
 
     this.saving.set(true);
@@ -204,9 +233,10 @@ export class CategoriesComponent implements OnInit {
       ? this.categoryService.update(this.editingCategory.id, request)
       : this.categoryService.create(request);
 
-    op$.subscribe({
+    op$.pipe(takeUntilDestroyed()).subscribe({
       next: () => {
         this.saving.set(false);
+        this._draft = null;
         this.dialogVisible = false;
         this.toast('success', this.editingCategory ? 'categories.toast.updateSuccess' : 'categories.toast.createSuccess');
         this.loadCategories(this.currentPage, this.pageSize);
@@ -215,24 +245,20 @@ export class CategoriesComponent implements OnInit {
     });
   }
 
-  confirmDeactivate(category: CategoryResponse): void {
+  confirmDelete(category: CategoryResponse): void {
     this.confirmationService.confirm({
-      message: this.translate.instant('categories.confirmDeactivate'),
-      header: this.translate.instant('categories.confirmDeactivateHeader'),
+      message: this.translate.instant('categories.confirmDelete'),
+      header: this.translate.instant('categories.confirmDeleteHeader'),
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
-      accept: () => this.deactivate(category),
+      accept: () => this.deleteCategory(category),
     });
   }
 
-  iconPreview(value: string | null | undefined): string {
-    return value ? value : 'pi pi-tag';
-  }
-
-  private deactivate(category: CategoryResponse): void {
-    this.categoryService.deactivate(category.id).subscribe({
+  private deleteCategory(category: CategoryResponse): void {
+    this.categoryService.delete(category.id).pipe(takeUntilDestroyed()).subscribe({
       next: () => {
-        this.toast('success', 'categories.toast.deactivateSuccess');
+        this.toast('success', 'categories.toast.deleteSuccess');
         this.loadCategories(this.currentPage, this.pageSize);
       },
     });
@@ -240,7 +266,7 @@ export class CategoriesComponent implements OnInit {
 
   private loadCategories(page: number, size: number): void {
     this.loading.set(true);
-    this.categoryService.getAll({ pageNumber: page, pageSize: size }).subscribe({
+    this.categoryService.getAll({ pageNumber: page, pageSize: size }).pipe(takeUntilDestroyed()).subscribe({
       next: res => {
         this.categories.set(res.items);
         this.totalRecords.set(res.totalCount);

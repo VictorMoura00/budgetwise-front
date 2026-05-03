@@ -1,0 +1,142 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ 'familyGroups.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'familyGroups.subtitle' | translate }}</p>
+    </div>
+    <div class="header-actions">
+      <p-button
+        icon="pi pi-plus"
+        [label]="'familyGroups.newGroup' | translate"
+        (onClick)="openCreateDialog()"
+      />
+      <p-button
+        icon="pi pi-sign-in"
+        [label]="'familyGroups.joinGroup' | translate"
+        variant="outlined"
+        (onClick)="openJoinDialog()"
+      />
+    </div>
+  </div>
+
+  <div class="content-card">
+    @if (loading()) {
+      <div class="skeleton-list">
+        @for (i of [1,2,3]; track i) {
+          <p-skeleton height="3rem" styleClass="mb-2" />
+        }
+      </div>
+    } @else if (!groups().length) {
+      <div class="empty-state">
+        <i class="pi pi-users empty-state__icon"></i>
+        <p class="empty-state__title">{{ 'familyGroups.empty.title' | translate }}</p>
+        <p class="empty-state__subtitle">{{ 'familyGroups.empty.subtitle' | translate }}</p>
+        <p-button
+          [label]="'familyGroups.newGroup' | translate"
+          icon="pi pi-plus"
+          size="small"
+          [outlined]="true"
+          (onClick)="openCreateDialog()"
+        />
+      </div>
+    } @else {
+      <ul class="group-list">
+        @for (group of groups(); track group.id) {
+          <li class="group-item">
+            <div class="group-info" [routerLink]="['/family-groups', group.id]" style="cursor: pointer;">
+              <span class="group-name">{{ group.name }}</span>
+              @if (group.description) {
+                <span class="group-desc">{{ group.description }}</span>
+              }
+              <span class="group-meta">{{ group.memberCount }} {{ 'familyGroups.members' | translate }}</span>
+            </div>
+            <div class="group-actions">
+              <p-button
+                icon="pi pi-arrow-right"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'sharedExpenses.title' | translate"
+                [routerLink]="['/family-groups', group.id, 'shared-expenses']"
+              />
+              <p-button
+                icon="pi pi-sign-out"
+                [text]="true"
+                [rounded]="true"
+                severity="danger"
+                [pTooltip]="'familyGroups.leave' | translate"
+                (onClick)="confirmLeave(group)"
+              />
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>
+
+<!-- Create dialog -->
+<p-dialog
+  [(visible)]="dialogVisible"
+  [header]="'familyGroups.create.title' | translate"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '440px' }"
+>
+  <div class="form-stack">
+    <div class="form-field">
+      <label class="field-label">{{ 'familyGroups.form.name' | translate }}</label>
+      <input pInputText [(ngModel)]="groupName" style="width: 100%" />
+    </div>
+    <div class="form-field">
+      <label class="field-label">{{ 'familyGroups.form.description' | translate }}</label>
+      <input pInputText [(ngModel)]="groupDescription" style="width: 100%" />
+    </div>
+  </div>
+  <ng-template #footer>
+    <p-button
+      [label]="'common.cancel' | translate"
+      [text]="true"
+      severity="secondary"
+      (onClick)="dialogVisible = false"
+    />
+    <p-button
+      [label]="'common.save' | translate"
+      [loading]="saving()"
+      (onClick)="createGroup()"
+    />
+  </ng-template>
+</p-dialog>
+
+<!-- Join dialog -->
+<p-dialog
+  [(visible)]="joinDialogVisible"
+  [header]="'familyGroups.join.title' | translate"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '400px' }"
+>
+  <div class="form-stack">
+    <div class="form-field">
+      <label class="field-label">{{ 'familyGroups.form.inviteCode' | translate }}</label>
+      <input pInputText [(ngModel)]="inviteCode" style="width: 100%" />
+    </div>
+  </div>
+  <ng-template #footer>
+    <p-button
+      [label]="'common.cancel' | translate"
+      [text]="true"
+      severity="secondary"
+      (onClick)="joinDialogVisible = false"
+    />
+    <p-button
+      [label]="'familyGroups.join.action' | translate"
+      [loading]="saving()"
+      (onClick)="joinGroup()"
+    />
+  </ng-template>
+</p-dialog>

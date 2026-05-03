@@ -3,6 +3,7 @@ import { AbstractControl, FormBuilder, ValidationErrors, Validators, ReactiveFor
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
@@ -86,6 +87,7 @@ export class RegisterComponent {
         password: this.form.value.password!,
         confirmPassword: this.form.value.confirmPassword!,
       })
+      .pipe(takeUntilDestroyed())
       .subscribe({
         next: () => this.router.navigate(['/dashboard']),
         error: (err: HttpErrorResponse) => {

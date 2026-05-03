@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -81,6 +82,8 @@ export class TransactionsComponent implements OnInit {
 
   dialogVisible = false;
   editingTransaction: TransactionResponse | null = null;
+  private _draft: typeof this.form.value | null = null;
+  private _cancelIntent = false;
 
   // ─── Bulk selection ─────────────────────────────────────────────────────────
 
@@ -224,20 +227,51 @@ export class TransactionsComponent implements OnInit {
 
   openCreateDialog(): void {
     this.editingTransaction = null;
-    this.form.reset({
-      description: '',
-      amount: null,
-      type: TransactionType.Expense,
-      transactionDate: new Date(),
-      categoryId: null,
-      tagIds: [],
-      notes: null,
-      recurrenceType: RecurrenceType.None,
-      recurrenceEndDate: null,
-      isConfirmed: false,
-      paymentMethod: null,
-    });
+    if (this._draft) {
+      this.form.patchValue({
+        ...this._draft,
+        transactionDate: this._draft.transactionDate
+          ? new Date(this._draft.transactionDate as Date)
+          : new Date(),
+        recurrenceEndDate: this._draft.recurrenceEndDate
+          ? new Date(this._draft.recurrenceEndDate as Date)
+          : null,
+      });
+    } else {
+      this.form.reset({
+        description: '',
+        amount: null,
+        type: TransactionType.Expense,
+        transactionDate: new Date(),
+        categoryId: null,
+        tagIds: [],
+        notes: null,
+        recurrenceType: RecurrenceType.None,
+        recurrenceEndDate: null,
+        isConfirmed: false,
+        paymentMethod: null,
+      });
+    }
     this.dialogVisible = true;
+  }
+
+  cancelDialog(): void {
+    this._cancelIntent = true;
+    this.dialogVisible = false;
+  }
+
+  onDialogHide(): void {
+    if (this._cancelIntent) {
+      this._draft = null;
+      this._cancelIntent = false;
+      return;
+    }
+    if (this.editingTransaction === null) {
+      const desc = this.form.value.description ?? '';
+      const amount = this.form.value.amount ?? null;
+      const hasData = desc !== '' || amount !== null;
+      this._draft = hasData ? { ...this.form.value } : null;
+    }
   }
 
   openEditDialog(transaction: TransactionResponse): void {
@@ -284,6 +318,7 @@ export class TransactionsComponent implements OnInit {
           recurrenceEndDate,
           paymentMethod: v.paymentMethod ?? null,
           familyGroupId: null,
+          dueDate: null,
         })
       : this.transactionService.create({
           description: v.description!,
@@ -297,13 +332,16 @@ export class TransactionsComponent implements OnInit {
           isConfirmed: v.isConfirmed ?? false,
           paymentMethod: v.paymentMethod ?? null,
           familyGroupId: null,
+          dueDate: null,
         });
 
     save$.pipe(
       switchMap(transaction => this.syncTags(transaction.id, selectedTagIds, existingTagIds)),
+      takeUntilDestroyed(),
     ).subscribe({
       next: () => {
         this.saving.set(false);
+        this._draft = null;
         this.dialogVisible = false;
         this.notify('success', this.editingTransaction
           ? 'transactions.toast.updateSuccess'
@@ -357,7 +395,7 @@ export class TransactionsComponent implements OnInit {
     const tx = this.tagEditingTx();
     if (!tx) return;
     this.tagSaving.set(true);
-    this.syncTags(tx.id, this.tagEditIds(), tx.tags.map(t => t.id)).subscribe({
+    this.syncTags(tx.id, this.tagEditIds(), tx.tags.map(t => t.id)).pipe(takeUntilDestroyed()).subscribe({
       next: () => {
         this.tagSaving.set(false);
         this.tagEditVisible = false;
@@ -374,7 +412,7 @@ export class TransactionsComponent implements OnInit {
     const pending = this.selectedTransactions().filter(t => !t.isConfirmed);
     if (!pending.length) return;
     this.bulkConfirming.set(true);
-    forkJoin(pending.map(t => this.transactionService.confirm(t.id))).subscribe({
+    forkJoin(pending.map(t => this.transactionService.confirm(t.id))).pipe(takeUntilDestroyed()).subscribe({
       next: () => {
         this.bulkConfirming.set(false);
         this.selectedTransactions.set([]);
@@ -393,7 +431,7 @@ export class TransactionsComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.bulkDeleting.set(true);
-        forkJoin(this.selectedTransactions().map(t => this.transactionService.delete(t.id))).subscribe({
+        forkJoin(this.selectedTransactions().map(t => this.transactionService.delete(t.id))).pipe(takeUntilDestroyed()).subscribe({
           next: () => {
             this.bulkDeleting.set(false);
             this.selectedTransactions.set([]);
@@ -464,7 +502,7 @@ export class TransactionsComponent implements OnInit {
       isConfirmed: this.filterStatus(),
       startDate: dateRange?.[0] ? this.toDateString(dateRange[0]) : null,
       endDate: dateRange?.[1] ? this.toDateString(dateRange[1]) : null,
-    }).subscribe({
+    }).pipe(takeUntilDestroyed()).subscribe({
       next: res => {
         this.transactions.set(res.items);
         this.totalRecords.set(res.totalCount);
@@ -475,19 +513,19 @@ export class TransactionsComponent implements OnInit {
   }
 
   private loadCategories(): void {
-    this.categoryService.getAll({ pageSize: 200 }).subscribe({
+    this.categoryService.getAll({ pageSize: 200 }).pipe(takeUntilDestroyed()).subscribe({
       next: res => this.allCategories.set(res.items),
     });
   }
 
   private loadTags(): void {
-    this.tagService.getAll().subscribe({
+    this.tagService.getAll().pipe(takeUntilDestroyed()).subscribe({
       next: tags => this.allTags.set(tags),
     });
   }
 
   private deleteTransaction(transaction: TransactionResponse): void {
-    this.transactionService.delete(transaction.id).subscribe({
+    this.transactionService.delete(transaction.id).pipe(takeUntilDestroyed()).subscribe({
       next: () => {
         this.notify('success', 'transactions.toast.deleteSuccess');
         this.loadTransactions(this.currentPage, this.pageSize);
@@ -496,7 +534,7 @@ export class TransactionsComponent implements OnInit {
   }
 
   private doConfirmTransaction(transaction: TransactionResponse): void {
-    this.transactionService.confirm(transaction.id).subscribe({
+    this.transactionService.confirm(transaction.id).pipe(takeUntilDestroyed()).subscribe({
       next: () => {
         this.notify('success', 'transactions.toast.confirmSuccess');
         this.loadTransactions(this.currentPage, this.pageSize);

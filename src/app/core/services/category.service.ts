@@ -22,6 +22,10 @@ export class CategoryService {
     return this.http.get<PaginatedCategoryResponse>(this.base, { params: httpParams });
   }
 
+  getById(id: string): Observable<CategoryResponse> {
+    return this.http.get<CategoryResponse>(`${this.base}/${id}`);
+  }
+
   create(request: CreateCategoryRequest): Observable<CategoryResponse> {
     return this.http.post<CategoryResponse>(this.base, request);
   }
@@ -30,7 +34,7 @@ export class CategoryService {
     return this.http.put<CategoryResponse>(`${this.base}/${id}`, request);
   }
 
-  deactivate(id: string): Observable<void> {
+  delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/${id}`);
   }
 }

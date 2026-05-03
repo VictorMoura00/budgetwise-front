@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, map, throwError } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../../environments/environment';
 import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.models';
 
@@ -9,11 +10,20 @@ export interface UserInfo {
   userId: string;
   email: string;
   fullName: string;
+  role: string;
 }
 
 interface TokenPair {
   accessToken: string;
   refreshToken: string;
+}
+
+interface JwtPayload {
+  sub?: string;
+  email?: string;
+  fullName?: string;
+  role?: string;
+  exp?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -29,6 +39,10 @@ export class AuthService {
 
   get accessToken(): string | null {
     return this.tokens()?.accessToken ?? null;
+  }
+
+  get isAdmin(): boolean {
+    return this.currentUser()?.role === 'Admin';
   }
 
   refreshTokens(): Observable<void> {
@@ -65,12 +79,22 @@ export class AuthService {
   }
 
   private storeSession(res: AuthResponse): void {
-    const user: UserInfo = { userId: res.userId, email: res.email, fullName: res.fullName };
+    const role = this.extractRoleFromToken(res.accessToken);
+    const user: UserInfo = { userId: res.userId, email: res.email, fullName: res.fullName, role };
     const tokens: TokenPair = { accessToken: res.accessToken, refreshToken: res.refreshToken };
     this.currentUser.set(user);
     this.tokens.set(tokens);
     localStorage.setItem(this.USER_KEY, JSON.stringify(user));
     localStorage.setItem(this.TOKEN_KEY, JSON.stringify(tokens));
+  }
+
+  private extractRoleFromToken(token: string): string {
+    try {
+      const payload = jwtDecode<JwtPayload>(token);
+      return payload.role ?? 'User';
+    } catch {
+      return 'User';
+    }
   }
 
   private loadFromStorage<T>(key: string): T | null {

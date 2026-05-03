@@ -75,6 +75,8 @@
   [modal]="true"
   [style]="{ width: 'min(420px, 95vw)' }"
   [draggable]="false"
+  [dismissableMask]="true"
+  (onHide)="onDialogHide()"
 >
   <form [formGroup]="form" (ngSubmit)="saveTag()" novalidate>
     <div class="form-field">
@@ -98,7 +100,7 @@
       [label]="'common.cancel' | translate"
       [text]="true"
       severity="secondary"
-      (onClick)="dialogVisible = false"
+      (onClick)="cancelDialog()"
     />
     <p-button
       [label]="'common.save' | translate"

@@ -41,12 +41,7 @@
       <tr>
         <td>
           <div class="category-name-cell">
-            <div
-              class="category-icon"
-              [style.background-color]="category.color ?? 'var(--p-primary-100)'"
-            >
-              <i [class]="iconPreview(category.icon)"></i>
-            </div>
+            <app-category-icon [icon]="category.icon" [color]="category.color" />
             <span>{{ category.name }}</span>
           </div>
         </td>
@@ -84,8 +79,8 @@
                   [text]="true"
                   [rounded]="true"
                   severity="danger"
-                  [pTooltip]="'common.deactivate' | translate"
-                  (onClick)="confirmDeactivate(category)"
+                  [pTooltip]="'common.delete' | translate"
+                  (onClick)="confirmDelete(category)"
                 />
               }
             </div>
@@ -131,6 +126,8 @@
   [modal]="true"
   [style]="{ width: 'min(480px, 95vw)' }"
   [draggable]="false"
+  [dismissableMask]="true"
+  (onHide)="onDialogHide()"
 >
   <form [formGroup]="form" (ngSubmit)="saveCategory()" novalidate>
 
@@ -225,7 +222,7 @@
       <p-popover #colorPopover>
         <p-colorpicker
           [inline]="true"
-          [ngModel]="colorPickerValue"
+          [ngModel]="colorPickerValue()"
           [ngModelOptions]="{ standalone: true }"
           format="hex"
           (ngModelChange)="onColorChange($event)"
@@ -240,7 +237,7 @@
       [label]="'common.cancel' | translate"
       [text]="true"
       severity="secondary"
-      (onClick)="dialogVisible = false"
+      (onClick)="cancelDialog()"
     />
     <p-button
       [label]="'common.save' | translate"

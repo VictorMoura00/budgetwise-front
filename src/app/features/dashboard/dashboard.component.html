@@ -15,6 +15,40 @@
     />
   </div>
 
+  <!-- Overview Cards (from /dashboard/overview) -->
+  @if (overview(); as ov) {
+    <div class="overview-grid">
+      <div class="overview-card">
+        <span class="overview-label">Receitas</span>
+        <span class="overview-value">{{ formatCurrency(ov.financialSummary.totalIncome) }}</span>
+      </div>
+      <div class="overview-card">
+        <span class="overview-label">Despesas</span>
+        <span class="overview-value">{{ formatCurrency(ov.financialSummary.totalExpense) }}</span>
+      </div>
+      <div class="overview-card">
+        <span class="overview-label">Saldo</span>
+        <span class="overview-value">{{ formatCurrency(ov.financialSummary.balance) }}</span>
+      </div>
+      <div class="overview-card">
+        <span class="overview-label">Taxa de Economia</span>
+        <span class="overview-value">{{ ov.financialSummary.savingsRate != null ? (ov.financialSummary.savingsRate + '%') : '—' }}</span>
+      </div>
+      <div class="overview-card">
+        <span class="overview-label">Saldo Confirmado</span>
+        <span class="overview-value">{{ formatCurrency(ov.financialSummary.confirmedBalance) }}</span>
+      </div>
+      <div class="overview-card">
+        <span class="overview-label">Impacto Pendente</span>
+        <span class="overview-value">{{ formatCurrency(ov.financialSummary.pendingImpact) }}</span>
+      </div>
+      <div class="overview-card">
+        <span class="overview-label">Saldo Projetado</span>
+        <span class="overview-value">{{ formatCurrency(ov.financialSummary.projectedBalance) }}</span>
+      </div>
+    </div>
+  }
+
   <!-- KPI Cards -->
   <div class="kpi-grid" [class.kpi-grid--loading]="loading()">
 
@@ -290,6 +324,7 @@
   [modal]="true"
   [draggable]="false"
   [resizable]="false"
+  [dismissableMask]="true"
   [style]="{ width: '560px' }"
 >
   @if (loadingPending()) {
@@ -354,6 +389,7 @@
   [modal]="true"
   [draggable]="false"
   [resizable]="false"
+  [dismissableMask]="true"
   [style]="{ width: '600px' }"
 >
   @if (txListLoading()) {
@@ -405,96 +441,11 @@
   }
 </p-dialog>
 
-<!-- ═══════════════════════════════════════════════════════════════════════════ -->
-<!-- Transaction detail modal                                                   -->
-<!-- ═══════════════════════════════════════════════════════════════════════════ -->
-<p-dialog
-  [(visible)]="txDetailVisible"
-  [header]="'dashboard.detail.title' | translate"
-  [modal]="true"
-  [draggable]="false"
-  [resizable]="false"
-  [style]="{ width: '480px' }"
->
-  @if (selectedTx(); as tx) {
-    <div class="detail-grid">
-
-      <div class="detail-row">
-        <span class="detail-label">{{ 'transactions.columns.description' | translate }}</span>
-        <span class="detail-value">{{ tx.description }}</span>
-      </div>
-
-      <div class="detail-row">
-        <span class="detail-label">{{ 'transactions.columns.amount' | translate }}</span>
-        <span class="detail-value detail-value--amount" [ngClass]="tx.type === TransactionType.Income ? 'amount--income' : 'amount--expense'">
-          {{ tx.type === TransactionType.Income ? '+' : '-' }}{{ formatCurrency(tx.amount) }}
-        </span>
-      </div>
-
-      <div class="detail-row">
-        <span class="detail-label">{{ 'transactions.columns.type' | translate }}</span>
-        <p-tag
-          [value]="tx.type === TransactionType.Income ? ('transactions.type.income' | translate) : ('transactions.type.expense' | translate)"
-          [severity]="tx.type === TransactionType.Income ? 'success' : 'danger'"
-        />
-      </div>
-
-      <div class="detail-row">
-        <span class="detail-label">{{ 'transactions.columns.date' | translate }}</span>
-        <span class="detail-value">{{ tx.transactionDate | date:'dd/MM/yyyy' }}</span>
-      </div>
-
-      <div class="detail-row">
-        <span class="detail-label">{{ 'transactions.columns.category' | translate }}</span>
-        <span class="detail-value">{{ tx.categoryName ?? '—' }}</span>
-      </div>
-
-      <div class="detail-row">
-        <span class="detail-label">{{ 'transactions.columns.status' | translate }}</span>
-        <p-tag
-          [value]="tx.isConfirmed ? ('transactions.status.confirmed' | translate) : ('transactions.status.pending' | translate)"
-          [severity]="tx.isConfirmed ? 'success' : 'warn'"
-        />
-      </div>
-
-      <div class="detail-row">
-        <span class="detail-label">{{ 'transactions.form.paymentMethod' | translate }}</span>
-        <span class="detail-value">{{ paymentMethodLabel(tx.paymentMethod) }}</span>
-      </div>
-
-      <div class="detail-row">
-        <span class="detail-label">{{ 'transactions.form.recurrenceType' | translate }}</span>
-        <span class="detail-value">{{ recurrenceLabel(tx.recurrenceType) }}</span>
-      </div>
-
-      @if (tx.recurrenceEndDate) {
-        <div class="detail-row">
-          <span class="detail-label">{{ 'transactions.form.recurrenceEndDate' | translate }}</span>
-          <span class="detail-value">{{ tx.recurrenceEndDate | date:'dd/MM/yyyy' }}</span>
-        </div>
-      }
-
-      @if (tx.tags.length) {
-        <div class="detail-row">
-          <span class="detail-label">{{ 'transactions.form.tags' | translate }}</span>
-          <div class="detail-tags">
-            @for (tag of tx.tags; track tag.id) {
-              <p-tag [value]="tag.name" severity="secondary" />
-            }
-          </div>
-        </div>
-      }
-
-      @if (tx.notes) {
-        <div class="detail-row detail-row--full">
-          <span class="detail-label">{{ 'transactions.form.notes' | translate }}</span>
-          <span class="detail-value detail-value--notes">{{ tx.notes }}</span>
-        </div>
-      }
-
-    </div>
-  }
-</p-dialog>
+<app-transaction-detail-dialog
+  [visible]="txDetailVisible"
+  [tx]="selectedTx()"
+  (close)="txDetailVisible = false"
+/>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 <!-- Quick-add dialog                                                           -->
@@ -505,8 +456,10 @@
   [modal]="true"
   [draggable]="false"
   [resizable]="false"
+  [dismissableMask]="true"
   [style]="{ width: '540px' }"
   styleClass="quick-dialog"
+  (onHide)="onQuickAddHide()"
 >
   <form [formGroup]="quickAddForm" class="quick-form">
 
@@ -533,7 +486,11 @@
     </div>
 
     <!-- ── Valor: destaque central ──────────────────────── -->
-    <div class="amount-row">
+    <div
+      class="amount-wrapper"
+      [class.amount-wrapper--income]="quickAddForm.get('type')?.value === TransactionType.Income"
+      [class.amount-wrapper--expense]="quickAddForm.get('type')?.value === TransactionType.Expense"
+    >
       <p-inputnumber
         inputId="qa-amount"
         formControlName="amount"
@@ -541,9 +498,6 @@
         currency="BRL"
         locale="pt-BR"
         [minFractionDigits]="2"
-        styleClass="amount-input"
-        [ngClass]="{ 'amount-input--income': quickAddForm.get('type')?.value === TransactionType.Income,
-                     'amount-input--expense': quickAddForm.get('type')?.value === TransactionType.Expense }"
       />
     </div>
 
@@ -606,7 +560,7 @@
       [label]="'common.cancel' | translate"
       severity="secondary"
       variant="text"
-      (onClick)="quickAddVisible = false"
+      (onClick)="cancelQuickAdd()"
     />
     <p-button
       [label]="'common.save' | translate"

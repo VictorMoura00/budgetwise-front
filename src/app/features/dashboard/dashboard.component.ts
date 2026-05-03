@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, NgZone, OnInit, computed, inject, s
 import { DatePipe, NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { SelectButtonModule } from 'primeng/selectbutton';
@@ -17,7 +18,8 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { MessageService } from 'primeng/api';
 import { CategoryService, DashboardService, LanguageService, LayoutService, TransactionService } from '../../core/services';
-import { CategoryResponse, DashboardData, GetTransactionsParams, PaymentMethod, PeriodMonths, RecurrenceType, TransactionResponse, TransactionType } from '../../core/models';
+import { CategoryResponse, DashboardData, DashboardOverviewResponse, GetTransactionsParams, PaymentMethod, PeriodMonths, RecurrenceType, TransactionResponse, TransactionType } from '../../core/models';
+import { TransactionDetailDialogComponent } from './transaction-detail-dialog/transaction-detail-dialog.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -41,6 +43,7 @@ import { CategoryResponse, DashboardData, GetTransactionsParams, PaymentMethod, 
     SelectModule,
     DatePickerModule,
     ToggleSwitchModule,
+    TransactionDetailDialogComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -64,6 +67,7 @@ export class DashboardComponent implements OnInit {
 
   loading = signal(true);
   data = signal<DashboardData | null>(null);
+  overview = signal<DashboardOverviewResponse | null>(null);
   period = signal<PeriodMonths>(1);
   allCategories = signal<CategoryResponse[]>([]);
 
@@ -90,10 +94,12 @@ export class DashboardComponent implements OnInit {
 
   quickAddVisible = false;
   quickAddSaving = signal(false);
+  private _quickAddDraft: typeof this.quickAddForm.value | null = null;
+  private _quickAddCancelIntent = false;
 
   quickAddForm = this.fb.group({
     description: ['', [Validators.required, Validators.maxLength(200)]],
-    amount: [null as number | null, [Validators.required, Validators.min(0.01)]],
+    amount: [0 as number | null, [Validators.required, Validators.min(0.01)]],
     type: [TransactionType.Expense, Validators.required],
     transactionDate: [new Date(), Validators.required],
     categoryId: [null as string | null],
@@ -277,7 +283,8 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.load();
-    this.categoryService.getAll({ pageSize: 200 }).subscribe({
+    this.loadOverview();
+    this.categoryService.getAll({ pageSize: 200 }).pipe(takeUntilDestroyed()).subscribe({
       next: res => this.allCategories.set(res.items),
     });
   }
@@ -306,7 +313,7 @@ export class DashboardComponent implements OnInit {
       startDate: `${y}-${m}-01`,
       endDate: `${y}-${m}-${String(lastDay).padStart(2, '0')}`,
       pageSize: 100,
-    }).subscribe({
+    }).pipe(takeUntilDestroyed()).subscribe({
       next: res => {
         this.pendingTransactions.set(res.items);
         this.loadingPending.set(false);
@@ -317,7 +324,7 @@ export class DashboardComponent implements OnInit {
 
   confirmPendingTransaction(tx: TransactionResponse): void {
     this.confirming.set(tx.id);
-    this.transactionService.confirm(tx.id).subscribe({
+    this.transactionService.confirm(tx.id).pipe(takeUntilDestroyed()).subscribe({
       next: () => {
         this.pendingTransactions.update(list => list.filter(t => t.id !== tx.id));
         this.confirming.set(null);
@@ -394,43 +401,43 @@ export class DashboardComponent implements OnInit {
     this.txDetailVisible = true;
   }
 
-  paymentMethodLabel(pm: PaymentMethod | null): string {
-    if (!pm) return this.translate.instant('transactions.paymentMethod.none');
-    const key = {
-      [PaymentMethod.Pix]: 'transactions.paymentMethod.pix',
-      [PaymentMethod.CreditCard]: 'transactions.paymentMethod.creditCard',
-      [PaymentMethod.DebitCard]: 'transactions.paymentMethod.debitCard',
-      [PaymentMethod.Cash]: 'transactions.paymentMethod.cash',
-      [PaymentMethod.Ted]: 'transactions.paymentMethod.ted',
-      [PaymentMethod.Boleto]: 'transactions.paymentMethod.boleto',
-      [PaymentMethod.Other]: 'transactions.paymentMethod.other',
-    }[pm];
-    return key ? this.translate.instant(key) : pm;
-  }
-
-  recurrenceLabel(rt: RecurrenceType): string {
-    const key = {
-      [RecurrenceType.None]: 'transactions.recurrence.none',
-      [RecurrenceType.Daily]: 'transactions.recurrence.daily',
-      [RecurrenceType.Weekly]: 'transactions.recurrence.weekly',
-      [RecurrenceType.Monthly]: 'transactions.recurrence.monthly',
-      [RecurrenceType.Yearly]: 'transactions.recurrence.yearly',
-    }[rt];
-    return key ? this.translate.instant(key) : rt;
-  }
-
   // ─── Quick-add ───────────────────────────────────────────────────────────────
 
   openQuickAdd(): void {
-    this.quickAddForm.reset({
-      description: '',
-      amount: null,
-      type: TransactionType.Expense,
-      transactionDate: new Date(),
-      categoryId: null,
-      isConfirmed: false,
-    });
+    if (this._quickAddDraft) {
+      this.quickAddForm.patchValue({
+        ...this._quickAddDraft,
+        transactionDate: this._quickAddDraft.transactionDate
+          ? new Date(this._quickAddDraft.transactionDate as Date)
+          : new Date(),
+      });
+    } else {
+      this.quickAddForm.reset({
+        description: '',
+        amount: 0,
+        type: TransactionType.Expense,
+        transactionDate: new Date(),
+        categoryId: null,
+        isConfirmed: false,
+      });
+    }
     this.quickAddVisible = true;
+  }
+
+  cancelQuickAdd(): void {
+    this._quickAddCancelIntent = true;
+    this.quickAddVisible = false;
+  }
+
+  onQuickAddHide(): void {
+    if (this._quickAddCancelIntent) {
+      this._quickAddDraft = null;
+      this._quickAddCancelIntent = false;
+      return;
+    }
+    const v = this.quickAddForm.value;
+    const hasData = (v.amount ?? 0) !== 0 || (v.description ?? '') !== '';
+    this._quickAddDraft = hasData ? { ...v } : null;
   }
 
   saveQuickAdd(): void {
@@ -454,9 +461,11 @@ export class DashboardComponent implements OnInit {
       isConfirmed: v.isConfirmed ?? false,
       paymentMethod: null,
       familyGroupId: null,
-    }).subscribe({
+      dueDate: null,
+    }).pipe(takeUntilDestroyed()).subscribe({
       next: () => {
         this.quickAddSaving.set(false);
+        this._quickAddDraft = null;
         this.quickAddVisible = false;
         this.messageService.add({
           severity: 'success',
@@ -497,7 +506,7 @@ export class DashboardComponent implements OnInit {
     this.txListLoading.set(true);
     this.txListItems.set([]);
 
-    this.transactionService.getAll(params).subscribe({
+    this.transactionService.getAll(params).pipe(takeUntilDestroyed()).subscribe({
       next: res => {
         this.txListItems.set(res.items);
         this.txListLoading.set(false);
@@ -536,12 +545,21 @@ export class DashboardComponent implements OnInit {
 
   private load(): void {
     this.loading.set(true);
-    this.dashboardService.load(this.period()).subscribe({
+    this.dashboardService.load(this.period()).pipe(takeUntilDestroyed()).subscribe({
       next: d => {
         this.data.set(d);
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
     });
+  }
+
+  private loadOverview(): void {
+    const now = new Date();
+    this.dashboardService.getOverview(now.getFullYear(), now.getMonth() + 1)
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: res => this.overview.set(res),
+      });
   }
 }

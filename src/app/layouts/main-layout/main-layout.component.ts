@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, HostListener, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { AuthService } from '../../core/services/auth.service';
 import { HeaderComponent } from './header/header.component';
 
 const MOBILE_BP = 768;
@@ -16,8 +17,11 @@ const MOBILE_BP = 768;
   styleUrl: './main-layout.component.scss',
 })
 export class MainLayoutComponent {
+  private readonly auth = inject(AuthService);
+
   readonly isMobile = signal(window.innerWidth <= MOBILE_BP);
   sidebarOpen = signal(window.innerWidth > MOBILE_BP);
+  readonly isAdmin = this.auth.isAdmin;
 
   @HostListener('window:resize')
   onResize(): void {

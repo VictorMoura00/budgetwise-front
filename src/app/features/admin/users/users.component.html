@@ -1,0 +1,75 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ 'admin.users.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'admin.users.subtitle' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="content-card">
+    <div class="table-wrapper">
+      <p-table
+        [value]="users()"
+        [lazy]="true"
+        (onLazyLoad)="onLazyLoad($event)"
+        [paginator]="true"
+        [rows]="pageSize"
+        [totalRecords]="totalRecords()"
+        [loading]="loading()"
+        [rowsPerPageOptions]="[10, 20, 50]"
+        styleClass="p-datatable-sm"
+        [tableStyle]="{'table-layout':'fixed'}"
+      >
+        <ng-template #header>
+          <tr>
+            <th>{{ 'admin.users.columns.name' | translate }}</th>
+            <th>{{ 'admin.users.columns.email' | translate }}</th>
+            <th>{{ 'admin.users.columns.role' | translate }}</th>
+            <th>{{ 'admin.users.columns.status' | translate }}</th>
+            <th style="width: 160px"></th>
+          </tr>
+        </ng-template>
+
+        <ng-template #body let-user>
+          <tr>
+            <td>{{ user.fullName }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <p-tag [value]="user.role" severity="info" />
+            </td>
+            <td>
+              <p-tag
+                [value]="user.isActive ? ('admin.users.status.active' | translate) : ('admin.users.status.inactive' | translate)"
+                [severity]="user.isActive ? 'success' : 'danger'"
+              />
+              @if (user.isLocked) {
+                <p-tag value="{{ 'admin.users.status.locked' | translate }}" severity="warn" styleClass="ml-2" />
+              }
+            </td>
+            <td>
+              <div class="row-actions">
+                <p-button
+                  icon="pi pi-lock-open"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="secondary"
+                  [disabled]="!user.isLocked"
+                  [pTooltip]="'admin.users.actions.unlock' | translate"
+                  (onClick)="confirmUnlock(user)"
+                />
+                <p-button
+                  [icon]="user.isActive ? 'pi pi-ban' : 'pi pi-check'"
+                  [text]="true"
+                  [rounded]="true"
+                  [severity]="user.isActive ? 'danger' : 'success'"
+                  [pTooltip]="(user.isActive ? 'admin.users.actions.deactivate' : 'admin.users.actions.activate') | translate"
+                  (onClick)="confirmToggleStatus(user)"
+                />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

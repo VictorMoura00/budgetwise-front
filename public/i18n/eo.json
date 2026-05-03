@@ -44,7 +44,10 @@
     "dashboard": "Panelo",
     "categories": "Kategorioj",
     "transactions": "Transakcioj",
-    "tags": "Etikedoj"
+    "tags": "Etikedoj",
+    "familyGroups": "Familio",
+    "dueTransactions": "Devontaj",
+    "admin": "Admin"
   },
   "dashboard": {
     "title": "Panelo",
@@ -249,6 +252,94 @@
     "email": "Nevalida retpoŝto",
     "minLength": "Minimumo {{value}} signoj",
     "passwordMismatch": "Pasvortoj ne kongruas"
+  },
+  "familyGroups": {
+    "title": "Familiaj Grupoj",
+    "subtitle": "Administru viajn familiajn grupojn kaj komune pagatajn elspezojn",
+    "newGroup": "Nova Grupo",
+    "joinGroup": "Aliĝi per Kodo",
+    "members": "membroj",
+    "empty": {
+      "title": "Neniuj grupoj",
+      "subtitle": "Kreu grupon aŭ aliĝu per invitkodo."
+    },
+    "create": {
+      "title": "Krei Grupon"
+    },
+    "join": {
+      "title": "Aliĝi al Grupo",
+      "action": "Aliĝi"
+    },
+    "form": {
+      "name": "Nomo",
+      "description": "Priskribo",
+      "inviteCode": "Invitkodo"
+    },
+    "confirmLeave": "Ĉu vi certas, ke vi volas forlasi {{name}}?",
+    "confirmLeaveHeader": "Forlasi Grupon",
+    "toast": {
+      "createSuccess": "Grupo sukcese kreita.",
+      "joinSuccess": "Vi sukcese aliĝis al la grupo."
+    }
+  },
+  "sharedExpenses": {
+    "title": "Komune Pagataj Elspezoj",
+    "subtitle": "Administru elspezojn kun via grupo",
+    "selectGroup": "Elekti Grupon",
+    "totalAmount": "Totalo",
+    "totalSettled": "Pagita",
+    "totalPending": "Pendanta",
+    "participants": "partoprenantoj",
+    "settled": "Pagita",
+    "pending": "Pendanta",
+    "empty": {
+      "title": "Neniuj elspezoj",
+      "subtitle": "Kreu komune pagatan elspezon por komenci."
+    },
+    "noExpenses": "Neniuj elspezoj trovitaj."
+  },
+  "dueTransactions": {
+    "title": "Devontaj Transakcioj",
+    "subtitle": "Spuru transakciojn laŭ pagdato",
+    "totalPending": "Pendantaj Entute",
+    "noItems": "Neniuj eroj en ĉi tiu grupo.",
+    "groups": {
+      "overdue": "Malfruaj",
+      "dueToday": "Hodiaŭ",
+      "dueNext7Days": "Venontaj 7 tagoj",
+      "dueNext30Days": "Venontaj 30 tagoj",
+      "future": "Estontaj",
+      "withoutDueDate": "Sen pagdato"
+    }
+  },
+  "admin": {
+    "users": {
+      "title": "Administrado de Uzantoj",
+      "subtitle": "Administru sistemajn uzantojn",
+      "columns": {
+        "name": "Nomo",
+        "email": "Retpoŝto",
+        "role": "Rolo",
+        "status": "Stato"
+      },
+      "status": {
+        "active": "Aktiva",
+        "inactive": "Neaktiva",
+        "locked": "Barita"
+      },
+      "actions": {
+        "unlock": "Malbari",
+        "activate": "Aktivigi",
+        "deactivate": "Malaktivigi"
+      },
+      "confirmActivate": "Aktivigi {{name}}?",
+      "confirmDeactivate": "Malaktivigi {{name}}?",
+      "confirmUnlock": "Malbari {{name}}?",
+      "toast": {
+        "statusUpdated": "Stato ĝisdatigita.",
+        "unlocked": "Uzanto malbarita."
+      }
+    }
   },
   "notFound": {
     "title": "Paĝo ne trovita",

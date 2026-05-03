@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
+  ConfirmTransactionRequest,
   CreateTransactionRequest,
   GetTransactionsParams,
   MonthlyTransactionSummary,
@@ -27,6 +28,7 @@ export class TransactionService {
     if (params.startDate) httpParams = httpParams.set('startDate', params.startDate);
     if (params.endDate) httpParams = httpParams.set('endDate', params.endDate);
     if (params.isConfirmed != null) httpParams = httpParams.set('isConfirmed', params.isConfirmed);
+    if (params.dueDate) httpParams = httpParams.set('dueDate', params.dueDate);
 
     return this.http.get<PaginatedTransactionResponse>(this.base, { params: httpParams });
   }
@@ -47,8 +49,16 @@ export class TransactionService {
     return this.http.delete<void>(`${this.base}/${id}`);
   }
 
-  confirm(id: string): Observable<TransactionResponse> {
-    return this.http.patch<TransactionResponse>(`${this.base}/${id}/confirm`, {});
+  confirm(id: string, request: ConfirmTransactionRequest = { paidAt: null }): Observable<TransactionResponse> {
+    return this.http.patch<TransactionResponse>(`${this.base}/${id}/confirm`, request);
+  }
+
+  addTag(transactionId: string, tagId: string): Observable<void> {
+    return this.http.post<void>(`${this.base}/${transactionId}/tags/${tagId}`, {});
+  }
+
+  removeTag(transactionId: string, tagId: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${transactionId}/tags/${tagId}`);
   }
 
   getSummary(params: { startDate?: string; endDate?: string } = {}): Observable<TransactionSummaryResponse> {

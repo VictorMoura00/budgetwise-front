@@ -44,7 +44,10 @@
     "dashboard": "Dashboard",
     "categories": "Categorias",
     "transactions": "Transações",
-    "tags": "Tags"
+    "tags": "Tags",
+    "familyGroups": "Familiar",
+    "dueTransactions": "Pendências",
+    "admin": "Admin"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -250,7 +253,95 @@
     "minLength": "Mínimo de {{value}} caracteres",
     "passwordMismatch": "As senhas não coincidem"
   },
-  "notFound": {
+  "familyGroups": {
+    "title": "Grupos Familiares",
+    "subtitle": "Gerencie seus grupos familiares e despesas compartilhadas",
+    "newGroup": "Novo Grupo",
+    "joinGroup": "Entrar com Código",
+    "members": "membros",
+    "empty": {
+      "title": "Nenhum grupo",
+      "subtitle": "Crie um grupo ou entre com um código de convite."
+    },
+    "create": {
+      "title": "Criar Grupo"
+    },
+    "join": {
+      "title": "Entrar no Grupo",
+      "action": "Entrar"
+    },
+    "form": {
+      "name": "Nome",
+      "description": "Descrição",
+      "inviteCode": "Código de Convite"
+    },
+    "confirmLeave": "Tem certeza que deseja sair do grupo {{name}}?",
+    "confirmLeaveHeader": "Sair do Grupo",
+    "toast": {
+      "createSuccess": "Grupo criado com sucesso.",
+      "joinSuccess": "Você entrou no grupo com sucesso."
+    }
+  },
+  "sharedExpenses": {
+    "title": "Despesas Compartilhadas",
+    "subtitle": "Gerencie despesas divididas com seu grupo",
+    "selectGroup": "Selecionar Grupo",
+    "totalAmount": "Total",
+    "totalSettled": "Liquidado",
+    "totalPending": "Pendente",
+    "participants": "participantes",
+    "settled": "Liquidada",
+    "pending": "Pendente",
+    "empty": {
+      "title": "Nenhuma despesa",
+      "subtitle": "Crie uma despesa compartilhada para começar."
+    },
+    "noExpenses": "Nenhuma despesa encontrada."
+  },
+  "dueTransactions": {
+    "title": "Pendências",
+    "subtitle": "Acompanhe transações por data de vencimento",
+    "totalPending": "Total Pendente",
+    "noItems": "Nenhum item neste grupo.",
+    "groups": {
+      "overdue": "Vencidas",
+      "dueToday": "Vencem Hoje",
+      "dueNext7Days": "Próximos 7 dias",
+      "dueNext30Days": "Próximos 30 dias",
+      "future": "Futuras",
+      "withoutDueDate": "Sem data de vencimento"
+    }
+  },
+  "admin": {
+    "users": {
+      "title": "Administração de Usuários",
+      "subtitle": "Gerencie usuários do sistema",
+      "columns": {
+        "name": "Nome",
+        "email": "E-mail",
+        "role": "Função",
+        "status": "Status"
+      },
+      "status": {
+        "active": "Ativo",
+        "inactive": "Inativo",
+        "locked": "Bloqueado"
+      },
+      "actions": {
+        "unlock": "Desbloquear",
+        "activate": "Ativar",
+        "deactivate": "Desativar"
+      },
+      "confirmActivate": "Ativar {{name}}?",
+      "confirmDeactivate": "Desativar {{name}}?",
+      "confirmUnlock": "Desbloquear {{name}}?",
+      "toast": {
+        "statusUpdated": "Status atualizado.",
+        "unlocked": "Usuário desbloqueado."
+      }
+    }
+  },
+  "notFound":
     "title": "Página não encontrada",
     "subtitle": "A página que você está procurando não existe ou foi movida.",
     "back": "Voltar ao início"

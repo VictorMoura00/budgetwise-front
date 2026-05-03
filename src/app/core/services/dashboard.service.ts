@@ -1,9 +1,12 @@
 import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { TransactionService } from './transaction.service';
 import { MonthlyTransactionSummary, TransactionResponse, TransactionSummaryResponse, TransactionType } from '../models/transaction.models';
 import { CategoryExpense, DashboardData, MonthlyPoint, PeriodMonths } from '../models/dashboard.models';
+import { DashboardOverviewResponse } from '../models/dashboard-overview.models';
+import { environment } from '../../../environments/environment';
 
 const PALETTE = [
   '#6366f1', '#22c55e', '#f59e0b', '#ef4444',
@@ -12,14 +15,24 @@ const PALETTE = [
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
+  private readonly http = inject(HttpClient);
   private readonly transactionService = inject(TransactionService);
+  private readonly base = `${environment.apiUrl}/dashboard`;
 
+  /** Novo endpoint unificado /dashboard/overview */
+  getOverview(year: number, month: number): Observable<DashboardOverviewResponse> {
+    const params = new HttpParams()
+      .set('year', year)
+      .set('month', month);
+    return this.http.get<DashboardOverviewResponse>(`${this.base}/overview`, { params });
+  }
+
+  /** Legado: composição de múltiplos endpoints (mantido para compatibilidade durante transição) */
   load(months: PeriodMonths): Observable<DashboardData> {
     const today = new Date();
     const endDate = this.toDateString(today);
     const startDate = this.toDateString(new Date(today.getFullYear(), today.getMonth() - (months - 1), 1));
 
-    // Previous period (same span, immediately before current)
     const prevEnd = new Date(today.getFullYear(), today.getMonth() - (months - 1), 0);
     const prevStart = this.toDateString(new Date(prevEnd.getFullYear(), prevEnd.getMonth() - (months - 1), 1));
     const prevEndStr = this.toDateString(prevEnd);
