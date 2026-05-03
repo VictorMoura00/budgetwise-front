@@ -1,5 +1,3 @@
-// ─── Fade-in animation ────────────────────────────────────────────────────────
-
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -10,8 +8,6 @@
   50%       { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0), 0 4px 16px rgba(239,68,68,0.2); }
 }
 
-// ─── Dashboard layout ─────────────────────────────────────────────────────────
-
 .dashboard {
   padding: 1.5rem 2rem;
   width: 100%;
@@ -19,8 +15,6 @@
   flex-direction: column;
   gap: 1.5rem;
 }
-
-// ─── Header ──────────────────────────────────────────────────────────────────
 
 .dashboard-header {
   display: flex;
@@ -42,8 +36,6 @@
   margin: 0;
   font-size: 0.875rem;
 }
-
-// ─── Overview Grid ────────────────────────────────────────────────────────────
 
 .overview-grid {
   display: grid;
@@ -71,8 +63,6 @@
     color: var(--p-text-color);
   }
 }
-
-// ─── KPI Grid ────────────────────────────────────────────────────────────────
 
 .kpi-grid {
   display: grid;
@@ -110,17 +100,11 @@
 
   :host-context(.app-dark) & {
     border-color: rgba(255, 255, 255, 0.1);
-    box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.05),
-      0 4px 20px rgba(0, 0, 0, 0.55),
-      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 4px 20px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 
     &:hover {
       border-color: rgba(255, 255, 255, 0.16);
-      box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.08),
-        0 8px 28px rgba(0, 0, 0, 0.65),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 28px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
   }
 }
@@ -212,8 +196,6 @@
   }
 }
 
-// ─── Shared Card ─────────────────────────────────────────────────────────────
-
 .card {
   background: var(--p-surface-card);
   border: 1px solid var(--p-surface-border);
@@ -230,13 +212,7 @@
     position: absolute;
     inset: 0 0 auto;
     height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      color-mix(in srgb, var(--p-primary-color) 40%, transparent) 40%,
-      color-mix(in srgb, var(--p-primary-color) 40%, transparent) 60%,
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--p-primary-color) 40%, transparent) 40%, color-mix(in srgb, var(--p-primary-color) 40%, transparent) 60%, transparent);
     opacity: 0;
     transition: opacity 0.2s;
   }
@@ -247,19 +223,10 @@
 
   :host-context(.app-dark) & {
     border-color: rgba(255, 255, 255, 0.1);
-    box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.05),
-      0 4px 24px rgba(0, 0, 0, 0.6),
-      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 4px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 
     &::before {
-      background: linear-gradient(
-        90deg,
-        transparent,
-        color-mix(in srgb, var(--p-primary-color) 55%, transparent) 40%,
-        color-mix(in srgb, var(--p-primary-color) 55%, transparent) 60%,
-        transparent
-      );
+      background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--p-primary-color) 55%, transparent) 40%, color-mix(in srgb, var(--p-primary-color) 55%, transparent) 60%, transparent);
     }
   }
 }
@@ -289,8 +256,6 @@
   .pi { font-size: 0.75rem; }
 }
 
-// ─── Charts Grid ─────────────────────────────────────────────────────────────
-
 .charts-grid {
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
@@ -309,12 +274,14 @@
   @media (max-width: 1100px) { grid-template-columns: 1fr; }
 }
 
-.chart-card {
-  .chart-wrap {
-    height: 280px;
-    position: relative;
-  }
+.chart-wrap,
+.donut-wrap {
+  height: 280px;
+  position: relative;
+}
 
+.chart-card .chart-wrap,
+.donut-wrap {
   ::ng-deep p-chart,
   ::ng-deep .p-chart {
     display: block;
@@ -342,34 +309,12 @@
   span { font-size: 0.875rem; }
 }
 
-// ─── Donut ───────────────────────────────────────────────────────────────────
-
-.donut-wrap {
-  height: 280px;
-  position: relative;
-
-  ::ng-deep p-chart,
-  ::ng-deep .p-chart {
-    display: block;
-    width: 100%;
-    height: 100%;
-
-    canvas {
-      display: block;
-      width: 100% !important;
-      height: 100% !important;
-    }
-  }
-}
-
 .legend-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
 }
-
-// ─── Expense progress bars ────────────────────────────────────────────────────
 
 .expense-bars {
   list-style: none;
@@ -442,8 +387,6 @@
   border-radius: 3px;
   transition: width 0.6s ease;
 }
-
-// ─── Recent Transactions ─────────────────────────────────────────────────────
 
 .recent-card {
   .card-header { margin-bottom: 0; }
@@ -539,8 +482,6 @@
   font-size: 0.6875rem;
   padding: 0.1rem 0.4rem;
 }
-
-// ─── Pending / TxList dialog ──────────────────────────────────────────────────
 
 .pending-list {
   list-style: none;
@@ -649,8 +590,6 @@
   color: var(--p-text-muted-color);
 }
 
-// ─── Quick-add form ───────────────────────────────────────────────────────────
-
 .quick-form {
   display: flex;
   flex-direction: column;
@@ -676,8 +615,6 @@
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
-
-// ─── Tipo ─────────────────────────────────────────────────────────────────────
 
 .type-cards {
   display: grid;
@@ -714,7 +651,6 @@
     transition: background 0.15s;
   }
 
-  // ── Receita ──
   &--income .type-card__icon {
     background: rgba(34, 197, 94, 0.14);
     color: #22c55e;
@@ -731,7 +667,6 @@
     }
   }
 
-  // ── Despesa ──
   &--expense .type-card__icon {
     background: rgba(239, 68, 68, 0.14);
     color: #ef4444;
@@ -748,8 +683,6 @@
     }
   }
 }
-
-// ─── Valor ────────────────────────────────────────────────────────────────────
 
 .amount-wrapper {
   display: flex;
@@ -781,8 +714,6 @@
   &--expense ::ng-deep .p-inputnumber-input { color: #ef4444; border-bottom-color: #ef4444; }
 }
 
-// ─── Grid 2 colunas ───────────────────────────────────────────────────────────
-
 .quick-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -797,8 +728,6 @@
     grid-template-columns: 1fr;
   }
 }
-
-// ─── Chips de categoria ───────────────────────────────────────────────────────
 
 .cat-chips {
   display: flex;
@@ -836,8 +765,6 @@
   }
 }
 
-// ─── FAB ─────────────────────────────────────────────────────────────────────
-
 .fab {
   position: fixed;
   bottom: 2rem;
@@ -864,8 +791,6 @@
 
   &:active { transform: scale(0.96); }
 }
-
-// ─── Mobile ───────────────────────────────────────────────────────────────────
 
 @media (max-width: 768px) {
   .dashboard {

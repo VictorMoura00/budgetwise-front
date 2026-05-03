@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -39,6 +39,7 @@ export class AdminUsersComponent implements OnInit {
   private readonly confirmationService = inject(ConfirmationService);
   private readonly translate = inject(TranslateService);
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
   users = signal<AdminUserResponse[]>([]);
   totalRecords = signal(0);
@@ -87,7 +88,7 @@ export class AdminUsersComponent implements OnInit {
 
   private loadUserDetail(id: string): void {
     this.editLoading.set(true);
-    this.service.getById(id).pipe(takeUntilDestroyed()).subscribe({
+    this.service.getById(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: res => {
         this.editingUser.set(res);
         this.editForm.patchValue({ fullName: res.fullName, email: res.email });
@@ -103,7 +104,7 @@ export class AdminUsersComponent implements OnInit {
     if (!user) return;
 
     this.editSaving.set(true);
-    this.service.update(user.id, this.editForm.value).pipe(takeUntilDestroyed()).subscribe({
+    this.service.update(user.id, this.editForm.value).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.editSaving.set(false);
         this.editDialogVisible.set(false);
@@ -137,7 +138,7 @@ export class AdminUsersComponent implements OnInit {
     if (!user) return;
 
     this.roleSaving.set(true);
-    this.service.updateRole(user.id, { role: this.selectedRole() }).pipe(takeUntilDestroyed()).subscribe({
+    this.service.updateRole(user.id, { role: this.selectedRole() }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.roleSaving.set(false);
         this.roleDialogVisible.set(false);
@@ -167,7 +168,7 @@ export class AdminUsersComponent implements OnInit {
   }
 
   private toggleStatus(user: AdminUserResponse): void {
-    this.service.toggleStatus(user.id).pipe(takeUntilDestroyed()).subscribe({
+    this.service.toggleStatus(user.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.toast('success', 'admin.users.toast.statusUpdated');
         this.loadUsers(this.currentPage, this.pageSize);
@@ -176,7 +177,7 @@ export class AdminUsersComponent implements OnInit {
   }
 
   private unlock(user: AdminUserResponse): void {
-    this.service.unlock(user.id).pipe(takeUntilDestroyed()).subscribe({
+    this.service.unlock(user.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.toast('success', 'admin.users.toast.unlocked');
         this.loadUsers(this.currentPage, this.pageSize);
@@ -186,7 +187,7 @@ export class AdminUsersComponent implements OnInit {
 
   private loadUsers(page: number, size: number): void {
     this.loading.set(true);
-    this.service.getAll(page, size).pipe(takeUntilDestroyed()).subscribe({
+    this.service.getAll(page, size).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: res => {
         this.users.set(res.items);
         this.totalRecords.set(res.totalCount);

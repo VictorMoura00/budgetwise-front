@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -24,6 +24,7 @@ export class FamilyGroupsComponent implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly translate = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   groups = signal<FamilyGroupSummaryResponse[]>([]);
   loading = signal(false);
@@ -41,7 +42,7 @@ export class FamilyGroupsComponent implements OnInit {
 
   load(): void {
     this.loading.set(true);
-    this.service.getAll().pipe(takeUntilDestroyed()).subscribe({
+    this.service.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: res => {
         this.groups.set(res);
         this.loading.set(false);
@@ -65,7 +66,7 @@ export class FamilyGroupsComponent implements OnInit {
     if (!this.groupName.trim()) return;
     this.saving.set(true);
     this.service.create({ name: this.groupName.trim(), description: this.groupDescription || null })
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.saving.set(false);
@@ -81,7 +82,7 @@ export class FamilyGroupsComponent implements OnInit {
     if (!this.inviteCode.trim()) return;
     this.saving.set(true);
     this.service.join({ inviteCode: this.inviteCode.trim() })
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.saving.set(false);
@@ -99,7 +100,7 @@ export class FamilyGroupsComponent implements OnInit {
       header: this.translate.instant('familyGroups.confirmLeaveHeader'),
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.service.leave(group.id).pipe(takeUntilDestroyed()).subscribe({
+        this.service.leave(group.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: () => {
             this.toast('success', 'familyGroups.toast.leaveSuccess');
             this.load();
