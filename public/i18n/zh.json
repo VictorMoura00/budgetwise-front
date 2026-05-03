@@ -10,6 +10,7 @@
     "error": "错误",
     "search": "搜索...",
     "all": "全部",
+    "close": "关闭",
     "details": "详情"
   },
   "login": {
@@ -286,6 +287,7 @@
     "title": "共享支出",
     "subtitle": "管理群组的共享支出",
     "selectGroup": "选择群组",
+    "newExpense": "新建共享支出",
     "totalAmount": "总额",
     "totalSettled": "已结清",
     "totalPending": "待结清",
@@ -296,7 +298,37 @@
       "title": "没有支出",
       "subtitle": "创建共享支出以开始。"
     },
-    "noExpenses": "未找到支出。"
+    "noExpenses": "未找到支出。",
+    "create": {
+      "title": "新建共享支出"
+    },
+    "form": {
+      "description": "描述",
+      "descriptionRequired": "描述为必填项",
+      "totalAmount": "总金额",
+      "totalAmountRequired": "总金额必须大于零",
+      "expenseDate": "支出日期",
+      "expenseDateRequired": "日期为必填项",
+      "category": "分类",
+      "selectCategory": "选择分类",
+      "participants": "参与者",
+      "addParticipant": "添加参与者",
+      "selectMember": "选择成员"
+    },
+    "errors": {
+      "noParticipants": "请添加至少一位参与者",
+      "duplicateParticipant": "不能重复添加同一位参与者",
+      "exceedsTotal": "金额总和不能超过总额"
+    },
+    "detail": {
+      "title": "支出详情",
+      "participants": "参与者",
+      "settle": "结清"
+    },
+    "toast": {
+      "createSuccess": "共享支出创建成功。",
+      "settleSuccess": "参与者结清成功。"
+    }
   },
   "dueTransactions": {
     "title": "到期交易",
@@ -330,14 +362,31 @@
       "actions": {
         "unlock": "解锁",
         "activate": "激活",
-        "deactivate": "停用"
+        "deactivate": "停用",
+        "changeRole": "更改角色"
       },
       "confirmActivate": "激活 {{name}}？",
       "confirmDeactivate": "停用 {{name}}？",
       "confirmUnlock": "解锁 {{name}}？",
+      "confirmRoleChange": "更改 {{name}} 的角色？",
+      "edit": {
+        "title": "编辑用户"
+      },
+      "form": {
+        "fullName": "全名",
+        "fullNameRequired": "姓名为必填项",
+        "email": "电子邮件",
+        "emailInvalid": "电子邮件无效",
+        "role": "角色"
+      },
+      "role": {
+        "title": "更改角色"
+      },
       "toast": {
         "statusUpdated": "状态已更新。",
-        "unlocked": "用户已解锁。"
+        "unlocked": "用户已解锁。",
+        "updated": "用户更新成功。",
+        "roleUpdated": "角色更改成功。"
       }
     }
   },

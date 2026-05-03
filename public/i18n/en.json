@@ -10,6 +10,8 @@
     "error": "Error",
     "search": "Search...",
     "all": "All",
+    "close": "Close",
+    "close": "Close",
     "details": "Details"
   },
   "login": {
@@ -286,6 +288,7 @@
     "title": "Shared Expenses",
     "subtitle": "Manage expenses shared with your group",
     "selectGroup": "Select Group",
+    "newExpense": "New shared expense",
     "totalAmount": "Total",
     "totalSettled": "Settled",
     "totalPending": "Pending",
@@ -296,7 +299,37 @@
       "title": "No expenses",
       "subtitle": "Create a shared expense to get started."
     },
-    "noExpenses": "No expenses found."
+    "noExpenses": "No expenses found.",
+    "create": {
+      "title": "New Shared Expense"
+    },
+    "form": {
+      "description": "Description",
+      "descriptionRequired": "Description is required",
+      "totalAmount": "Total amount",
+      "totalAmountRequired": "Total amount must be greater than zero",
+      "expenseDate": "Expense date",
+      "expenseDateRequired": "Date is required",
+      "category": "Category",
+      "selectCategory": "Select a category",
+      "participants": "Participants",
+      "addParticipant": "Add participant",
+      "selectMember": "Select a member"
+    },
+    "errors": {
+      "noParticipants": "Add at least one participant",
+      "duplicateParticipant": "Cannot add the same participant twice",
+      "exceedsTotal": "The sum of amounts cannot exceed the total"
+    },
+    "detail": {
+      "title": "Expense Detail",
+      "participants": "Participants",
+      "settle": "Settle"
+    },
+    "toast": {
+      "createSuccess": "Shared expense created successfully.",
+      "settleSuccess": "Participant settled successfully."
+    }
   },
   "dueTransactions": {
     "title": "Due Transactions",
@@ -330,14 +363,31 @@
       "actions": {
         "unlock": "Unlock",
         "activate": "Activate",
-        "deactivate": "Deactivate"
+        "deactivate": "Deactivate",
+        "changeRole": "Change role"
       },
       "confirmActivate": "Activate {{name}}?",
       "confirmDeactivate": "Deactivate {{name}}?",
       "confirmUnlock": "Unlock {{name}}?",
+      "confirmRoleChange": "Change role of {{name}}?",
+      "edit": {
+        "title": "Edit User"
+      },
+      "form": {
+        "fullName": "Full name",
+        "fullNameRequired": "Name is required",
+        "email": "Email",
+        "emailInvalid": "Invalid email",
+        "role": "Role"
+      },
+      "role": {
+        "title": "Change Role"
+      },
       "toast": {
         "statusUpdated": "Status updated.",
-        "unlocked": "User unlocked."
+        "unlocked": "User unlocked.",
+        "updated": "User updated successfully.",
+        "roleUpdated": "Role changed successfully."
       }
     }
   },

@@ -10,6 +10,7 @@
     "error": "Erro",
     "search": "Buscar...",
     "all": "Todos",
+    "close": "Fechar",
     "details": "Detalhes"
   },
   "login": {
@@ -286,6 +287,7 @@
     "title": "Despesas Compartilhadas",
     "subtitle": "Gerencie despesas divididas com seu grupo",
     "selectGroup": "Selecionar Grupo",
+    "newExpense": "Nova despesa compartilhada",
     "totalAmount": "Total",
     "totalSettled": "Liquidado",
     "totalPending": "Pendente",
@@ -296,7 +298,37 @@
       "title": "Nenhuma despesa",
       "subtitle": "Crie uma despesa compartilhada para começar."
     },
-    "noExpenses": "Nenhuma despesa encontrada."
+    "noExpenses": "Nenhuma despesa encontrada.",
+    "create": {
+      "title": "Nova Despesa Compartilhada"
+    },
+    "form": {
+      "description": "Descrição",
+      "descriptionRequired": "Descrição é obrigatória",
+      "totalAmount": "Valor total",
+      "totalAmountRequired": "Valor total deve ser maior que zero",
+      "expenseDate": "Data da despesa",
+      "expenseDateRequired": "Data é obrigatória",
+      "category": "Categoria",
+      "selectCategory": "Selecione uma categoria",
+      "participants": "Participantes",
+      "addParticipant": "Adicionar participante",
+      "selectMember": "Selecione um membro"
+    },
+    "errors": {
+      "noParticipants": "Adicione pelo menos um participante",
+      "duplicateParticipant": "Não é possível adicionar o mesmo participante duas vezes",
+      "exceedsTotal": "A soma dos valores não pode exceder o total"
+    },
+    "detail": {
+      "title": "Detalhe da Despesa",
+      "participants": "Participantes",
+      "settle": "Liquidar"
+    },
+    "toast": {
+      "createSuccess": "Despesa compartilhada criada com sucesso.",
+      "settleSuccess": "Participante liquidado com sucesso."
+    }
   },
   "dueTransactions": {
     "title": "Pendências",
@@ -330,14 +362,31 @@
       "actions": {
         "unlock": "Desbloquear",
         "activate": "Ativar",
-        "deactivate": "Desativar"
+        "deactivate": "Desativar",
+        "changeRole": "Alterar função"
       },
       "confirmActivate": "Ativar {{name}}?",
       "confirmDeactivate": "Desativar {{name}}?",
       "confirmUnlock": "Desbloquear {{name}}?",
+      "confirmRoleChange": "Alterar função de {{name}}?",
+      "edit": {
+        "title": "Editar Usuário"
+      },
+      "form": {
+        "fullName": "Nome completo",
+        "fullNameRequired": "Nome é obrigatório",
+        "email": "E-mail",
+        "emailInvalid": "E-mail inválido",
+        "role": "Função"
+      },
+      "role": {
+        "title": "Alterar Função"
+      },
       "toast": {
         "statusUpdated": "Status atualizado.",
-        "unlocked": "Usuário desbloqueado."
+        "unlocked": "Usuário desbloqueado.",
+        "updated": "Usuário atualizado com sucesso.",
+        "roleUpdated": "Função alterada com sucesso."
       }
     }
   },

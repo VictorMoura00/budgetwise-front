@@ -10,6 +10,7 @@
     "error": "Eraro",
     "search": "Serĉi...",
     "all": "Ĉiuj",
+    "close": "Fermi",
     "details": "Detaloj"
   },
   "login": {
@@ -286,6 +287,7 @@
     "title": "Komune Pagataj Elspezoj",
     "subtitle": "Administru elspezojn kun via grupo",
     "selectGroup": "Elekti Grupon",
+    "newExpense": "Nova komune pagata elspezo",
     "totalAmount": "Totalo",
     "totalSettled": "Pagita",
     "totalPending": "Pendanta",
@@ -296,7 +298,37 @@
       "title": "Neniuj elspezoj",
       "subtitle": "Kreu komune pagatan elspezon por komenci."
     },
-    "noExpenses": "Neniuj elspezoj trovitaj."
+    "noExpenses": "Neniuj elspezoj trovitaj.",
+    "create": {
+      "title": "Nova Komune Pagata Elspezo"
+    },
+    "form": {
+      "description": "Priskribo",
+      "descriptionRequired": "Priskribo estas deviga",
+      "totalAmount": "Tuta sumo",
+      "totalAmountRequired": "Tuta sumo devas esti pli granda ol nulo",
+      "expenseDate": "Elspezodato",
+      "expenseDateRequired": "Dato estas deviga",
+      "category": "Kategorio",
+      "selectCategory": "Elektu kategorion",
+      "participants": "Partoprenantoj",
+      "addParticipant": "Aldoni partoprenanton",
+      "selectMember": "Elektu membron"
+    },
+    "errors": {
+      "noParticipants": "Aldonu almenaŭ unu partoprenanton",
+      "duplicateParticipant": "Ne eblas aldoni la saman partoprenanton dufoje",
+      "exceedsTotal": "La sumo de sumoj ne povas superi la tuton"
+    },
+    "detail": {
+      "title": "Detalo de Elspezo",
+      "participants": "Partoprenantoj",
+      "settle": "Pagigi"
+    },
+    "toast": {
+      "createSuccess": "Komune pagata elspezo sukcese kreita.",
+      "settleSuccess": "Partoprenanto sukcese pagigita."
+    }
   },
   "dueTransactions": {
     "title": "Devontaj Transakcioj",
@@ -330,14 +362,31 @@
       "actions": {
         "unlock": "Malbari",
         "activate": "Aktivigi",
-        "deactivate": "Malaktivigi"
+        "deactivate": "Malaktivigi",
+        "changeRole": "Ŝanĝi rolon"
       },
       "confirmActivate": "Aktivigi {{name}}?",
       "confirmDeactivate": "Malaktivigi {{name}}?",
       "confirmUnlock": "Malbari {{name}}?",
+      "confirmRoleChange": "Ŝanĝi rolon de {{name}}?",
+      "edit": {
+        "title": "Redakti Uzanton"
+      },
+      "form": {
+        "fullName": "Plena nomo",
+        "fullNameRequired": "Nomo estas deviga",
+        "email": "Retpoŝto",
+        "emailInvalid": "Nevalida retpoŝto",
+        "role": "Rolo"
+      },
+      "role": {
+        "title": "Ŝanĝi Rolon"
+      },
       "toast": {
         "statusUpdated": "Stato ĝisdatigita.",
-        "unlocked": "Uzanto malbarita."
+        "unlocked": "Uzanto malbarita.",
+        "updated": "Uzanto sukcese ĝisdatigita.",
+        "roleUpdated": "Rolo sukcese ŝanĝita."
       }
     }
   },

@@ -26,7 +26,7 @@
             <th>{{ 'admin.users.columns.email' | translate }}</th>
             <th>{{ 'admin.users.columns.role' | translate }}</th>
             <th>{{ 'admin.users.columns.status' | translate }}</th>
-            <th style="width: 160px"></th>
+            <th style="width: 200px"></th>
           </tr>
         </ng-template>
 
@@ -48,6 +48,22 @@
             </td>
             <td>
               <div class="row-actions">
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="secondary"
+                  [pTooltip]="'common.edit' | translate"
+                  (onClick)="openEdit(user)"
+                />
+                <p-button
+                  icon="pi pi-user-edit"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="secondary"
+                  [pTooltip]="'admin.users.actions.changeRole' | translate"
+                  (onClick)="openRoleDialog(user)"
+                />
                 <p-button
                   icon="pi pi-lock-open"
                   [text]="true"
@@ -73,3 +89,92 @@
     </div>
   </div>
 </div>
+
+<!-- Edit Dialog -->
+<p-dialog
+  [(visible)]="editDialogVisible"
+  [header]="'admin.users.edit.title' | translate"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '440px' }"
+>
+  @if (editLoading()) {
+    <div class="skeleton-body">
+      <p-skeleton width="60%" height="1.5rem" styleClass="mb-2" />
+      <p-skeleton width="100%" height="2.5rem" styleClass="mb-2" />
+      <p-skeleton width="100%" height="2.5rem" />
+    </div>
+  } @else {
+    <form [formGroup]="editForm" class="form-stack">
+      <div class="form-field">
+        <label class="field-label">{{ 'admin.users.form.fullName' | translate }} *</label>
+        <input pInputText formControlName="fullName" style="width: 100%" />
+        @if (editForm.get('fullName')?.invalid && editForm.get('fullName')?.touched) {
+          <small class="p-error">{{ 'admin.users.form.fullNameRequired' | translate }}</small>
+        }
+      </div>
+      <div class="form-field">
+        <label class="field-label">{{ 'admin.users.form.email' | translate }} *</label>
+        <input pInputText formControlName="email" type="email" style="width: 100%" />
+        @if (editForm.get('email')?.invalid && editForm.get('email')?.touched) {
+          <small class="p-error">{{ 'admin.users.form.emailInvalid' | translate }}</small>
+        }
+      </div>
+    </form>
+  }
+
+  <ng-template #footer>
+    <p-button
+      [label]="'common.cancel' | translate"
+      [text]="true"
+      severity="secondary"
+      (onClick)="editDialogVisible.set(false)"
+    />
+    <p-button
+      [label]="'common.save' | translate"
+      [loading]="editSaving()"
+      [disabled]="editForm.invalid || editLoading()"
+      (onClick)="saveEdit()"
+    />
+  </ng-template>
+</p-dialog>
+
+<!-- Role Dialog -->
+<p-dialog
+  [(visible)]="roleDialogVisible"
+  [header]="'admin.users.role.title' | translate"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '360px' }"
+>
+  <div class="form-stack">
+    <div class="form-field">
+      <label class="field-label">{{ 'admin.users.form.role' | translate }}</label>
+      <p-select
+        [options]="roleOptions"
+        optionLabel="label"
+        optionValue="value"
+        [(ngModel)]="selectedRole"
+        styleClass="w-full"
+      />
+    </div>
+  </div>
+
+  <ng-template #footer>
+    <p-button
+      [label]="'common.cancel' | translate"
+      [text]="true"
+      severity="secondary"
+      (onClick)="roleDialogVisible.set(false)"
+    />
+    <p-button
+      [label]="'common.save' | translate"
+      [loading]="roleSaving()"
+      (onClick)="confirmRoleChange()"
+    />
+  </ng-template>
+</p-dialog>

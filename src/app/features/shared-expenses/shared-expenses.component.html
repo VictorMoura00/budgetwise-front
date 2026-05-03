@@ -4,6 +4,13 @@
       <h1 class="page-title">{{ 'sharedExpenses.title' | translate }}</h1>
       <p class="page-subtitle">{{ 'sharedExpenses.subtitle' | translate }}</p>
     </div>
+    @if (groupId()) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="'sharedExpenses.newExpense' | translate"
+        (onClick)="openCreateDialog()"
+      />
+    }
   </div>
 
   @if (!groupId()) {
@@ -51,7 +58,7 @@
       } @else {
         <ul class="expense-list">
           @for (exp of expenses(); track exp.id) {
-            <li class="expense-item">
+            <li class="expense-item" (click)="openDetail(exp)" style="cursor: pointer">
               <div class="expense-info">
                 <span class="expense-desc">{{ exp.description ?? '—' }}</span>
                 <span class="expense-meta">{{ formatCurrency(exp.totalAmount) }} · {{ exp.participants.length }} {{ 'sharedExpenses.participants' | translate }}</span>
@@ -70,3 +77,212 @@
     </div>
   }
 </div>
+
+<!-- Create Dialog -->
+<p-dialog
+  [(visible)]="createDialogVisible"
+  [header]="'sharedExpenses.create.title' | translate"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '520px' }"
+>
+  <form [formGroup]="createForm" class="form-stack">
+    <div class="form-field">
+      <label class="field-label">{{ 'sharedExpenses.form.description' | translate }} *</label>
+      <textarea
+        pTextarea
+        formControlName="description"
+        rows="2"
+        style="width: 100%"
+        [maxlength]="255"
+      ></textarea>
+      @if (createForm.get('description')?.invalid && createForm.get('description')?.touched) {
+        <small class="p-error">{{ 'sharedExpenses.form.descriptionRequired' | translate }}</small>
+      }
+    </div>
+
+    <div class="form-row">
+      <div class="form-field" style="flex: 1">
+        <label class="field-label">{{ 'sharedExpenses.form.totalAmount' | translate }} *</label>
+        <p-inputnumber
+          formControlName="totalAmount"
+          mode="decimal"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+          styleClass="w-full"
+        />
+        @if (createForm.get('totalAmount')?.invalid && createForm.get('totalAmount')?.touched) {
+          <small class="p-error">{{ 'sharedExpenses.form.totalAmountRequired' | translate }}</small>
+        }
+      </div>
+      <div class="form-field" style="flex: 1">
+        <label class="field-label">{{ 'sharedExpenses.form.expenseDate' | translate }} *</label>
+        <p-datepicker
+          formControlName="expenseDate"
+          dateFormat="dd/mm/yy"
+          styleClass="w-full"
+        />
+        @if (createForm.get('expenseDate')?.invalid && createForm.get('expenseDate')?.touched) {
+          <small class="p-error">{{ 'sharedExpenses.form.expenseDateRequired' | translate }}</small>
+        }
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label class="field-label">{{ 'sharedExpenses.form.category' | translate }}</label>
+      @if (loadingCategories()) {
+        <p-skeleton height="2.5rem" />
+      } @else {
+        <p-select
+          formControlName="categoryId"
+          [options]="filteredCategories()"
+          optionLabel="name"
+          optionValue="id"
+          [placeholder]="'sharedExpenses.form.selectCategory' | translate"
+          styleClass="w-full"
+        />
+      }
+    </div>
+
+    <div class="form-field">
+      <div class="field-label-row">
+        <label class="field-label">{{ 'sharedExpenses.form.participants' | translate }} *</label>
+        <p-button
+          icon="pi pi-plus"
+          [text]="true"
+          size="small"
+          (onClick)="addParticipant()"
+          [label]="'sharedExpenses.form.addParticipant' | translate"
+        />
+      </div>
+
+      @if (participantError()) {
+        <small class="p-error">{{ participantError() }}</small>
+      }
+
+      @if (loadingMembers()) {
+        <p-skeleton height="6rem" />
+      } @else {
+        <div formArrayName="participants">
+          @for (ctrl of participantsArray.controls; track $index; let i = $index) {
+            <div [formGroupName]="i" class="participant-row">
+              <p-select
+                formControlName="userId"
+                [options]="members()"
+                optionLabel="userId"
+                optionValue="userId"
+                [placeholder]="'sharedExpenses.form.selectMember' | translate"
+                styleClass="w-full"
+              />
+              <p-inputnumber
+                formControlName="amountOwed"
+                mode="decimal"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                placeholder="Valor"
+                styleClass="w-full"
+              />
+              <p-button
+                icon="pi pi-trash"
+                [text]="true"
+                severity="danger"
+                size="small"
+                (onClick)="removeParticipant(i)"
+              />
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button
+      [label]="'common.cancel' | translate"
+      [text]="true"
+      severity="secondary"
+      (onClick)="createDialogVisible.set(false)"
+    />
+    <p-button
+      [label]="'common.save' | translate"
+      [loading]="saving()"
+      [disabled]="createForm.invalid || !!participantError()"
+      (onClick)="saveCreate()"
+    />
+  </ng-template>
+</p-dialog>
+
+<!-- Detail Dialog -->
+<p-dialog
+  [(visible)]="detailDialogVisible"
+  [header]="'sharedExpenses.detail.title' | translate"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '520px' }"
+>
+  @if (detailLoading()) {
+    <div class="skeleton-body">
+      <p-skeleton width="60%" height="1.5rem" styleClass="mb-2" />
+      <p-skeleton width="40%" height="1rem" styleClass="mb-2" />
+      @for (i of [1,2]; track i) {
+        <p-skeleton height="3rem" styleClass="mb-2" />
+      }
+    </div>
+  } @else if (selectedExpense(); as exp) {
+    <div class="detail-header">
+      <h3 class="detail-title">{{ exp.description ?? '—' }}</h3>
+      <div class="detail-meta">
+        <span>{{ formatCurrency(exp.totalAmount) }}</span>
+        <span class="detail-sep">·</span>
+        <span>{{ 'sharedExpenses.totalSettled' | translate }}: {{ formatCurrency(exp.totalSettled) }}</span>
+        <span class="detail-sep">·</span>
+        <span>{{ 'sharedExpenses.totalPending' | translate }}: {{ formatCurrency(exp.totalPending) }}</span>
+        <span class="detail-sep">·</span>
+        @if (exp.isFullySettled) {
+          <span class="status-badge status-badge--settled">{{ 'sharedExpenses.settled' | translate }}</span>
+        } @else {
+          <span class="status-badge status-badge--pending">{{ 'sharedExpenses.pending' | translate }}</span>
+        }
+      </div>
+    </div>
+
+    <h4 class="section-subtitle">{{ 'sharedExpenses.detail.participants' | translate }}</h4>
+    <ul class="participant-list">
+      @for (p of exp.participants; track p.id) {
+        <li class="participant-item">
+          <div class="participant-info">
+            <span class="participant-id">{{ p.userId }}</span>
+            <span class="participant-amount">{{ formatCurrency(p.amountOwed) }}</span>
+          </div>
+          <div class="participant-status">
+            @if (p.isSettled) {
+              <span class="status-badge status-badge--settled">{{ 'sharedExpenses.settled' | translate }}</span>
+              <span class="settled-at">{{ p.settledAt | date:'dd/MM/yyyy' }}</span>
+            } @else {
+              <span class="status-badge status-badge--pending">{{ 'sharedExpenses.pending' | translate }}</span>
+              <p-button
+                icon="pi pi-check"
+                [label]="'sharedExpenses.detail.settle' | translate"
+                size="small"
+                (onClick)="settle(p)"
+              />
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+
+  <ng-template #footer>
+    <p-button
+      [label]="'common.close' | translate"
+      [text]="true"
+      severity="secondary"
+      (onClick)="detailDialogVisible.set(false)"
+    />
+  </ng-template>
+</p-dialog>
