@@ -53,10 +53,19 @@
   "dashboard": {
     "title": "仪表盘",
     "subtitle": "所选时段的财务摘要",
-    "period": {
-      "month": "本月",
-      "quarter": "3个月",
-      "semester": "6个月"
+    "filters": {
+      "thisMonth": "本月",
+      "threeMonths": "3个月",
+      "sixMonths": "6个月"
+    },
+    "cards": {
+      "income": "收入",
+      "expenses": "支出",
+      "balance": "余额",
+      "savingsRate": "储蓄率",
+      "confirmedBalance": "已确认余额",
+      "pendingImpact": "待处理影响",
+      "projectedBalance": "预计余额"
     },
     "kpi": {
       "income": "收入",

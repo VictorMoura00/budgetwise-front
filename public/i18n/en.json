@@ -54,10 +54,19 @@
   "dashboard": {
     "title": "Dashboard",
     "subtitle": "Financial summary for the selected period",
-    "period": {
-      "month": "This month",
-      "quarter": "3 months",
-      "semester": "6 months"
+    "filters": {
+      "thisMonth": "This month",
+      "threeMonths": "3 months",
+      "sixMonths": "6 months"
+    },
+    "cards": {
+      "income": "Income",
+      "expenses": "Expenses",
+      "balance": "Balance",
+      "savingsRate": "Savings Rate",
+      "confirmedBalance": "Confirmed Balance",
+      "pendingImpact": "Pending Impact",
+      "projectedBalance": "Projected Balance"
     },
     "kpi": {
       "income": "Income",

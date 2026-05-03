@@ -53,10 +53,19 @@
   "dashboard": {
     "title": "Panelo",
     "subtitle": "Financa resumo de la elektita periodo",
-    "period": {
-      "month": "Ĉi-monate",
-      "quarter": "3 monatoj",
-      "semester": "6 monatoj"
+    "filters": {
+      "thisMonth": "Ĉi-monate",
+      "threeMonths": "3 monatoj",
+      "sixMonths": "6 monatoj"
+    },
+    "cards": {
+      "income": "Enspezo",
+      "expenses": "Elspezoj",
+      "balance": "Saldo",
+      "savingsRate": "Ŝparprocento",
+      "confirmedBalance": "Konfirmita Saldo",
+      "pendingImpact": "Pendanta Efiko",
+      "projectedBalance": "Projektita Saldo"
     },
     "kpi": {
       "income": "Enspezo",

@@ -53,10 +53,19 @@
   "dashboard": {
     "title": "Dashboard",
     "subtitle": "Resumo financeiro do período selecionado",
-    "period": {
-      "month": "Este mês",
-      "quarter": "3 meses",
-      "semester": "6 meses"
+    "filters": {
+      "thisMonth": "Este mês",
+      "threeMonths": "3 meses",
+      "sixMonths": "6 meses"
+    },
+    "cards": {
+      "income": "Receitas",
+      "expenses": "Despesas",
+      "balance": "Saldo",
+      "savingsRate": "Taxa de Economia",
+      "confirmedBalance": "Saldo Confirmado",
+      "pendingImpact": "Impacto Pendente",
+      "projectedBalance": "Saldo Projetado"
     },
     "kpi": {
       "income": "Receitas",

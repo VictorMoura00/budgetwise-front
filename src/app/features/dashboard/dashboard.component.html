@@ -16,36 +16,14 @@
   </div>
 
   <!-- Overview Cards (from /dashboard/overview) -->
-  @if (overview(); as ov) {
+  @if (overviewCards().length) {
     <div class="overview-grid">
-      <div class="overview-card">
-        <span class="overview-label">Receitas</span>
-        <span class="overview-value">{{ formatCurrency(ov.financialSummary.totalIncome) }}</span>
-      </div>
-      <div class="overview-card">
-        <span class="overview-label">Despesas</span>
-        <span class="overview-value">{{ formatCurrency(ov.financialSummary.totalExpense) }}</span>
-      </div>
-      <div class="overview-card">
-        <span class="overview-label">Saldo</span>
-        <span class="overview-value">{{ formatCurrency(ov.financialSummary.balance) }}</span>
-      </div>
-      <div class="overview-card">
-        <span class="overview-label">Taxa de Economia</span>
-        <span class="overview-value">{{ ov.financialSummary.savingsRate != null ? (ov.financialSummary.savingsRate + '%') : '—' }}</span>
-      </div>
-      <div class="overview-card">
-        <span class="overview-label">Saldo Confirmado</span>
-        <span class="overview-value">{{ formatCurrency(ov.financialSummary.confirmedBalance) }}</span>
-      </div>
-      <div class="overview-card">
-        <span class="overview-label">Impacto Pendente</span>
-        <span class="overview-value">{{ formatCurrency(ov.financialSummary.pendingImpact) }}</span>
-      </div>
-      <div class="overview-card">
-        <span class="overview-label">Saldo Projetado</span>
-        <span class="overview-value">{{ formatCurrency(ov.financialSummary.projectedBalance) }}</span>
-      </div>
+      @for (card of overviewCards(); track card.labelKey) {
+        <div class="overview-card">
+          <span class="overview-label">{{ card.labelKey | translate }}</span>
+          <span class="overview-value">{{ formatOverviewValue(card.type, card.value) }}</span>
+        </div>
+      }
     </div>
   }
 

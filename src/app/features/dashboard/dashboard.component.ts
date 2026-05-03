@@ -112,9 +112,23 @@ export class DashboardComponent implements OnInit {
   readonly periodOptions = computed(() => {
     this.lang.currentLang();
     return [
-      { label: this.translate.instant('dashboard.period.month'), value: 1 },
-      { label: this.translate.instant('dashboard.period.quarter'), value: 3 },
-      { label: this.translate.instant('dashboard.period.semester'), value: 6 },
+      { label: this.translate.instant('dashboard.filters.thisMonth'), value: 1 },
+      { label: this.translate.instant('dashboard.filters.threeMonths'), value: 3 },
+      { label: this.translate.instant('dashboard.filters.sixMonths'), value: 6 },
+    ];
+  });
+
+  readonly overviewCards = computed(() => {
+    const ov = this.overview();
+    if (!ov) return [];
+    return [
+      { labelKey: 'dashboard.cards.income', value: ov.financialSummary.totalIncome, type: 'currency' as const },
+      { labelKey: 'dashboard.cards.expenses', value: ov.financialSummary.totalExpense, type: 'currency' as const },
+      { labelKey: 'dashboard.cards.balance', value: ov.financialSummary.balance, type: 'currency' as const },
+      { labelKey: 'dashboard.cards.savingsRate', value: ov.financialSummary.savingsRate, type: 'percentage' as const },
+      { labelKey: 'dashboard.cards.confirmedBalance', value: ov.financialSummary.confirmedBalance, type: 'currency' as const },
+      { labelKey: 'dashboard.cards.pendingImpact', value: ov.financialSummary.pendingImpact, type: 'currency' as const },
+      { labelKey: 'dashboard.cards.projectedBalance', value: ov.financialSummary.projectedBalance, type: 'currency' as const },
     ];
   });
 
@@ -497,6 +511,12 @@ export class DashboardComponent implements OnInit {
   formatDelta(delta: number): string {
     const abs = this.formatCurrency(Math.abs(delta));
     return delta >= 0 ? `+${abs}` : `-${abs}`;
+  }
+
+  formatOverviewValue(type: 'currency' | 'percentage', value: number | null): string {
+    if (value == null) return '—';
+    if (type === 'percentage') return `${value}%`;
+    return this.formatCurrency(value);
   }
 
   // ─── Private helpers ─────────────────────────────────────────────────────────
