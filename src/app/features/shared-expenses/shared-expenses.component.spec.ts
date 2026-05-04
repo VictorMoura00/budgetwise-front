@@ -119,7 +119,7 @@ describe('SharedExpensesComponent', () => {
     await TestBed.configureTestingModule({
       imports: [SharedExpensesComponent],
       providers: [
-        provideTranslateService({ defaultLanguage: 'pt' }),
+        provideTranslateService({ fallbackLang: 'pt' }),
         { provide: SharedExpenseService, useClass: MockSharedExpenseService },
         { provide: FamilyGroupService, useClass: MockFamilyGroupService },
         { provide: CategoryService, useClass: MockCategoryService },

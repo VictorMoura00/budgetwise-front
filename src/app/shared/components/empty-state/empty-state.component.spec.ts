@@ -9,7 +9,7 @@ describe('EmptyStateComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EmptyStateComponent],
-      providers: [provideTranslateService({ defaultLanguage: 'pt' })],
+      providers: [provideTranslateService({ fallbackLang: 'pt' })],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EmptyStateComponent);

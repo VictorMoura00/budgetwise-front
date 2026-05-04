@@ -52,7 +52,7 @@ describe('AdminUsersComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AdminUsersComponent],
       providers: [
-        provideTranslateService({ defaultLanguage: 'pt' }),
+        provideTranslateService({ fallbackLang: 'pt' }),
         { provide: AdminUserService, useClass: MockAdminUserService },
         { provide: ConfirmationService, useClass: MockConfirmationService },
         { provide: MessageService, useValue: { add: () => {} } },

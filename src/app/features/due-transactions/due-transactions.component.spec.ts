@@ -28,7 +28,7 @@ describe('DueTransactionsComponent', () => {
     await TestBed.configureTestingModule({
       imports: [DueTransactionsComponent],
       providers: [
-        provideTranslateService({ defaultLanguage: 'pt' }),
+        provideTranslateService({ fallbackLang: 'pt' }),
         { provide: ReportService, useClass: MockReportService },
       ],
     }).compileComponents();

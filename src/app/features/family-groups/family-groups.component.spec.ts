@@ -34,7 +34,7 @@ describe('FamilyGroupsComponent', () => {
     await TestBed.configureTestingModule({
       imports: [FamilyGroupsComponent],
       providers: [
-        provideTranslateService({ defaultLanguage: 'pt' }),
+        provideTranslateService({ fallbackLang: 'pt' }),
         { provide: FamilyGroupService, useClass: MockFamilyGroupService },
         { provide: ConfirmationService, useClass: MockConfirmationService },
         { provide: MessageService, useValue: { add: () => {} } },

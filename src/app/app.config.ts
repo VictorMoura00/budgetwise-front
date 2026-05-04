@@ -48,7 +48,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideHttpClient(withFetch(), withInterceptors([errorInterceptor, authInterceptor, tokenRefreshInterceptor])),
     provideAnimationsAsync(),
-    provideTranslateService({ defaultLanguage: 'pt' }),
+    provideTranslateService({ fallbackLang: 'pt' }),
     provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
     providePrimeNG({
       ripple: true,

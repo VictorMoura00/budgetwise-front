@@ -11,7 +11,7 @@ describe('App', () => {
       providers: [
         provideRouter([]),
         provideAnimationsAsync(),
-        provideTranslateService({ defaultLanguage: 'pt' }),
+        provideTranslateService({ fallbackLang: 'pt' }),
       ],
     }).compileComponents();
   });
