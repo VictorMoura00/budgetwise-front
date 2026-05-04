@@ -28,7 +28,8 @@ import { CategoryResponse, PaymentMethod, RecurrenceType, TagResponse, Transacti
 type Severity = 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast';
 
 interface SelectOption<T> {
-  label: string;
+  label?: string;
+  labelKey?: string;
   value: T;
 }
 
@@ -121,68 +122,72 @@ export class TransactionsComponent implements OnInit {
 
   // ─── Translated select options (reactive to language changes) ──────────────
 
-  readonly typeFilterOptions = computed<SelectOption<TransactionType | null>[]>(() => {
-    this.lang.currentLang();
-    return [
-      { label: this.translate.instant('common.all'), value: null },
-      { label: this.translate.instant('transactions.type.income'), value: TransactionType.Income },
-      { label: this.translate.instant('transactions.type.expense'), value: TransactionType.Expense },
-    ];
-  });
+  readonly typeFilterOptionsTranslated = signal<SelectOption<TransactionType | null>[]>([]);
+  readonly statusFilterOptionsTranslated = signal<SelectOption<boolean | null>[]>([]);
+  readonly typeFormOptionsTranslated = signal<SelectOption<TransactionType>[]>([]);
 
-  readonly statusFilterOptions = computed<SelectOption<boolean | null>[]>(() => {
-    this.lang.currentLang();
-    return [
-      { label: this.translate.instant('common.all'), value: null },
-      { label: this.translate.instant('transactions.status.confirmed'), value: true },
-      { label: this.translate.instant('transactions.status.pending'), value: false },
-    ];
-  });
+  private readonly typeFilterLabelKeys = [
+    { labelKey: 'common.all', value: null as TransactionType | null },
+    { labelKey: 'transactions.type.income', value: TransactionType.Income },
+    { labelKey: 'transactions.type.expense', value: TransactionType.Expense },
+  ] as const;
 
-  readonly typeFormOptions = computed<SelectOption<TransactionType>[]>(() => {
-    this.lang.currentLang();
-    return [
-      { label: this.translate.instant('transactions.type.income'), value: TransactionType.Income },
-      { label: this.translate.instant('transactions.type.expense'), value: TransactionType.Expense },
-    ];
-  });
+  private readonly statusFilterLabelKeys = [
+    { labelKey: 'common.all', value: null as boolean | null },
+    { labelKey: 'transactions.status.confirmed', value: true },
+    { labelKey: 'transactions.status.pending', value: false },
+  ] as const;
 
-  readonly paymentMethodOptions = computed<SelectOption<PaymentMethod | null>[]>(() => {
-    this.lang.currentLang();
-    return [
-      { label: this.translate.instant('transactions.paymentMethod.none'), value: null },
-      { label: this.translate.instant('transactions.paymentMethod.pix'), value: PaymentMethod.Pix },
-      { label: this.translate.instant('transactions.paymentMethod.creditCard'), value: PaymentMethod.CreditCard },
-      { label: this.translate.instant('transactions.paymentMethod.debitCard'), value: PaymentMethod.DebitCard },
-      { label: this.translate.instant('transactions.paymentMethod.cash'), value: PaymentMethod.Cash },
-      { label: this.translate.instant('transactions.paymentMethod.ted'), value: PaymentMethod.Ted },
-      { label: this.translate.instant('transactions.paymentMethod.boleto'), value: PaymentMethod.Boleto },
-      { label: this.translate.instant('transactions.paymentMethod.other'), value: PaymentMethod.Other },
-    ];
-  });
+  private readonly typeFormLabelKeys = [
+    { labelKey: 'transactions.type.income', value: TransactionType.Income },
+    { labelKey: 'transactions.type.expense', value: TransactionType.Expense },
+  ] as const;
 
-  readonly recurrenceOptions = computed<SelectOption<RecurrenceType>[]>(() => {
-    this.lang.currentLang();
-    return [
-      { label: this.translate.instant('transactions.recurrence.none'), value: RecurrenceType.None },
-      { label: this.translate.instant('transactions.recurrence.daily'), value: RecurrenceType.Daily },
-      { label: this.translate.instant('transactions.recurrence.weekly'), value: RecurrenceType.Weekly },
-      { label: this.translate.instant('transactions.recurrence.monthly'), value: RecurrenceType.Monthly },
-      { label: this.translate.instant('transactions.recurrence.yearly'), value: RecurrenceType.Yearly },
-    ];
-  });
+  readonly paymentMethodOptions = computed<SelectOption<PaymentMethod | null>[]>(() => [
+    { labelKey: 'transactions.paymentMethod.none', value: null },
+    { labelKey: 'transactions.paymentMethod.pix', value: PaymentMethod.Pix },
+    { labelKey: 'transactions.paymentMethod.creditCard', value: PaymentMethod.CreditCard },
+    { labelKey: 'transactions.paymentMethod.debitCard', value: PaymentMethod.DebitCard },
+    { labelKey: 'transactions.paymentMethod.cash', value: PaymentMethod.Cash },
+    { labelKey: 'transactions.paymentMethod.ted', value: PaymentMethod.Ted },
+    { labelKey: 'transactions.paymentMethod.boleto', value: PaymentMethod.Boleto },
+    { labelKey: 'transactions.paymentMethod.other', value: PaymentMethod.Other },
+  ]);
 
-  readonly categoriesOptions = computed<SelectOption<string | null>[]>(() => {
-    const noneLabel = this.translate.instant('transactions.form.noCategory');
-    return [
-      { label: noneLabel, value: null },
-      ...this.allCategories().map(c => ({ label: c.name, value: c.id })),
-    ];
-  });
+  readonly recurrenceOptions = computed<SelectOption<RecurrenceType>[]>(() => [
+    { labelKey: 'transactions.recurrence.none', value: RecurrenceType.None },
+    { labelKey: 'transactions.recurrence.daily', value: RecurrenceType.Daily },
+    { labelKey: 'transactions.recurrence.weekly', value: RecurrenceType.Weekly },
+    { labelKey: 'transactions.recurrence.monthly', value: RecurrenceType.Monthly },
+    { labelKey: 'transactions.recurrence.yearly', value: RecurrenceType.Yearly },
+  ]);
+
+  readonly categoriesOptions = computed<SelectOption<string | null>[]>(() => [
+    { labelKey: 'transactions.form.noCategory', label: undefined, value: null },
+    ...this.allCategories().map(c => ({ labelKey: undefined, label: c.name, value: c.id })),
+  ]);
 
   readonly tagsOptions = computed<SelectOption<string>[]>(() =>
     this.allTags().map(t => ({ label: t.name, value: t.id }))
   );
+
+  private rebuildTranslatedOptions(): void {
+    this.translate.get(this.typeFilterLabelKeys.map(x => x.labelKey)).subscribe(t => {
+      this.typeFilterOptionsTranslated.set(
+        this.typeFilterLabelKeys.map(o => ({ label: t[o.labelKey] ?? o.labelKey, value: o.value })),
+      );
+    });
+    this.translate.get(this.statusFilterLabelKeys.map(x => x.labelKey)).subscribe(t => {
+      this.statusFilterOptionsTranslated.set(
+        this.statusFilterLabelKeys.map(o => ({ label: t[o.labelKey] ?? o.labelKey, value: o.value })),
+      );
+    });
+    this.translate.get(this.typeFormLabelKeys.map(x => x.labelKey)).subscribe(t => {
+      this.typeFormOptionsTranslated.set(
+        this.typeFormLabelKeys.map(o => ({ label: t[o.labelKey] ?? o.labelKey, value: o.value })),
+      );
+    });
+  }
 
   form = this.fb.group({
     description: ['', [Validators.required, Validators.maxLength(200)]],
@@ -199,6 +204,10 @@ export class TransactionsComponent implements OnInit {
   });
 
   constructor() {
+    this.rebuildTranslatedOptions();
+    this.translate.onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.rebuildTranslatedOptions());
     effect(() => { this.lang.currentLang(); });
   }
 

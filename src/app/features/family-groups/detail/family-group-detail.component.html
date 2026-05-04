@@ -85,8 +85,17 @@
         @for (member of g.members; track member.id) {
           <li class="member-item">
             <div class="member-info">
-              <span class="member-id">{{ member.userId }}</span>
-              <span class="member-role" [class.member-role--owner]="member.role === 'Owner'">{{ member.role }}</span>
+              @if (member.fullName) {
+                <span class="member-name">{{ member.fullName }}</span>
+              } @else {
+                <span class="member-id">{{ member.userId }}</span>
+              }
+              <div class="member-meta">
+                @if (member.email) {
+                  <span class="member-email">{{ member.email }}</span>
+                }
+                <span class="member-role" [class.member-role--owner]="member.role === 'Owner'">{{ member.role }}</span>
+              </div>
             </div>
             @if (isOwner() && member.role !== 'Owner') {
               <p-button

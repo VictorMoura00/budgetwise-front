@@ -17,8 +17,22 @@ import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { MessageService } from 'primeng/api';
-import { CategoryService, DashboardService, LanguageService, LayoutService, TransactionService } from '../../core/services';
-import { CategoryResponse, DashboardData, DashboardOverviewResponse, GetTransactionsParams, PaymentMethod, PeriodMonths, RecurrenceType, TransactionResponse, TransactionType } from '../../core/models';
+import { CategoryService, DashboardService, FamilyGroupService, LanguageService, LayoutService, TransactionService } from '../../core/services';
+import {
+  CategoryResponse,
+  DashboardData,
+  DashboardFilterPreset,
+  DashboardOverviewResponse,
+  DashboardStatusFilter,
+  DashboardTypeFilter,
+  FamilyGroupSummaryResponse,
+  GetTransactionsParams,
+  PaymentMethod,
+  RecurrenceType,
+  TransactionResponse,
+  TransactionType,
+  calculateDateRange,
+} from '../../core/models';
 import { TransactionDetailDialogComponent } from './transaction-detail-dialog/transaction-detail-dialog.component';
 
 @Component({
@@ -52,6 +66,7 @@ export class DashboardComponent implements OnInit {
   private readonly dashboardService = inject(DashboardService);
   private readonly transactionService = inject(TransactionService);
   private readonly categoryService = inject(CategoryService);
+  private readonly familyGroupService = inject(FamilyGroupService);
   private readonly fb = inject(FormBuilder);
   private readonly translate = inject(TranslateService);
   private readonly lang = inject(LanguageService);
@@ -64,13 +79,25 @@ export class DashboardComponent implements OnInit {
   readonly RecurrenceType = RecurrenceType;
   readonly PaymentMethod = PaymentMethod;
 
+  // ─── Filter state ───────────────────────────────────────────────────────────
+
+  filterPreset = signal<DashboardFilterPreset>('thisMonth');
+  filterStatus = signal<DashboardStatusFilter>('all');
+  filterType = signal<DashboardTypeFilter>('all');
+  filterCategoryId = signal<string | null>(null);
+  filterFamilyGroupId = signal<string | null>(null);
+  filterPaymentMethod = signal<PaymentMethod | null>(null);
+  customStartDate = signal<Date | null>(null);
+  customEndDate = signal<Date | null>(null);
+
+  allCategories = signal<CategoryResponse[]>([]);
+  familyGroups = signal<FamilyGroupSummaryResponse[]>([]);
+
   // ─── Dashboard state ────────────────────────────────────────────────────────
 
   loading = signal(true);
   data = signal<DashboardData | null>(null);
   overview = signal<DashboardOverviewResponse | null>(null);
-  period = signal<PeriodMonths>(1);
-  allCategories = signal<CategoryResponse[]>([]);
 
   // ─── Pending dialog ─────────────────────────────────────────────────────────
 
@@ -109,13 +136,73 @@ export class DashboardComponent implements OnInit {
 
   // ─── Computed options ────────────────────────────────────────────────────────
 
-  readonly periodOptions = computed(() => {
-    this.lang.currentLang();
-    return [
-      { label: this.translate.instant('dashboard.filters.thisMonth'), value: 1 },
-      { label: this.translate.instant('dashboard.filters.threeMonths'), value: 3 },
-      { label: this.translate.instant('dashboard.filters.sixMonths'), value: 6 },
-    ];
+  readonly presetOptionsTranslated = signal<{ label: string; value: DashboardFilterPreset }[]>([]);
+
+  private readonly periodLabelKeys = [
+    { value: 'thisMonth' as DashboardFilterPreset, labelKey: 'dashboard.filters.thisMonth' },
+    { value: 'lastMonth' as DashboardFilterPreset, labelKey: 'dashboard.filters.lastMonth' },
+    { value: 'last3Months' as DashboardFilterPreset, labelKey: 'dashboard.filters.last3Months' },
+    { value: 'last6Months' as DashboardFilterPreset, labelKey: 'dashboard.filters.last6Months' },
+    { value: 'thisYear' as DashboardFilterPreset, labelKey: 'dashboard.filters.thisYear' },
+    { value: 'custom' as DashboardFilterPreset, labelKey: 'dashboard.filters.custom' },
+  ] as const;
+
+  private rebuildPresetOptions(): void {
+    const keys = this.periodLabelKeys.map(x => x.labelKey);
+    this.translate.get(keys).subscribe(translations => {
+      this.presetOptionsTranslated.set(
+        this.periodLabelKeys.map(option => ({
+          value: option.value,
+          label: translations[option.labelKey] ?? option.labelKey,
+        })),
+      );
+    });
+  }
+
+  readonly statusOptions = computed(() => [
+    { labelKey: 'common.all', value: 'all' as DashboardStatusFilter },
+    { labelKey: 'transactions.status.confirmed', value: 'confirmed' as DashboardStatusFilter },
+    { labelKey: 'transactions.status.pending', value: 'pending' as DashboardStatusFilter },
+  ]);
+
+  readonly typeOptions = computed(() => [
+    { labelKey: 'common.all', value: 'all' as DashboardTypeFilter },
+    { labelKey: 'transactions.type.income', value: 'income' as DashboardTypeFilter },
+    { labelKey: 'transactions.type.expense', value: 'expense' as DashboardTypeFilter },
+  ]);
+
+  readonly paymentMethodOptions = computed(() => [
+    { labelKey: 'transactions.paymentMethod.none', value: null as PaymentMethod | null },
+    { labelKey: 'transactions.paymentMethod.pix', value: PaymentMethod.Pix },
+    { labelKey: 'transactions.paymentMethod.creditCard', value: PaymentMethod.CreditCard },
+    { labelKey: 'transactions.paymentMethod.debitCard', value: PaymentMethod.DebitCard },
+    { labelKey: 'transactions.paymentMethod.cash', value: PaymentMethod.Cash },
+    { labelKey: 'transactions.paymentMethod.ted', value: PaymentMethod.Ted },
+    { labelKey: 'transactions.paymentMethod.boleto', value: PaymentMethod.Boleto },
+    { labelKey: 'transactions.paymentMethod.other', value: PaymentMethod.Other },
+  ]);
+
+  readonly categoryOptions = computed(() => {
+    const none = { labelKey: 'common.all' as string | undefined, label: undefined as string | undefined, value: null as string | null };
+    return [none, ...this.allCategories().map(c => ({ labelKey: undefined as string | undefined, label: c.name, value: c.id as string | null }))];
+  });
+
+  readonly familyGroupOptions = computed(() => {
+    const none = { labelKey: 'common.all' as string | undefined, label: undefined as string | undefined, value: null as string | null };
+    return [none, ...this.familyGroups().map(g => ({ labelKey: undefined as string | undefined, label: g.name, value: g.id as string | null }))];
+  });
+
+  readonly isCustomPreset = computed(() => this.filterPreset() === 'custom');
+
+  readonly currentDateRange = computed(() => {
+    const preset = this.filterPreset();
+    const start = this.customStartDate();
+    const end = this.customEndDate();
+    return calculateDateRange(
+      preset,
+      start ? this.toDateStr(start) ?? undefined : undefined,
+      end ? this.toDateStr(end) ?? undefined : undefined,
+    );
   });
 
   readonly overviewCards = computed(() => {
@@ -132,23 +219,14 @@ export class DashboardComponent implements OnInit {
     ];
   });
 
-  readonly typeFormOptions = computed(() => {
-    this.lang.currentLang();
-    return [
-      { label: this.translate.instant('transactions.type.income'), value: TransactionType.Income },
-      { label: this.translate.instant('transactions.type.expense'), value: TransactionType.Expense },
-    ];
-  });
-
-  readonly categoriesOptions = computed(() => {
-    const none = { label: this.translate.instant('transactions.form.noCategory'), value: null as string | null };
-    return [none, ...this.allCategories().map(c => ({ label: c.name, value: c.id as string | null }))];
-  });
+  readonly typeFormOptions = computed(() => [
+    { labelKey: 'transactions.type.income', value: TransactionType.Income },
+    { labelKey: 'transactions.type.expense', value: TransactionType.Expense },
+  ]);
 
   readonly categoriesChips = computed(() => {
-    this.lang.currentLang();
-    const none = { label: this.translate.instant('transactions.form.noCategory'), value: null as string | null, icon: null, color: null };
-    return [none, ...this.allCategories().map(c => ({ label: c.name, value: c.id as string | null, icon: c.icon, color: c.color }))];
+    const none = { labelKey: 'transactions.form.noCategory' as string | undefined, label: undefined as string | undefined, value: null as string | null, icon: null as string | null, color: null as string | null };
+    return [none, ...this.allCategories().map(c => ({ labelKey: undefined as string | undefined, label: c.name, value: c.id as string | null, icon: c.icon, color: c.color }))];
   });
 
   readonly lineChartData = computed(() => {
@@ -297,19 +375,59 @@ export class DashboardComponent implements OnInit {
   // ─── Lifecycle ──────────────────────────────────────────────────────────────
 
   ngOnInit(): void {
-    this.load();
-    this.loadOverview();
+    this.rebuildPresetOptions();
+    this.translate.onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.rebuildPresetOptions());
+
+    this.applyFilters();
     this.categoryService.getAll({ pageSize: 200 }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: res => this.allCategories.set(res.items),
     });
+    this.familyGroupService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: res => this.familyGroups.set(res),
+    });
   }
 
-  // ─── Period ─────────────────────────────────────────────────────────────────
+  // ─── Filter actions ─────────────────────────────────────────────────────────
 
-  changePeriod(months: PeriodMonths | null): void {
-    if (!months) return;
-    this.period.set(months);
-    this.load();
+  changePreset(preset: DashboardFilterPreset | null): void {
+    if (!preset) return;
+    this.filterPreset.set(preset);
+    this.applyFilters();
+  }
+
+  changeStatus(status: DashboardStatusFilter | null): void {
+    if (!status) return;
+    this.filterStatus.set(status);
+    this.applyFilters();
+  }
+
+  changeType(type: DashboardTypeFilter | null): void {
+    if (!type) return;
+    this.filterType.set(type);
+    this.applyFilters();
+  }
+
+  changeCategory(categoryId: string | null): void {
+    this.filterCategoryId.set(categoryId);
+    this.applyFilters();
+  }
+
+  changeFamilyGroup(familyGroupId: string | null): void {
+    this.filterFamilyGroupId.set(familyGroupId);
+    this.applyFilters();
+  }
+
+  changePaymentMethod(paymentMethod: PaymentMethod | null): void {
+    this.filterPaymentMethod.set(paymentMethod);
+    this.applyFilters();
+  }
+
+  onCustomDateChange(): void {
+    if (this.filterPreset() === 'custom') {
+      this.applyFilters();
+    }
   }
 
   // ─── Pending dialog ─────────────────────────────────────────────────────────
@@ -318,15 +436,12 @@ export class DashboardComponent implements OnInit {
     this.pendingDialogVisible = true;
     this.loadingPending.set(true);
 
-    const now = new Date();
-    const y = now.getFullYear();
-    const m = String(now.getMonth() + 1).padStart(2, '0');
-    const lastDay = new Date(y, now.getMonth() + 1, 0).getDate();
+    const { startDate, endDate } = this.currentDateRange();
 
     this.transactionService.getAll({
       isConfirmed: false,
-      startDate: `${y}-${m}-01`,
-      endDate: `${y}-${m}-${String(lastDay).padStart(2, '0')}`,
+      startDate,
+      endDate,
       pageSize: 100,
     }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: res => {
@@ -349,7 +464,7 @@ export class DashboardComponent implements OnInit {
           detail: this.translate.instant('transactions.toast.confirmSuccess'),
           life: 3000,
         });
-        this.load();
+        this.applyFilters();
       },
       error: () => this.confirming.set(null),
     });
@@ -358,7 +473,7 @@ export class DashboardComponent implements OnInit {
   // ─── Income / Expense KPI modals ────────────────────────────────────────────
 
   openIncomeModal(): void {
-    const { startDate, endDate } = this.periodDateRange();
+    const { startDate, endDate } = this.currentDateRange();
     this.openTxListModal(
       this.translate.instant('dashboard.modal.incomeTitle'),
       { type: TransactionType.Income, startDate, endDate, pageSize: 200 },
@@ -366,7 +481,7 @@ export class DashboardComponent implements OnInit {
   }
 
   openExpenseModal(): void {
-    const { startDate, endDate } = this.periodDateRange();
+    const { startDate, endDate } = this.currentDateRange();
     this.openTxListModal(
       this.translate.instant('dashboard.modal.expenseTitle'),
       { type: TransactionType.Expense, startDate, endDate, pageSize: 200 },
@@ -376,18 +491,19 @@ export class DashboardComponent implements OnInit {
   // ─── Chart click handlers ───────────────────────────────────────────────────
 
   onLineChartClick(index: number): void {
-    const today = new Date();
-    const months = this.period();
-    const date = new Date(today.getFullYear(), today.getMonth() - (months - 1 - index), 1);
+    const { startDate, endDate } = this.currentDateRange();
+    const months = this.data()?.monthlyEvolution.length ?? 1;
+    const start = new Date(startDate);
+    const date = new Date(start.getFullYear(), start.getMonth() + index, 1);
     const label = this.data()?.monthlyEvolution[index]?.label ?? '';
 
-    const startDate = this.toDateStr(date);
+    const monthStart = this.toDateStr(date);
     const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    const endDate = this.toDateStr(lastDay);
+    const monthEnd = this.toDateStr(lastDay);
 
     this.openTxListModal(
       this.translate.instant('dashboard.modal.monthTitle', { month: label }),
-      { startDate, endDate, pageSize: 200 },
+      { startDate: monthStart ?? '', endDate: monthEnd ?? '', pageSize: 200 },
     );
   }
 
@@ -395,7 +511,7 @@ export class DashboardComponent implements OnInit {
     const cat = this.data()?.topCategories[index];
     if (!cat) return;
 
-    const { startDate, endDate } = this.periodDateRange();
+    const { startDate, endDate } = this.currentDateRange();
     const title = cat.categoryId
       ? this.translate.instant('dashboard.modal.categoryTitle', { name: cat.categoryName })
       : this.translate.instant('dashboard.modal.noCategoryTitle');
@@ -488,7 +604,7 @@ export class DashboardComponent implements OnInit {
           detail: this.translate.instant('transactions.toast.createSuccess'),
           life: 3000,
         });
-        this.load();
+        this.applyFilters();
       },
       error: () => this.quickAddSaving.set(false),
     });
@@ -536,14 +652,6 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  private periodDateRange(): { startDate: string; endDate: string } {
-    const today = new Date();
-    const months = this.period();
-    const startDate = this.toDateStr(new Date(today.getFullYear(), today.getMonth() - (months - 1), 1))!;
-    const endDate = this.toDateStr(today)!;
-    return { startDate, endDate };
-  }
-
   private buildComparison(field: 'totalIncome' | 'totalExpense' | 'balance'): string | null {
     const d = this.data();
     if (!d?.prevSummary) return null;
@@ -564,20 +672,29 @@ export class DashboardComponent implements OnInit {
     return `${y}-${m}-${d}`;
   }
 
-  private load(): void {
+  private applyFilters(): void {
     this.loading.set(true);
-    this.dashboardService.load(this.period()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    const { startDate, endDate } = this.currentDateRange();
+
+    const request = {
+      startDate,
+      endDate,
+      status: this.filterStatus(),
+      type: this.filterType(),
+      categoryId: this.filterCategoryId(),
+      familyGroupId: this.filterFamilyGroupId(),
+      paymentMethod: this.filterPaymentMethod(),
+    };
+
+    this.dashboardService.load(request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: d => {
         this.data.set(d);
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
     });
-  }
 
-  private loadOverview(): void {
-    const now = new Date();
-    this.dashboardService.getOverview(now.getFullYear(), now.getMonth() + 1)
+    this.dashboardService.getOverview(request)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: res => this.overview.set(res),

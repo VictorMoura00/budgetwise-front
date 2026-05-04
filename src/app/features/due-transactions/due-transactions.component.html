@@ -1,5 +1,7 @@
-<div class="page">
-  <div class="page-header">
+<div class="due-page">
+
+  <!-- Header -->
+  <div class="due-header">
     <div>
       <h1 class="page-title">{{ 'dueTransactions.title' | translate }}</h1>
       <p class="page-subtitle">{{ 'dueTransactions.subtitle' | translate }}</p>
@@ -7,47 +9,75 @@
   </div>
 
   @if (loading()) {
-    <div class="content-card skeleton-list">
+    <div class="due-skeleton">
       @for (i of [1,2,3]; track i) {
-        <p-skeleton height="8rem" styleClass="mb-2" />
+        <p-skeleton height="10rem" styleClass="mb-3" />
       }
     </div>
   } @else if (data(); as d) {
-    <div class="summary-bar">
-      <div class="summary-item">
-        <span class="summary-label">{{ 'dueTransactions.totalPending' | translate }}</span>
-        <span class="summary-value">{{ d.totalPendingCount }}</span>
-        <span class="summary-amount">{{ formatCurrency(d.totalPendingAmount) }}</span>
+
+    <!-- KPI Summary -->
+    <div class="kpi-bar">
+      <div class="kpi-card kpi-card--pending">
+        <div class="kpi-icon"><i class="pi pi-clock"></i></div>
+        <div class="kpi-body">
+          <span class="kpi-label">{{ 'dueTransactions.totalPending' | translate }}</span>
+          <div class="kpi-values">
+            <span class="kpi-count">{{ d.totalPendingCount }}</span>
+            <span class="kpi-amount">{{ formatCurrency(d.totalPendingAmount) }}</span>
+          </div>
+        </div>
       </div>
     </div>
 
+    <!-- Groups Grid -->
     <div class="groups-grid">
       @for (g of groups; track g.key) {
         @if (getGroup(g.key); as group) {
-          <div class="group-card">
+          <div class="group-card" [class.group-card--empty]="!group.items.length">
             <div class="group-header group-header--{{ g.severity }}">
-              <span class="group-title">{{ groupTitle(g.key) }}</span>
-              <span class="group-badge">{{ group.count }} · {{ formatCurrency(group.totalAmount) }}</span>
+              <div class="group-header-left">
+                <span class="group-accent"></span>
+                <span class="group-title">{{ groupTitle(g.key) }}</span>
+              </div>
+              <div class="group-header-right">
+                <span class="group-count">{{ group.count }}</span>
+                <span class="group-total">{{ formatCurrency(group.totalAmount) }}</span>
+              </div>
             </div>
+
             @if (group.items.length) {
               <ul class="item-list">
                 @for (item of group.items; track item.id) {
                   <li class="item-row">
-                    <div class="item-info">
+                    <div class="item-main">
                       <span class="item-desc">{{ item.description }}</span>
-                      <span class="item-meta">
-                        {{ item.transactionDate | date:'dd/MM/yyyy' }}
-                        @if (item.categoryName) { · {{ item.categoryName }} }
+                      <div class="item-meta">
+                        <span class="item-date">
+                          <i class="pi pi-calendar"></i>
+                          {{ item.transactionDate | date:'dd/MM/yyyy' }}
+                        </span>
+                        @if (item.categoryName) {
+                          <span class="item-cat">
+                            <i class="pi pi-tag"></i>
+                            {{ item.categoryName }}
+                          </span>
+                        }
+                      </div>
+                    </div>
+                    <div class="item-right">
+                      <span class="item-amount" [ngClass]="item.type === 'Income' ? 'amount--income' : 'amount--expense'">
+                        {{ item.type === 'Income' ? '+' : '-' }}{{ formatCurrency(item.amount) }}
                       </span>
                     </div>
-                    <span class="item-amount" [ngClass]="item.type === 'Income' ? 'amount--income' : 'amount--expense'">
-                      {{ item.type === 'Income' ? '+' : '-' }}{{ formatCurrency(item.amount) }}
-                    </span>
                   </li>
                 }
               </ul>
             } @else {
-              <div class="group-empty">{{ 'dueTransactions.noItems' | translate }}</div>
+              <div class="group-empty">
+                <i class="pi pi-check-circle"></i>
+                <span>{{ 'dueTransactions.noItems' | translate }}</span>
+              </div>
             }
           </div>
         }

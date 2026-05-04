@@ -7,12 +7,125 @@
       <p class="page-subtitle">{{ 'dashboard.subtitle' | translate }}</p>
     </div>
     <p-selectbutton
-      [options]="periodOptions()"
-      [ngModel]="period()"
-      (ngModelChange)="changePeriod($event)"
+      [options]="presetOptionsTranslated()"
+      [ngModel]="filterPreset()"
+      (onChange)="changePreset($event.value)"
       optionLabel="label"
       optionValue="value"
     />
+  </div>
+
+  <!-- Advanced Filters -->
+  <div class="filters-bar">
+    @if (isCustomPreset()) {
+      <div class="filter-field">
+        <label>{{ 'dashboard.filters.startDate' | translate }}</label>
+        <p-datepicker
+          [ngModel]="customStartDate()"
+          (ngModelChange)="customStartDate.set($event); onCustomDateChange()"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          styleClass="date-full"
+        />
+      </div>
+      <div class="filter-field">
+        <label>{{ 'dashboard.filters.endDate' | translate }}</label>
+        <p-datepicker
+          [ngModel]="customEndDate()"
+          (ngModelChange)="customEndDate.set($event); onCustomDateChange()"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          styleClass="date-full"
+        />
+      </div>
+    }
+    <div class="filter-field">
+      <label>{{ 'dashboard.filters.status' | translate }}</label>
+      <p-select
+        [options]="statusOptions()"
+        [ngModel]="filterStatus()"
+        (ngModelChange)="changeStatus($event)"
+        optionValue="value"
+        [showClear]="false"
+      >
+        <ng-template let-selectedItem pTemplate="selectedItem">
+          {{ selectedItem.labelKey | translate }}
+        </ng-template>
+        <ng-template let-item pTemplate="item">
+          {{ item.labelKey | translate }}
+        </ng-template>
+      </p-select>
+    </div>
+    <div class="filter-field">
+      <label>{{ 'dashboard.filters.type' | translate }}</label>
+      <p-select
+        [options]="typeOptions()"
+        [ngModel]="filterType()"
+        (ngModelChange)="changeType($event)"
+        optionValue="value"
+        [showClear]="false"
+      >
+        <ng-template let-selectedItem pTemplate="selectedItem">
+          {{ selectedItem.labelKey | translate }}
+        </ng-template>
+        <ng-template let-item pTemplate="item">
+          {{ item.labelKey | translate }}
+        </ng-template>
+      </p-select>
+    </div>
+    <div class="filter-field">
+      <label>{{ 'dashboard.filters.category' | translate }}</label>
+      <p-select
+        [options]="categoryOptions()"
+        [ngModel]="filterCategoryId()"
+        (ngModelChange)="changeCategory($event)"
+        optionValue="value"
+        [showClear]="false"
+      >
+        <ng-template let-selectedItem pTemplate="selectedItem">
+          {{ selectedItem.labelKey ? (selectedItem.labelKey | translate) : selectedItem.label }}
+        </ng-template>
+        <ng-template let-item pTemplate="item">
+          {{ item.labelKey ? (item.labelKey | translate) : item.label }}
+        </ng-template>
+      </p-select>
+    </div>
+    @if (familyGroups().length > 0) {
+      <div class="filter-field">
+        <label>{{ 'dashboard.filters.familyGroup' | translate }}</label>
+        <p-select
+          [options]="familyGroupOptions()"
+          [ngModel]="filterFamilyGroupId()"
+          (ngModelChange)="changeFamilyGroup($event)"
+          optionValue="value"
+          [showClear]="false"
+        >
+          <ng-template let-selectedItem pTemplate="selectedItem">
+            {{ selectedItem.labelKey ? (selectedItem.labelKey | translate) : selectedItem.label }}
+          </ng-template>
+          <ng-template let-item pTemplate="item">
+            {{ item.labelKey ? (item.labelKey | translate) : item.label }}
+          </ng-template>
+        </p-select>
+      </div>
+    }
+    <div class="filter-field">
+      <label>{{ 'dashboard.filters.paymentMethod' | translate }}</label>
+      <p-select
+        [options]="paymentMethodOptions()"
+        [ngModel]="filterPaymentMethod()"
+        (ngModelChange)="changePaymentMethod($event)"
+        optionValue="value"
+        [showClear]="false"
+      >
+        <ng-template let-selectedItem pTemplate="selectedItem">
+          {{ selectedItem.labelKey | translate }}
+        </ng-template>
+        <ng-template let-item pTemplate="item">
+          {{ item.labelKey | translate }}
+        </ng-template>
+      </p-select>
+    </div>
   </div>
 
   <!-- Overview Cards (from /dashboard/overview) -->
@@ -519,7 +632,7 @@
             } @else {
               <i class="pi pi-tag" style="opacity: 0.4"></i>
             }
-            {{ cat.label }}
+            {{ cat.labelKey ? (cat.labelKey | translate) : cat.label }}
           </button>
         }
       </div>

@@ -1,4 +1,10 @@
 {
+  "language": {
+    "pt": "Português",
+    "en": "Inglês",
+    "zh": "Chinês",
+    "eo": "Esperanto"
+  },
   "common": {
     "save": "Salvar",
     "cancel": "Cancelar",
@@ -55,8 +61,18 @@
     "subtitle": "Resumo financeiro do período selecionado",
     "filters": {
       "thisMonth": "Este mês",
-      "threeMonths": "3 meses",
-      "sixMonths": "6 meses"
+      "lastMonth": "Mês anterior",
+      "last3Months": "Últimos 3 meses",
+      "last6Months": "Últimos 6 meses",
+      "thisYear": "Este ano",
+      "custom": "Personalizado",
+      "startDate": "Data inicial",
+      "endDate": "Data final",
+      "status": "Status",
+      "type": "Tipo",
+      "category": "Categoria",
+      "familyGroup": "Grupo familiar",
+      "paymentMethod": "Forma de pagamento"
     },
     "cards": {
       "income": "Receitas",
@@ -399,7 +415,7 @@
       }
     }
   },
-  "notFound":
+  "notFound": {
     "title": "Página não encontrada",
     "subtitle": "A página que você está procurando não existe ou foi movida.",
     "back": "Voltar ao início"

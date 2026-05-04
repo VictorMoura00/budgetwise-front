@@ -19,7 +19,7 @@
     <!-- Filter bar -->
     <div class="filter-bar">
       <p-selectbutton
-        [options]="typeFilterOptions()"
+        [options]="typeFilterOptionsTranslated()"
         [ngModel]="filterType()"
         (ngModelChange)="filterType.set($event); applyFilters()"
         optionLabel="label"
@@ -27,7 +27,7 @@
       />
 
       <p-selectbutton
-        [options]="statusFilterOptions()"
+        [options]="statusFilterOptionsTranslated()"
         [ngModel]="filterStatus()"
         (ngModelChange)="filterStatus.set($event); applyFilters()"
         optionLabel="label"
@@ -304,7 +304,7 @@
       <div class="form-field">
         <label class="field-label">{{ 'transactions.form.type' | translate }}</label>
         <p-selectbutton
-          [options]="typeFormOptions()"
+          [options]="typeFormOptionsTranslated()"
           formControlName="type"
           optionLabel="label"
           optionValue="value"
@@ -338,13 +338,19 @@
           inputId="tx-category"
           formControlName="categoryId"
           [options]="categoriesOptions()"
-          optionLabel="label"
           optionValue="value"
           [showClear]="true"
           [filter]="true"
           filterBy="label"
           [placeholder]="'transactions.form.noCategory' | translate"
-        />
+        >
+          <ng-template let-selectedItem pTemplate="selectedItem">
+            {{ selectedItem.labelKey ? (selectedItem.labelKey | translate) : selectedItem.label }}
+          </ng-template>
+          <ng-template let-item pTemplate="item">
+            {{ item.labelKey ? (item.labelKey | translate) : item.label }}
+          </ng-template>
+        </p-select>
       </div>
 
       <!-- Tags (full width) -->
@@ -375,9 +381,15 @@
           inputId="tx-payment"
           formControlName="paymentMethod"
           [options]="paymentMethodOptions()"
-          optionLabel="label"
           optionValue="value"
-        />
+        >
+          <ng-template let-selectedItem pTemplate="selectedItem">
+            {{ selectedItem.labelKey | translate }}
+          </ng-template>
+          <ng-template let-item pTemplate="item">
+            {{ item.labelKey | translate }}
+          </ng-template>
+        </p-select>
       </div>
 
       <!-- Confirmada? -->
@@ -395,9 +407,15 @@
           inputId="tx-recurrence"
           formControlName="recurrenceType"
           [options]="recurrenceOptions()"
-          optionLabel="label"
           optionValue="value"
-        />
+        >
+          <ng-template let-selectedItem pTemplate="selectedItem">
+            {{ selectedItem.labelKey | translate }}
+          </ng-template>
+          <ng-template let-item pTemplate="item">
+            {{ item.labelKey | translate }}
+          </ng-template>
+        </p-select>
       </div>
 
       <!-- Data fim da recorrência (condicional) -->

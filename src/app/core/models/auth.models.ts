@@ -28,6 +28,14 @@ export interface ApiError {
   description: string;
 }
 
+export interface CurrentUserResponse {
+  userId: string;
+  email: string;
+  fullName: string;
+  role: 'User' | 'Admin';
+  isActive: boolean;
+}
+
 export interface ProblemDetails {
   title: string;
   status: number;

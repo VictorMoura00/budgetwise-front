@@ -29,3 +29,42 @@ export interface DueTransactionsReportResponse {
   future: DueTransactionGroup;
   withoutDueDate: DueTransactionGroup;
 }
+
+/* ─── Category Analysis Report ───────────────────────────────────────────── */
+
+export interface CategoryAnalysisItemResponse {
+  categoryId: string | null;
+  categoryName: string;
+  categoryColor: string | null;
+  categoryIcon: string | null;
+  totalAmount: number;
+  transactionCount: number;
+  percentage: number;
+}
+
+export interface CategoryAnalysisReportResponse {
+  startDate: string;
+  endDate: string;
+  totalAmount: number;
+  totalTransactions: number;
+  items: CategoryAnalysisItemResponse[];
+}
+
+/* ─── Payment Status Report ──────────────────────────────────────────────── */
+
+export interface PaymentStatusGroupResponse {
+  count: number;
+  totalAmount: number;
+}
+
+export interface PaymentStatusReportResponse {
+  reportDate: string;
+  startDate: string;
+  endDate: string;
+  confirmed: PaymentStatusGroupResponse;
+  pending: PaymentStatusGroupResponse;
+  overdue: PaymentStatusGroupResponse;
+  dueToday: PaymentStatusGroupResponse;
+  dueNext7Days: PaymentStatusGroupResponse;
+  withoutDueDate: PaymentStatusGroupResponse;
+}

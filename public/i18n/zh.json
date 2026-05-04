@@ -1,4 +1,10 @@
 {
+  "language": {
+    "pt": "葡萄牙语",
+    "en": "英语",
+    "zh": "中文",
+    "eo": "世界语"
+  },
   "common": {
     "save": "保存",
     "cancel": "取消",
@@ -55,8 +61,18 @@
     "subtitle": "所选时段的财务摘要",
     "filters": {
       "thisMonth": "本月",
-      "threeMonths": "3个月",
-      "sixMonths": "6个月"
+      "lastMonth": "上个月",
+      "last3Months": "最近3个月",
+      "last6Months": "最近6个月",
+      "thisYear": "今年",
+      "custom": "自定义",
+      "startDate": "开始日期",
+      "endDate": "结束日期",
+      "status": "状态",
+      "type": "类型",
+      "category": "分类",
+      "familyGroup": "家庭群组",
+      "paymentMethod": "支付方式"
     },
     "cards": {
       "income": "收入",

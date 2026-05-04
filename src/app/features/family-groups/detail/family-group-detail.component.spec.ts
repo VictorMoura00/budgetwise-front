@@ -18,8 +18,8 @@ class MockFamilyGroupService {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       members: [
-        { id: 'm1', userId: 'user-1', role: 'Owner' as const, joinedAt: '2024-01-01T00:00:00Z' },
-        { id: 'm2', userId: 'user-2', role: 'Member' as const, joinedAt: '2024-01-02T00:00:00Z' },
+        { id: 'm1', userId: 'user-1', fullName: 'Owner User', email: 'owner@test.com', role: 'Owner' as const, joinedAt: '2024-01-01T00:00:00Z' },
+        { id: 'm2', userId: 'user-2', fullName: 'Member User', email: 'member@test.com', role: 'Member' as const, joinedAt: '2024-01-02T00:00:00Z' },
       ],
     });
   }
@@ -32,7 +32,7 @@ class MockFamilyGroupService {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-02T00:00:00Z',
       members: [
-        { id: 'm1', userId: 'user-1', role: 'Owner' as const, joinedAt: '2024-01-01T00:00:00Z' },
+        { id: 'm1', userId: 'user-1', fullName: 'Owner User', email: 'owner@test.com', role: 'Owner' as const, joinedAt: '2024-01-01T00:00:00Z' },
       ],
     });
   }
@@ -118,7 +118,7 @@ describe('FamilyGroupDetailComponent', () => {
   });
 
   it('should call removeMember when confirmed', () => {
-    const member = { id: 'm2', userId: 'user-2', role: 'Member' as const, joinedAt: '' };
+    const member = { id: 'm2', userId: 'user-2', fullName: 'Member User', email: 'member@test.com', role: 'Member' as const, joinedAt: '' };
     component.confirmRemoveMember(member);
     // MockConfirmationService auto-accepts
   });

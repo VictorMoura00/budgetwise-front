@@ -3,6 +3,8 @@ export type FamilyMemberRole = 'Owner' | 'Member';
 export interface FamilyMemberResponse {
   id: string;
   userId: string;
+  fullName: string | null;
+  email: string | null;
   role: FamilyMemberRole;
   joinedAt: string;
 }

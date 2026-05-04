@@ -105,6 +105,8 @@ export interface GetTransactionsParams {
   endDate?: string | null;
   isConfirmed?: boolean | null;
   dueDate?: string | null;
+  familyGroupId?: string | null;
+  paymentMethod?: PaymentMethod | null;
 }
 
 export interface PaginatedTransactionResponse {

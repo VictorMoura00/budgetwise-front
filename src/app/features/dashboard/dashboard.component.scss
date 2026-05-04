@@ -37,6 +37,43 @@
   font-size: 0.875rem;
 }
 
+.filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  background: var(--p-surface-card);
+  border: 1px solid var(--p-surface-border);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 8px rgba(0, 0, 0, 0.05);
+
+  .filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 140px;
+    flex: 1 1 160px;
+
+    label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--p-text-muted-color);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    ::ng-deep .p-select,
+    ::ng-deep .p-datepicker {
+      width: 100%;
+    }
+
+    ::ng-deep .p-datepicker-input {
+      width: 100%;
+    }
+  }
+}
+
 .overview-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

@@ -29,6 +29,8 @@ export class TransactionService {
     if (params.endDate) httpParams = httpParams.set('endDate', params.endDate);
     if (params.isConfirmed != null) httpParams = httpParams.set('isConfirmed', params.isConfirmed);
     if (params.dueDate) httpParams = httpParams.set('dueDate', params.dueDate);
+    if (params.familyGroupId) httpParams = httpParams.set('familyGroupId', params.familyGroupId);
+    if (params.paymentMethod) httpParams = httpParams.set('paymentMethod', params.paymentMethod);
 
     return this.http.get<PaginatedTransactionResponse>(this.base, { params: httpParams });
   }
@@ -61,15 +63,27 @@ export class TransactionService {
     return this.http.delete<void>(`${this.base}/${transactionId}/tags/${tagId}`);
   }
 
-  getSummary(params: { startDate?: string; endDate?: string } = {}): Observable<TransactionSummaryResponse> {
+  getSummary(params: GetTransactionsParams = {}): Observable<TransactionSummaryResponse> {
     let httpParams = new HttpParams();
     if (params.startDate) httpParams = httpParams.set('startDate', params.startDate);
     if (params.endDate) httpParams = httpParams.set('endDate', params.endDate);
+    if (params.type != null) httpParams = httpParams.set('type', params.type);
+    if (params.categoryId) httpParams = httpParams.set('categoryId', params.categoryId);
+    if (params.isConfirmed != null) httpParams = httpParams.set('isConfirmed', params.isConfirmed);
+    if (params.familyGroupId) httpParams = httpParams.set('familyGroupId', params.familyGroupId);
+    if (params.paymentMethod) httpParams = httpParams.set('paymentMethod', params.paymentMethod);
     return this.http.get<TransactionSummaryResponse>(`${this.base}/summary`, { params: httpParams });
   }
 
-  getMonthlySummary(months: number): Observable<MonthlyTransactionSummary[]> {
-    const httpParams = new HttpParams().set('months', months);
+  getMonthlySummary(params: GetTransactionsParams = {}): Observable<MonthlyTransactionSummary[]> {
+    let httpParams = new HttpParams();
+    if (params.startDate) httpParams = httpParams.set('startDate', params.startDate);
+    if (params.endDate) httpParams = httpParams.set('endDate', params.endDate);
+    if (params.type != null) httpParams = httpParams.set('type', params.type);
+    if (params.categoryId) httpParams = httpParams.set('categoryId', params.categoryId);
+    if (params.isConfirmed != null) httpParams = httpParams.set('isConfirmed', params.isConfirmed);
+    if (params.familyGroupId) httpParams = httpParams.set('familyGroupId', params.familyGroupId);
+    if (params.paymentMethod) httpParams = httpParams.set('paymentMethod', params.paymentMethod);
     return this.http.get<MonthlyTransactionSummary[]>(`${this.base}/monthly-summary`, { params: httpParams });
   }
 }

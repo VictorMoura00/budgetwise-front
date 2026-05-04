@@ -1,4 +1,10 @@
 {
+  "language": {
+    "pt": "Portugala",
+    "en": "Angla",
+    "zh": "Ĉina",
+    "eo": "Esperanto"
+  },
   "common": {
     "save": "Konservi",
     "cancel": "Nuligi",
@@ -55,8 +61,18 @@
     "subtitle": "Financa resumo de la elektita periodo",
     "filters": {
       "thisMonth": "Ĉi-monate",
-      "threeMonths": "3 monatoj",
-      "sixMonths": "6 monatoj"
+      "lastMonth": "Antaŭa monato",
+      "last3Months": "Lastaj 3 monatoj",
+      "last6Months": "Lastaj 6 monatoj",
+      "thisYear": "Ĉi-jare",
+      "custom": "Propra",
+      "startDate": "Komenca dato",
+      "endDate": "Fina dato",
+      "status": "Stato",
+      "type": "Tipo",
+      "category": "Kategorio",
+      "familyGroup": "Familia grupo",
+      "paymentMethod": "Pagmaniero"
     },
     "cards": {
       "income": "Enspezo",

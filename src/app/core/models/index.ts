@@ -3,6 +3,7 @@ export * from './auth.models';
 export * from './category.models';
 export * from './dashboard.models';
 export * from './dashboard-overview.models';
+export * from './dashboard-filter.models';
 export * from './family-group.models';
 export * from './report.models';
 export * from './shared-expense.models';

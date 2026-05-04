@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable, tap, map, throwError } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../../environments/environment';
-import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.models';
+import { AuthResponse, CurrentUserResponse, LoginRequest, RegisterRequest } from '../models/auth.models';
 
 export interface UserInfo {
   userId: string;
@@ -68,6 +68,10 @@ export class AuthService {
     return this.http
       .post<AuthResponse>(`${environment.apiUrl}/auth/register`, request)
       .pipe(tap(res => this.storeSession(res)), map(() => undefined));
+  }
+
+  getCurrentUser(): Observable<CurrentUserResponse> {
+    return this.http.get<CurrentUserResponse>(`${environment.apiUrl}/auth/me`);
   }
 
   logout(): void {

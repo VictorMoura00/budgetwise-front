@@ -82,6 +82,46 @@
   margin-left: 0.1rem;
 }
 
+.language-switcher {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--p-border-radius-md, 6px);
+  border: 1px solid var(--p-surface-border);
+  overflow: hidden;
+}
+
+.lang-btn {
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--p-surface-border);
+  color: var(--p-text-muted-color);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.55rem;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &:hover {
+    background: var(--p-surface-hover);
+    color: var(--p-text-color);
+  }
+
+  &--active {
+    background: var(--p-primary-color);
+    color: var(--p-primary-contrast-color);
+
+    &:hover {
+      background: var(--p-primary-color);
+      color: var(--p-primary-contrast-color);
+    }
+  }
+}
+
 ::ng-deep .app-toolbar {
   border-radius: 0 !important;
   border-left: none !important;
@@ -122,7 +162,7 @@
   }
 
   // Esconde o lang switcher — usuário acessa pelo menu de usuário se necessário
-  ::ng-deep p-selectbutton {
+  .language-switcher {
     display: none;
   }
 }

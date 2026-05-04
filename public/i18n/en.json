@@ -1,4 +1,10 @@
 {
+  "language": {
+    "pt": "Portuguese",
+    "en": "English",
+    "zh": "Chinese",
+    "eo": "Esperanto"
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",
@@ -10,7 +16,6 @@
     "error": "Error",
     "search": "Search...",
     "all": "All",
-    "close": "Close",
     "close": "Close",
     "details": "Details"
   },
@@ -56,8 +61,18 @@
     "subtitle": "Financial summary for the selected period",
     "filters": {
       "thisMonth": "This month",
-      "threeMonths": "3 months",
-      "sixMonths": "6 months"
+      "lastMonth": "Last month",
+      "last3Months": "Last 3 months",
+      "last6Months": "Last 6 months",
+      "thisYear": "This year",
+      "custom": "Custom",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "status": "Status",
+      "type": "Type",
+      "category": "Category",
+      "familyGroup": "Family group",
+      "paymentMethod": "Payment method"
     },
     "cards": {
       "income": "Income",

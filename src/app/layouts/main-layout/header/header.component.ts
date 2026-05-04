@@ -7,6 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { TooltipModule } from 'primeng/tooltip';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
 import { LayoutService } from '../../../core/services/layout.service';
@@ -24,6 +25,7 @@ import { LanguageService } from '../../../core/services/language.service';
     AvatarModule,
     MenuModule,
     SelectButtonModule,
+    TooltipModule,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
@@ -37,10 +39,10 @@ export class HeaderComponent {
   readonly lang = inject(LanguageService);
 
   readonly langOptions = [
-    { label: 'PT', value: 'pt' },
-    { label: 'EN', value: 'en' },
-    { label: '中文', value: 'zh' },
-    { label: 'EO', value: 'eo' },
+    { label: 'PT', value: 'pt', tooltipKey: 'language.pt' },
+    { label: 'EN', value: 'en', tooltipKey: 'language.en' },
+    { label: '中文', value: 'zh', tooltipKey: 'language.zh' },
+    { label: 'EO', value: 'eo', tooltipKey: 'language.eo' },
   ];
 
   readonly userInitials = computed(() => {
@@ -54,6 +56,10 @@ export class HeaderComponent {
   });
 
   menuItems = signal<MenuItem[]>([]);
+
+  changeLanguage(code: string): void {
+    this.lang.setLanguage(code);
+  }
 
   constructor() {
     effect(() => {
