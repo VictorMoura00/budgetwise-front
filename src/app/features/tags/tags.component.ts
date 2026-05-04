@@ -39,7 +39,7 @@ export class TagsComponent implements OnInit {
   tags = signal<TagResponse[]>([]);
   loading = signal(false);
   saving = signal(false);
-  readonly skeletonTags = Array(8);
+  readonly skeletonTags = Array.from({ length: 8 }, (_, i) => i + 1);
 
   dialogVisible = false;
   editingTag: TagResponse | null = null;

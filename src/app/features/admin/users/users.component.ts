@@ -46,7 +46,7 @@ export class AdminUsersComponent implements OnInit {
   loading = signal(false);
 
   readonly pageSize = 20;
-  readonly skeletonRows = Array(this.pageSize);
+  readonly skeletonRows = Array.from({ length: this.pageSize }, (_, i) => i + 1);
   private currentPage = 1;
 
   editDialogVisible = signal(false);

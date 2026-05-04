@@ -117,7 +117,7 @@ export class TransactionsComponent implements OnInit {
   filterDateRange = signal<Date[] | null>(null);
 
   readonly pageSize = 20;
-  readonly skeletonRows = Array(this.pageSize);
+  readonly skeletonRows = Array.from({ length: this.pageSize }, (_, i) => i + 1);
   private currentPage = 1;
 
   // ─── Translated select options (reactive to language changes) ──────────────

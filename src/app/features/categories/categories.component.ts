@@ -112,7 +112,7 @@ export class CategoriesComponent implements OnInit {
   private _cancelIntent = false;
 
   readonly pageSize = 10;
-  readonly skeletonRows = Array(this.pageSize);
+  readonly skeletonRows = Array.from({ length: this.pageSize }, (_, i) => i + 1);
   private currentPage = 1;
 
   iconSearch = '';
